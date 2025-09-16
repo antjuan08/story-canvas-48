@@ -2,41 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+/* Storyou Design System - Apple-inspired aesthetic with beautiful gradients */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Core Apple-like palette */
+    --background: 0 0% 99%;
+    --foreground: 210 9% 15%;
 
+    /* Glass surfaces with subtle tints */
+    --glass: 0 0% 100% / 0.8;
+    --glass-border: 220 13% 91% / 0.5;
+    
+    /* Cards with depth */
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 210 9% 15%;
+    --card-glass: 0 0% 100% / 0.9;
 
+    /* Popovers */
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 210 9% 15%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    /* Brand gradients - Purple to Blue */
+    --primary: 250 75% 60%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 250 75% 95%;
+    
+    /* Gradient stops for the signature gradient */
+    --gradient-start: 258 100% 88%; /* #D6C7FF */
+    --gradient-end: 212 100% 82%;   /* #A6C8FF */
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    /* Muted slate/stone palette */
+    --secondary: 210 6% 97%;
+    --secondary-foreground: 210 9% 15%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 210 6% 96%;
+    --muted-foreground: 215 13% 45%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 210 6% 95%;
+    --accent-foreground: 210 9% 15%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    /* Surface colors */
+    --surface-primary: 0 0% 100%;
+    --surface-secondary: 210 6% 98%;
+    --surface-tertiary: 210 6% 96%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    /* Destructive */
+    --destructive: 0 75% 55%;
+    --destructive-foreground: 0 0% 100%;
 
-    --radius: 0.5rem;
+    /* Borders and inputs */
+    --border: 220 13% 91%;
+    --border-soft: 220 13% 91% / 0.6;
+    --input: 220 13% 91%;
+    --ring: 250 75% 60%;
+
+    /* Shadows */
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.08);
+
+    /* Smooth Apple-like radius */
+    --radius: 1rem;
+    --radius-sm: 0.75rem;
+    --radius-lg: 1.5rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -56,41 +86,58 @@ All colors MUST be HSL.
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
+    /* Dark mode Apple aesthetic */
+    --background: 210 9% 8%;
+    --foreground: 210 6% 95%;
 
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
+    /* Glass surfaces for dark mode */
+    --glass: 210 9% 10% / 0.8;
+    --glass-border: 210 9% 20% / 0.5;
+    
+    --card: 210 9% 10%;
+    --card-foreground: 210 6% 95%;
+    --card-glass: 210 9% 12% / 0.9;
 
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 210 9% 10%;
+    --popover-foreground: 210 6% 95%;
 
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    /* Brand maintains vibrancy in dark */
+    --primary: 250 75% 65%;
+    --primary-foreground: 0 0% 100%;
+    --primary-soft: 250 75% 15%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    /* Muted surfaces for dark */
+    --secondary: 210 9% 12%;
+    --secondary-foreground: 210 6% 95%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 210 9% 14%;
+    --muted-foreground: 215 13% 65%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 210 9% 16%;
+    --accent-foreground: 210 6% 95%;
 
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
+    /* Surface hierarchy */
+    --surface-primary: 210 9% 10%;
+    --surface-secondary: 210 9% 12%;
+    --surface-tertiary: 210 9% 16%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
+    --destructive: 0 75% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 210 9% 20%;
+    --border-soft: 210 9% 20% / 0.6;
+    --input: 210 9% 20%;
+    --ring: 250 75% 65%;
+
+    /* Sidebar dark theme */
+    --sidebar-background: 210 9% 8%;
+    --sidebar-foreground: 210 6% 95%;
+    --sidebar-primary: 250 75% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-accent: 210 9% 14%;
+    --sidebar-accent-foreground: 210 6% 95%;
+    --sidebar-border: 210 9% 20%;
+    --sidebar-ring: 250 75% 65%;
   }
 }
 
@@ -100,6 +147,59 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-sans antialiased;
+    /* SF Pro Display system font stack */
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+}
+
+@layer components {
+  /* Glass morphism utilities */
+  .glass {
+    @apply backdrop-blur-xl bg-glass border border-glass-border;
+  }
+
+  .glass-card {
+    @apply backdrop-blur-xl bg-card-glass border border-glass-border rounded-2xl;
+  }
+
+  /* Apple-inspired transitions */
+  .transition-apple {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .transition-apple-long {
+    transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* Gradient backgrounds */
+  .bg-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)));
+  }
+
+  .bg-gradient-subtle {
+    background: linear-gradient(135deg, hsl(var(--surface-primary)), hsl(var(--surface-secondary)));
+  }
+
+  /* Apple-style shadows */
+  .shadow-apple {
+    box-shadow: var(--shadow-glass);
+  }
+
+  .shadow-apple-sm {
+    box-shadow: var(--shadow-sm);
+  }
+
+  .shadow-apple-md {
+    box-shadow: var(--shadow-md);
+  }
+
+  .shadow-apple-lg {
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* Keyboard shortcuts */
+  .kbd {
+    @apply inline-flex items-center px-2 py-1 text-xs font-mono bg-muted border rounded-md;
   }
 }

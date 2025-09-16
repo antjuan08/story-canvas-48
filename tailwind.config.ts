@@ -15,13 +15,20 @@ export default {
     extend: {
       colors: {
         border: "hsl(var(--border))",
+        "border-soft": "hsl(var(--border-soft))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        
+        // Glass surfaces
+        glass: "hsl(var(--glass))",
+        "glass-border": "hsl(var(--glass-border))",
+        
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          soft: "hsl(var(--primary-soft))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -46,7 +53,20 @@ export default {
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
+          glass: "hsl(var(--card-glass))",
         },
+        
+        // Surface hierarchy
+        surface: {
+          primary: "hsl(var(--surface-primary))",
+          secondary: "hsl(var(--surface-secondary))",
+          tertiary: "hsl(var(--surface-tertiary))",
+        },
+        
+        // Gradient colors
+        "gradient-start": "hsl(var(--gradient-start))",
+        "gradient-end": "hsl(var(--gradient-end))",
+        
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
           foreground: "hsl(var(--sidebar-foreground))",
@@ -59,31 +79,56 @@ export default {
         },
       },
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
+        lg: "var(--radius-lg)",
+        DEFAULT: "var(--radius)",
+        md: "var(--radius)",
+        sm: "var(--radius-sm)",
+        "2xl": "1rem",
+        "3xl": "1.5rem",
+      },
+      backdropBlur: {
+        xs: "2px",
+      },
+      fontFamily: {
+        sans: ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
       },
       keyframes: {
         "accordion-down": {
-          from: {
-            height: "0",
-          },
-          to: {
-            height: "var(--radix-accordion-content-height)",
-          },
+          from: { height: "0", opacity: "0" },
+          to: { height: "var(--radix-accordion-content-height)", opacity: "1" },
         },
         "accordion-up": {
-          from: {
-            height: "var(--radix-accordion-content-height)",
-          },
-          to: {
-            height: "0",
-          },
+          from: { height: "var(--radix-accordion-content-height)", opacity: "1" },
+          to: { height: "0", opacity: "0" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" },
+        },
+        "slide-in": {
+          "0%": { transform: "translateX(-100%)" },
+          "100%": { transform: "translateX(0)" },
+        },
+        "slide-out": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-100%)" },
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" },
+        },
+        "shimmer": {
+          "100%": { transform: "translateX(100%)" },
         },
       },
       animation: {
-        "accordion-down": "accordion-down 0.2s ease-out",
-        "accordion-up": "accordion-up 0.2s ease-out",
+        "accordion-down": "accordion-down 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "accordion-up": "accordion-up 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "fade-in": "fade-in 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "slide-in": "slide-in 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+        "slide-out": "slide-out 0.35s cubic-bezier(0.4, 0, 0.2, 1)",
+        "scale-in": "scale-in 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+        "shimmer": "shimmer 2s ease-in-out infinite",
       },
     },
   },
