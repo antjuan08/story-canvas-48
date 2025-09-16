@@ -105,10 +105,10 @@ export function Dashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid lg:grid-cols-3 gap-8">
+      <div className="grid lg:grid-cols-3 gap-6">
         {/* Recent Stories */}
         <div className="lg:col-span-2">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <h2 className="text-xl font-semibold">Recent Stories</h2>
             <Button variant="ghost" className="gap-2 text-primary">
               View all
@@ -116,22 +116,22 @@ export function Dashboard() {
             </Button>
           </div>
           
-          <div className="grid gap-6">
-            {recentStories.map((story, index) => (
+          <div className="grid gap-4">
+            {recentStories.slice(0, 3).map((story, index) => (
               <StoryCard key={index} {...story} />
             ))}
           </div>
         </div>
 
         {/* Quick Actions */}
-        <div className="space-y-6">
+        <div className="space-y-4">
           <div>
-            <h2 className="text-xl font-semibold mb-6">Quick Actions</h2>
+            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
             
-            <div className="space-y-3">
+            <div className="space-y-2">
               <Button 
                 variant="outline" 
-                className="w-full justify-start gap-3 h-12 rounded-2xl"
+                className="w-full justify-start gap-3 h-10 rounded-2xl"
               >
                 <Plus className="h-4 w-4" />
                 New Story
@@ -139,7 +139,7 @@ export function Dashboard() {
               
               <Button 
                 variant="outline" 
-                className="w-full justify-start gap-3 h-12 rounded-2xl"
+                className="w-full justify-start gap-3 h-10 rounded-2xl"
               >
                 <Plus className="h-4 w-4" />
                 New Keynote
@@ -147,7 +147,7 @@ export function Dashboard() {
               
               <Button 
                 variant="outline" 
-                className="w-full justify-start gap-3 h-12 rounded-2xl"
+                className="w-full justify-start gap-3 h-10 rounded-2xl"
               >
                 <TrendingUp className="h-4 w-4" />
                 View Analytics
@@ -156,40 +156,40 @@ export function Dashboard() {
           </div>
 
           {/* Activity Feed */}
-          <div className="glass-card p-6">
-            <h3 className="font-semibold mb-4">Recent Activity</h3>
+          <div className="glass-card p-4">
+            <h3 className="font-semibold mb-3">Recent Activity</h3>
             
-            <div className="space-y-4">
-              <div className="flex items-start gap-3">
-                <div className="h-2 w-2 rounded-full bg-green-500 mt-2" />
+            <div className="space-y-3">
+              <div className="flex items-start gap-2">
+                <div className="h-2 w-2 rounded-full bg-green-500 mt-1.5" />
                 <div className="text-sm">
                   <p className="font-medium">Story published</p>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     "The Future of Storytelling" went live
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">2 hours ago</p>
+                  <p className="text-xs text-muted-foreground">2 hours ago</p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
-                <div className="h-2 w-2 rounded-full bg-blue-500 mt-2" />
+              <div className="flex items-start gap-2">
+                <div className="h-2 w-2 rounded-full bg-blue-500 mt-1.5" />
                 <div className="text-sm">
                   <p className="font-medium">New collaboration</p>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     Sarah invited you to "Q4 Review"
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">1 day ago</p>
+                  <p className="text-xs text-muted-foreground">1 day ago</p>
                 </div>
               </div>
               
-              <div className="flex items-start gap-3">
-                <div className="h-2 w-2 rounded-full bg-purple-500 mt-2" />
+              <div className="flex items-start gap-2">
+                <div className="h-2 w-2 rounded-full bg-purple-500 mt-1.5" />
                 <div className="text-sm">
                   <p className="font-medium">Analytics milestone</p>
-                  <p className="text-muted-foreground">
+                  <p className="text-muted-foreground text-xs">
                     Reached 10k total views
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">3 days ago</p>
+                  <p className="text-xs text-muted-foreground">3 days ago</p>
                 </div>
               </div>
             </div>
