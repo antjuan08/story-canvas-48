@@ -86,12 +86,12 @@ export function RecordingCard({ rec }: { rec: Recording }) {
         <audio src={rec.url} controls className="w-full" />
 
         <div className="flex flex-wrap gap-2">
-          <Button size="sm" variant="outline" className="rounded-xl gap-1.5" onClick={transcribe}>
-            <FileText className="h-3.5 w-3.5" />
+          <Button size="sm" variant="outline" className="rounded-xl gap-1.5" onClick={transcribe} disabled={transcribing}>
+            {transcribing ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <FileText className="h-3.5 w-3.5" />}
             {rec.transcript ? "Re-transcribe" : "Transcribe"}
           </Button>
-          <Button size="sm" className="rounded-xl gap-1.5 bg-gradient-primary text-white hover:opacity-90" onClick={rewriteStory}>
-            <Sparkles className="h-3.5 w-3.5" />
+          <Button size="sm" className="rounded-xl gap-1.5 bg-gradient-primary text-white hover:opacity-90" onClick={rewriteStory} disabled={rewriting}>
+            {rewriting ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
             Rewrite as Story
           </Button>
         </div>
