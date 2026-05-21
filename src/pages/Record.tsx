@@ -52,7 +52,7 @@ export function Record() {
       };
       mediaRecorderRef.current = mr;
       startRef.current = Date.now();
-      mr.start();
+      mr.start(250);
       setRecording(true);
       setElapsed(0);
       tickRef.current = window.setInterval(() => setElapsed((e) => e + 1), 1000);
