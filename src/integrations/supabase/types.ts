@@ -14,7 +14,454 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      collection_stories: {
+        Row: {
+          collection_id: string
+          position: number
+          story_id: string
+        }
+        Insert: {
+          collection_id: string
+          position?: number
+          story_id: string
+        }
+        Update: {
+          collection_id?: string
+          position?: number
+          story_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "collection_stories_collection_id_fkey"
+            columns: ["collection_id"]
+            isOneToOne: false
+            referencedRelation: "collections"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "collection_stories_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      collections: {
+        Row: {
+          context: string
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          tags: string[] | null
+          user_id: string
+        }
+        Insert: {
+          context: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          tags?: string[] | null
+          user_id: string
+        }
+        Update: {
+          context?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          tags?: string[] | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      community_posts: {
+        Row: {
+          caption: string | null
+          created_at: string
+          id: string
+          story_id: string | null
+          user_id: string
+        }
+        Insert: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          story_id?: string | null
+          user_id: string
+        }
+        Update: {
+          caption?: string | null
+          created_at?: string
+          id?: string
+          story_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "community_posts_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      folders: {
+        Row: {
+          context: string
+          created_at: string
+          id: string
+          name: string
+          parent_folder_id: string | null
+          user_id: string
+        }
+        Insert: {
+          context: string
+          created_at?: string
+          id?: string
+          name: string
+          parent_folder_id?: string | null
+          user_id: string
+        }
+        Update: {
+          context?: string
+          created_at?: string
+          id?: string
+          name?: string
+          parent_folder_id?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "folders_parent_folder_id_fkey"
+            columns: ["parent_folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      license_requests: {
+        Row: {
+          created_at: string
+          id: string
+          owner_id: string
+          requester_id: string
+          resolved_at: string | null
+          status: string
+          story_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          owner_id: string
+          requester_id: string
+          resolved_at?: string | null
+          status?: string
+          story_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          owner_id?: string
+          requester_id?: string
+          resolved_at?: string | null
+          status?: string
+          story_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "license_requests_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      presentation_stories: {
+        Row: {
+          position: number
+          presentation_id: string
+          story_id: string
+        }
+        Insert: {
+          position?: number
+          presentation_id: string
+          story_id: string
+        }
+        Update: {
+          position?: number
+          presentation_id?: string
+          story_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "presentation_stories_presentation_id_fkey"
+            columns: ["presentation_id"]
+            isOneToOne: false
+            referencedRelation: "presentations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "presentation_stories_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      presentations: {
+        Row: {
+          content: Json
+          created_at: string
+          folder_id: string | null
+          id: string
+          tags: string[] | null
+          template_type: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          content?: Json
+          created_at?: string
+          folder_id?: string | null
+          id?: string
+          tags?: string[] | null
+          template_type: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          content?: Json
+          created_at?: string
+          folder_id?: string | null
+          id?: string
+          tags?: string[] | null
+          template_type?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "presentations_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+          interests: string[] | null
+          social_links: Json | null
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+          interests?: string[] | null
+          social_links?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+          interests?: string[] | null
+          social_links?: Json | null
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      recordings: {
+        Row: {
+          analysis: Json | null
+          audio_url: string | null
+          created_at: string
+          duration_seconds: number | null
+          folder_id: string | null
+          id: string
+          linked_presentation_id: string | null
+          linked_story_id: string | null
+          title: string
+          user_id: string
+          video_url: string | null
+        }
+        Insert: {
+          analysis?: Json | null
+          audio_url?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          folder_id?: string | null
+          id?: string
+          linked_presentation_id?: string | null
+          linked_story_id?: string | null
+          title: string
+          user_id: string
+          video_url?: string | null
+        }
+        Update: {
+          analysis?: Json | null
+          audio_url?: string | null
+          created_at?: string
+          duration_seconds?: number | null
+          folder_id?: string | null
+          id?: string
+          linked_presentation_id?: string | null
+          linked_story_id?: string | null
+          title?: string
+          user_id?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recordings_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recordings_linked_presentation_id_fkey"
+            columns: ["linked_presentation_id"]
+            isOneToOne: false
+            referencedRelation: "presentations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "recordings_linked_story_id_fkey"
+            columns: ["linked_story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      stories: {
+        Row: {
+          audio_url: string | null
+          body: string | null
+          category: string | null
+          created_at: string
+          folder_id: string | null
+          grade: string | null
+          id: string
+          image_url: string | null
+          is_licensable: boolean
+          is_public: boolean
+          section: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string
+          user_id: string
+          video_url: string | null
+        }
+        Insert: {
+          audio_url?: string | null
+          body?: string | null
+          category?: string | null
+          created_at?: string
+          folder_id?: string | null
+          grade?: string | null
+          id?: string
+          image_url?: string | null
+          is_licensable?: boolean
+          is_public?: boolean
+          section?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string
+          user_id: string
+          video_url?: string | null
+        }
+        Update: {
+          audio_url?: string | null
+          body?: string | null
+          category?: string | null
+          created_at?: string
+          folder_id?: string | null
+          grade?: string | null
+          id?: string
+          image_url?: string | null
+          is_licensable?: boolean
+          is_public?: boolean
+          section?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stories_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "folders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      story_collaborators: {
+        Row: {
+          collaborator_id: string
+          created_at: string
+          id: string
+          perspective_text: string | null
+          status: string
+          story_id: string
+        }
+        Insert: {
+          collaborator_id: string
+          created_at?: string
+          id?: string
+          perspective_text?: string | null
+          status?: string
+          story_id: string
+        }
+        Update: {
+          collaborator_id?: string
+          created_at?: string
+          id?: string
+          perspective_text?: string | null
+          status?: string
+          story_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "story_collaborators_story_id_fkey"
+            columns: ["story_id"]
+            isOneToOne: false
+            referencedRelation: "stories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

@@ -2,9 +2,10 @@ import { useState, useEffect } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
-  Library,
+  Lock,
   Presentation,
   Mic,
+  Users,
   BarChart3,
   Settings,
   ChevronRight,
@@ -12,36 +13,13 @@ import {
 import { cn } from "@/lib/utils";
 
 const navigation = [
-  {
-    name: "Dashboard",
-    href: "/dashboard",
-    icon: LayoutDashboard,
-  },
-  {
-    name: "Library",
-    href: "/library",
-    icon: Library,
-  },
-  {
-    name: "Keynotes",
-    href: "/keynotes",
-    icon: Presentation,
-  },
-  {
-    name: "AI Record",
-    href: "/record",
-    icon: Mic,
-  },
-  {
-    name: "Analytics",
-    href: "/analytics",
-    icon: BarChart3,
-  },
-  {
-    name: "Settings",
-    href: "/settings",
-    icon: Settings,
-  },
+  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+  { name: "The Vault", href: "/vault", icon: Lock },
+  { name: "The Stage", href: "/stage", icon: Presentation },
+  { name: "Recordings", href: "/recordings", icon: Mic },
+  { name: "Storytellers", href: "/storytellers", icon: Users },
+  { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 export function Sidebar() {
