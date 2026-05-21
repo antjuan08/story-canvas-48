@@ -17,11 +17,22 @@ export function Record() {
   const start = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mr = new MediaRecorder(stream);
+      const candidates = [
+        "audio/webm;codecs=opus",
+        "audio/webm",
+        "audio/mp4;codecs=mp4a.40.2",
+        "audio/mp4",
+        "audio/ogg;codecs=opus",
+      ];
+      const mimeType =
+        candidates.find((t) => (window as any).MediaRecorder?.isTypeSupported?.(t)) || "";
+      const mr = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
       chunksRef.current = [];
       mr.ondataavailable = (e) => e.data.size && chunksRef.current.push(e.data);
       mr.onstop = async () => {
-        const blob = new Blob(chunksRef.current, { type: "audio/webm" });
+        const type = mr.mimeType || mimeType || "audio/webm";
+        const blob = new Blob(chunksRef.current, { type });
+
         const url = await new Promise<string>((res, rej) => {
           const r = new FileReader();
           r.onload = () => res(r.result as string);
