@@ -120,7 +120,7 @@ export function Recordings() {
               />
             </div>
             <Button variant="outline" className="rounded-xl gap-1.5" onClick={newFolder}>
-              <Plus className="h-4 w-4" /> Folder
+              <Plus className="h-4 w-4" /> New Folder
             </Button>
           </div>
         </div>

@@ -23,6 +23,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { DictateButton } from "@/components/vault/DictateButton";
 
 const schema = z.object({
   title: z.string().trim().min(1, "Title is required").max(160),
@@ -139,13 +140,20 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
           </div>
 
           <div className="space-y-1.5">
-            <Label htmlFor="body">Story</Label>
+            <div className="flex items-center justify-between">
+              <Label htmlFor="body">Story</Label>
+              <DictateButton
+                onTranscript={(text) =>
+                  setBody((prev) => (prev?.trim() ? prev.replace(/\s+$/, "") + " " + text : text))
+                }
+              />
+            </div>
             <Textarea
               id="body"
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={8}
-              placeholder="Tell it your way…"
+              placeholder="Tell it your way… or tap Dictate to speak."
             />
           </div>
 
