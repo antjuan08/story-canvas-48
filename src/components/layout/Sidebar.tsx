@@ -65,7 +65,7 @@ export function Sidebar() {
   return (
     <div
       className={cn(
-        "fixed left-0 top-0 z-40 h-full glass-card border-r transition-apple-long",
+        "fixed left-0 top-0 z-40 h-full glass-card border-r border-border-soft rounded-none transition-apple-long flex flex-col",
         isExpanded ? "w-64" : "w-18"
       )}
       onMouseEnter={() => setIsExpanded(true)}

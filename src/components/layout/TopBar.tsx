@@ -18,20 +18,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { SearchDialog } from "@/components/ui/SearchDialog";
+import { useTheme } from "@/hooks/use-theme";
 
 export function TopBar() {
   const [searchOpen, setSearchOpen] = useState(false);
-  const [isDark, setIsDark] = useState(false);
-
-  useEffect(() => {
-    const isDarkMode = document.documentElement.classList.contains("dark");
-    setIsDark(isDarkMode);
-  }, []);
-
-  const toggleTheme = () => {
-    document.documentElement.classList.toggle("dark");
-    setIsDark(!isDark);
-  };
+  const { theme, toggle } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+  const toggleTheme = toggle;
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
