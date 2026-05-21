@@ -2,142 +2,124 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Storyou Design System - Apple-inspired aesthetic with beautiful gradients */
+/* Storyou / Syncra brand — purple → coral, dark-first */
 
 @layer base {
   :root {
-    /* Core Apple-like palette */
+    /* Light theme */
     --background: 0 0% 99%;
-    --foreground: 210 9% 15%;
+    --foreground: 240 10% 8%;
 
-    /* Glass surfaces with subtle tints */
-    --glass: 0 0% 100% / 0.8;
-    --glass-border: 220 13% 91% / 0.5;
-    
-    /* Cards with depth */
+    --glass: 0 0% 100% / 0.7;
+    --glass-border: 270 30% 88% / 0.6;
+
     --card: 0 0% 100%;
-    --card-foreground: 210 9% 15%;
-    --card-glass: 0 0% 100% / 0.9;
+    --card-foreground: 240 10% 8%;
+    --card-glass: 0 0% 100% / 0.85;
 
-    /* Popovers */
     --popover: 0 0% 100%;
-    --popover-foreground: 210 9% 15%;
+    --popover-foreground: 240 10% 8%;
 
-    /* Brand gradients - Purple to Blue */
-    --primary: 250 75% 60%;
+    --primary: 270 90% 58%;
     --primary-foreground: 0 0% 100%;
-    --primary-soft: 250 75% 95%;
-    
-    /* Gradient stops for the signature gradient */
-    --gradient-start: 258 100% 88%; /* #D6C7FF */
-    --gradient-end: 212 100% 82%;   /* #A6C8FF */
+    --primary-soft: 270 90% 95%;
 
-    /* Muted slate/stone palette */
-    --secondary: 210 6% 97%;
-    --secondary-foreground: 210 9% 15%;
+    --gradient-start: 270 90% 55%; /* vivid purple */
+    --gradient-mid: 320 90% 58%;   /* magenta */
+    --gradient-end: 12 95% 60%;    /* coral */
 
-    --muted: 210 6% 96%;
-    --muted-foreground: 215 13% 45%;
+    --secondary: 270 20% 96%;
+    --secondary-foreground: 240 10% 12%;
 
-    --accent: 210 6% 95%;
-    --accent-foreground: 210 9% 15%;
+    --muted: 270 15% 95%;
+    --muted-foreground: 240 5% 45%;
 
-    /* Surface colors */
+    --accent: 270 25% 95%;
+    --accent-foreground: 240 10% 12%;
+
     --surface-primary: 0 0% 100%;
-    --surface-secondary: 210 6% 98%;
-    --surface-tertiary: 210 6% 96%;
+    --surface-secondary: 270 15% 98%;
+    --surface-tertiary: 270 15% 95%;
 
-    /* Destructive */
     --destructive: 0 75% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    /* Borders and inputs */
-    --border: 220 13% 91%;
-    --border-soft: 220 13% 91% / 0.6;
-    --input: 220 13% 91%;
-    --ring: 250 75% 60%;
+    --border: 270 20% 90%;
+    --border-soft: 270 20% 90% / 0.6;
+    --input: 270 20% 90%;
+    --ring: 270 90% 58%;
 
-    /* Shadows */
     --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 30px -10px rgb(0 0 0 / 0.2);
     --shadow-glass: 0 8px 32px rgb(0 0 0 / 0.08);
 
-    /* Smooth Apple-like radius */
     --radius: 1rem;
     --radius-sm: 0.75rem;
     --radius-lg: 1.5rem;
 
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 240 5% 26%;
+    --sidebar-primary: 270 90% 58%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 270 20% 95%;
+    --sidebar-accent-foreground: 240 10% 12%;
+    --sidebar-border: 270 20% 90%;
+    --sidebar-ring: 270 90% 58%;
   }
 
   .dark {
-    /* Dark mode Apple aesthetic */
-    --background: 210 9% 8%;
-    --foreground: 210 6% 95%;
+    /* Syncra dark — true black with purple/coral glow */
+    --background: 240 12% 4%;
+    --foreground: 0 0% 96%;
 
-    /* Glass surfaces for dark mode */
-    --glass: 210 9% 10% / 0.8;
-    --glass-border: 210 9% 20% / 0.5;
-    
-    --card: 210 9% 10%;
-    --card-foreground: 210 6% 95%;
-    --card-glass: 210 9% 12% / 0.9;
+    --glass: 270 20% 8% / 0.6;
+    --glass-border: 270 50% 50% / 0.18;
 
-    --popover: 210 9% 10%;
-    --popover-foreground: 210 6% 95%;
+    --card: 240 10% 7%;
+    --card-foreground: 0 0% 96%;
+    --card-glass: 270 15% 9% / 0.7;
 
-    /* Brand maintains vibrancy in dark */
-    --primary: 250 75% 65%;
+    --popover: 240 10% 7%;
+    --popover-foreground: 0 0% 96%;
+
+    --primary: 280 95% 65%;
     --primary-foreground: 0 0% 100%;
-    --primary-soft: 250 75% 15%;
+    --primary-soft: 280 60% 18%;
 
-    /* Muted surfaces for dark */
-    --secondary: 210 9% 12%;
-    --secondary-foreground: 210 6% 95%;
+    --gradient-start: 270 95% 60%;
+    --gradient-mid: 320 90% 60%;
+    --gradient-end: 12 95% 62%;
 
-    --muted: 210 9% 14%;
-    --muted-foreground: 215 13% 65%;
+    --secondary: 240 8% 12%;
+    --secondary-foreground: 0 0% 96%;
 
-    --accent: 210 9% 16%;
-    --accent-foreground: 210 6% 95%;
+    --muted: 240 8% 14%;
+    --muted-foreground: 240 5% 65%;
 
-    /* Surface hierarchy */
-    --surface-primary: 210 9% 10%;
-    --surface-secondary: 210 9% 12%;
-    --surface-tertiary: 210 9% 16%;
+    --accent: 270 30% 16%;
+    --accent-foreground: 0 0% 96%;
+
+    --surface-primary: 240 10% 7%;
+    --surface-secondary: 240 10% 9%;
+    --surface-tertiary: 240 10% 12%;
 
     --destructive: 0 75% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 210 9% 20%;
-    --border-soft: 210 9% 20% / 0.6;
-    --input: 210 9% 20%;
-    --ring: 250 75% 65%;
+    --border: 270 20% 16%;
+    --border-soft: 270 20% 18% / 0.6;
+    --input: 270 20% 16%;
+    --ring: 280 95% 65%;
 
-    /* Sidebar dark theme */
-    --sidebar-background: 210 9% 8%;
-    --sidebar-foreground: 210 6% 95%;
-    --sidebar-primary: 250 75% 65%;
+    --sidebar-background: 240 12% 4%;
+    --sidebar-foreground: 0 0% 90%;
+    --sidebar-primary: 280 95% 65%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 210 9% 14%;
-    --sidebar-accent-foreground: 210 6% 95%;
-    --sidebar-border: 210 9% 20%;
-    --sidebar-ring: 250 75% 65%;
+    --sidebar-accent: 270 25% 12%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 270 20% 16%;
+    --sidebar-ring: 280 95% 65%;
   }
 }
 
@@ -146,15 +128,18 @@
     @apply border-border;
   }
 
+  html, body, #root {
+    @apply min-h-screen;
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    /* SF Pro Display system font stack */
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    overflow-x: hidden;
   }
 }
 
 @layer components {
-  /* Glass morphism utilities */
   .glass {
     @apply backdrop-blur-xl bg-glass border border-glass-border;
   }
@@ -163,7 +148,6 @@
     @apply backdrop-blur-xl bg-card-glass border border-glass-border rounded-2xl;
   }
 
-  /* Apple-inspired transitions */
   .transition-apple {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
@@ -172,33 +156,35 @@
     transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
-  /* Gradient backgrounds */
   .bg-gradient-primary {
-    background: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)));
+    background: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-mid)) 55%, hsl(var(--gradient-end)));
   }
 
   .bg-gradient-subtle {
     background: linear-gradient(135deg, hsl(var(--surface-primary)), hsl(var(--surface-secondary)));
   }
 
-  /* Apple-style shadows */
-  .shadow-apple {
-    box-shadow: var(--shadow-glass);
+  .text-gradient-primary {
+    background: linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
   }
 
-  .shadow-apple-sm {
-    box-shadow: var(--shadow-sm);
+  .orb-glow {
+    background: radial-gradient(circle at 35% 30%, hsl(var(--gradient-start)) 0%, hsl(var(--gradient-mid)) 45%, hsl(var(--gradient-end)) 100%);
+    box-shadow:
+      0 0 60px hsl(var(--gradient-mid) / 0.55),
+      0 0 120px hsl(var(--gradient-start) / 0.35),
+      inset 0 -10px 30px hsl(var(--gradient-end) / 0.6),
+      inset 0 10px 20px hsl(0 0% 100% / 0.15);
   }
 
-  .shadow-apple-md {
-    box-shadow: var(--shadow-md);
-  }
+  .shadow-apple    { box-shadow: var(--shadow-glass); }
+  .shadow-apple-sm { box-shadow: var(--shadow-sm); }
+  .shadow-apple-md { box-shadow: var(--shadow-md); }
+  .shadow-apple-lg { box-shadow: var(--shadow-lg); }
 
-  .shadow-apple-lg {
-    box-shadow: var(--shadow-lg);
-  }
-
-  /* Keyboard shortcuts */
   .kbd {
     @apply inline-flex items-center px-2 py-1 text-xs font-mono bg-muted border rounded-md;
   }
