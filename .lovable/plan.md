@@ -1,76 +1,57 @@
+# StoryYou — Master Update Plan
 
-## 1. Fix framing (content shifted left / text cut off)
+This is a very large scope (auth, 10 DB tables, 7 reworked pages, community feed, licensing, analytics, collaboration). To ship reliably I'll break it into phases and confirm before each. Phase 1 lays the foundation everything else depends on.
 
-Root cause: `pl-18` and `w-18` in `AppLayout.tsx` and `Sidebar.tsx` are not valid Tailwind classes (Tailwind has no `18` spacing by default), so the sidebar collapses to `0` width and main content has no left padding, but the fixed sidebar still overlays the left edge — pushing things visually off.
+---
 
-- In `tailwind.config.ts`, add `spacing: { 18: '4.5rem' }` in `theme.extend`.
-- Add a max-width container in `AppLayout` main: `max-w-[1600px] mx-auto` with responsive padding `px-4 md:px-6 lg:px-8`.
-- Ensure `min-w-0` / `overflow-x-hidden` on the wrapper to prevent horizontal overflow on narrow viewports.
+## Phase 1 — Foundation (this build)
 
-## 2. Apply Syncra brand (from uploaded reference)
+**Auth**
+- Enable email/password (auto-confirm ON so no verification step, per your spec).
+- Enable Google OAuth via Lovable Cloud managed social login. Apple is supported and can be added in Phase 1b. **Facebook and X (Twitter) are NOT supported by Lovable Cloud's managed auth** — I'll note this and we can revisit via direct Supabase config later.
+- `/auth` page with email + Google buttons, session listener, protected routes.
 
-Dark-first, glossy purple/magenta → coral gradient orb aesthetic.
+**Database schema (single migration)**
+All 10 tables from spec: `profiles`, `stories`, `folders`, `collections`, `collection_stories`, `story_collaborators`, `presentations`, `presentation_stories`, `recordings`, `community_posts`, `license_requests`.
+- `handle_new_user` trigger with EXCEPTION block → auto-insert profile row.
+- `update_updated_at_column` trigger on stories/profiles/presentations.
+- RLS on every table per Section 12.
+- Storage buckets: `profile-avatars` (public), `story-media` (public), `recordings` (public).
 
-- Update `src/index.css` tokens:
-  - Default to dark theme palette (deep black `--background: 240 10% 4%`).
-  - Primary gradient: `--gradient-start: 270 90% 55%` (vivid purple) → `--gradient-end: 12 95% 60%` (coral/red).
-  - Accent glow: violet `280 95% 65%`.
-  - Glass cards: `rgba(255,255,255,0.04)` over dark with subtle violet border.
-- Replace `bg-gradient-primary` definition with the purple→coral diagonal.
-- Add a reusable `.orb-glow` utility (radial purple→coral with blur) for hero accents.
-- Apply to: sidebar logo, "New" button, KPI accent rings, Record mic button.
+**Sidebar rename + reorder**
+Dashboard → The Vault → The Stage → Recordings → Storytellers → Analytics → Settings. Routes: `/dashboard`, `/vault`, `/stage`, `/recordings`, `/storytellers`, `/analytics`, `/settings`. Old `/library`, `/keynotes`, `/record` redirect to new paths.
 
-## 3. Dark Mode tab / toggle
+**Layout/framing fix carry-over**
+Keep the existing centered max-w-[1600px] container; verify nothing leaks off-screen at 1010px.
 
-- Add a dedicated **Appearance** section in `Settings` page with Light / Dark / System radio cards (using existing theme toggle logic).
-- Persist choice to `localStorage` and apply `.dark` class on `<html>` at app boot (small `useTheme` hook in `src/hooks/use-theme.ts`).
-- Keep the existing TopBar sun/moon button as a quick toggle wired to the same hook.
+## Phase 2 — The Vault (next build)
+Stories CRUD, image/audio/video upload to `story-media`, tags, folders, collections, search, sections, ellipsis menu actions, simple heuristic grading (A–D).
 
-## 4. CMS Media Library
+## Phase 3 — Dashboard + The Stage
+Rotating story carousel from user's stories, 3 analytics count cards, grading panel. Stage template selector (Sermon/Keynote/Podcast/Book), folder/collection/tag.
 
-Reshape `/library` into a media CMS for images and audio.
+## Phase 4 — Recordings page rebuild
+Move existing recording UI to `/recordings`, add playlists/folders, link to stories/presentations, scaffold "AI Analysis Coming Soon" card.
 
-- Tabs: **Images** | **Audio** | **All**.
-- Grid of media cards with thumbnail (waveform placeholder for audio), filename, size, date, tag chips.
-- Upload zone (drag-drop) using a hidden `<input type="file" accept="image/*,audio/*" multiple>`.
-- Client-side state via Zustand store `src/stores/mediaStore.ts`: items kept in memory + `localStorage` (object URLs for preview). No backend yet — flag a follow-up to wire Lovable Cloud storage when ready.
-- Item actions: preview (dialog with `<img>` or `<audio controls>`), rename, delete, copy link.
+## Phase 5 — Storytellers + Licensing
+Community feed, public/private toggle on stories, license request flow, cross-post share-link export.
 
-## 5. AI Record page
+## Phase 6 — Analytics + Settings + Collaboration + Responsive polish
+Recharts (growth, variety, impact). Full settings sections. Story collaborators with perspectives + merge. Mobile bottom nav, sheet modals, 44px tap targets.
 
-Rebuild `/record`:
+---
 
-- Big centered Syncra-style mic orb (purple→coral radial gradient, pulsing while recording).
-- Uses `MediaRecorder` API → produces a `Blob` (audio/webm).
-- On stop: auto-append to a **Recordings playlist** below (list of cards with `<audio controls>`, duration, timestamp, title editable).
-- Recordings persisted in Zustand store `src/stores/recordingsStore.ts` (+ localStorage; blobs kept as object URLs for the session, with a note that persistence across reloads needs Cloud storage).
-- Each recording card has buttons:
-  - **Transcribe** — stub now (placeholder text) with a clear TODO to wire Lovable AI Gateway speech-to-text when Cloud is enabled.
-  - **Rewrite as Story** — takes transcript, calls AI to produce a storytelling-mode narrative; opens a modal showing the rewritten story with **Export** (download `.md`/`.txt`) and **Send to Library** actions.
+## Technical notes
+- Profiles trigger uses `SECURITY DEFINER` + `EXCEPTION WHEN unique_violation THEN RETURN NEW;`
+- Roles aren't part of spec yet — skipping the `user_roles` table until needed.
+- Avatar/media uploads use signed paths `{user_id}/{filename}` so RLS works.
+- Existing local `mediaStore`/`recordingsStore` (zustand) stay for now; Phase 2 migrates Vault to Supabase, Phase 4 migrates Recordings.
+- Charts library: Recharts (already in shadcn).
+- Facebook/X social login: out of scope until we connect external Supabase or use a third-party OAuth broker.
 
-Because transcription + rewrite need server-side AI, this step is stubbed in the plan with mock output, and I'll prompt to enable **Lovable Cloud** before wiring real calls.
+## What I'd like to confirm before starting Phase 1
+1. **Auto-confirm email signup**: you said disable verification → I'll set `auto_confirm_email: true`. ✅ assumed yes.
+2. **Facebook/X auth**: OK to ship Google (+ Apple optional) now and defer FB/X? 
+3. **Phase 1 only this turn**, then I pause for your go-ahead on Phase 2? Or do you want me to chain through all phases without stopping?
 
-## 6. Files touched
-
-```text
-edit   tailwind.config.ts                (spacing.18, brand colors)
-edit   src/index.css                     (Syncra dark palette, orb utility)
-edit   src/components/layout/AppLayout.tsx   (fix padding, max-width)
-edit   src/components/layout/Sidebar.tsx     (w-18 → valid class, brand)
-edit   src/components/layout/TopBar.tsx      (use theme hook)
-new    src/hooks/use-theme.ts
-new    src/stores/mediaStore.ts
-new    src/stores/recordingsStore.ts
-rewrite src/pages/Library.tsx            (CMS media library)
-rewrite src/pages/Record.tsx             (recorder + playlist + transcript)
-edit   src/pages/Settings.tsx            (Appearance section)
-new    src/components/media/MediaCard.tsx
-new    src/components/media/UploadZone.tsx
-new    src/components/record/MicOrb.tsx
-new    src/components/record/RecordingCard.tsx
-new    src/components/record/StoryDialog.tsx
-```
-
-## 7. Open question
-
-Transcription + AI story rewrite require a backend (Lovable Cloud + AI Gateway). I'll stub them with mock output in this pass and ask to enable Cloud right after, so the buttons become real. OK to proceed this way?
+Reply "go" (or with answers) and I'll execute Phase 1.
