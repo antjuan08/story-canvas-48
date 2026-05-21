@@ -1,1 +1,4 @@
 project_id = "lufhfjptukmgsudemujb"
+
+[functions.audio-ai]
+verify_jwt = false
