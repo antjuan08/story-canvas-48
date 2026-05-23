@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useFolders } from "@/hooks/use-stories";
 import { usePresentations, STAGE_TEMPLATES, type Presentation, type StageTemplate } from "@/hooks/use-presentations";
 import { PresentationEditorDialog } from "@/components/stage/PresentationEditorDialog";
+import { StageWizardDialog } from "@/components/stage/StageWizardDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
