@@ -2,6 +2,7 @@ import { MoreVertical, Pencil, Trash2, Copy, FolderInput, ImageIcon, Music, Vide
 import { Story, Folder, gradeStory } from "@/hooks/use-stories";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { GradientCard } from "@/components/ui/gradient-card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -33,7 +34,8 @@ const gradeColor: Record<string, string> = {
 export function StoryCard({ story, folders, onEdit, onDelete, onDuplicate, onMoveFolder }: Props) {
   const grade = gradeStory(story);
   return (
-    <div className="glass-card p-4 flex flex-col gap-3 hover:shadow-apple-lg transition-apple group">
+    <GradientCard className="h-full">
+      <div className="p-4 flex flex-col gap-3 h-full">
       {story.image_url && (
         <img src={story.image_url} alt="" className="rounded-xl aspect-video object-cover w-full" />
       )}
@@ -51,7 +53,7 @@ export function StoryCard({ story, folders, onEdit, onDelete, onDuplicate, onMov
           </div>
           <h3 className="font-semibold truncate">{story.title}</h3>
           {story.body && (
-            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{story.body}</p>
+            <p className="text-sm text-white/70 line-clamp-2 mt-1">{story.body}</p>
           )}
         </div>
 
@@ -104,12 +106,13 @@ export function StoryCard({ story, folders, onEdit, onDelete, onDuplicate, onMov
         </div>
       )}
 
-      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-auto pt-1">
+      <div className="flex items-center gap-3 text-xs text-white/60 mt-auto pt-1">
         {story.image_url && <ImageIcon className="h-3.5 w-3.5" />}
         {story.audio_url && <Music className="h-3.5 w-3.5" />}
         {story.video_url && <Video className="h-3.5 w-3.5" />}
         <span className="ml-auto">{new Date(story.updated_at).toLocaleDateString()}</span>
       </div>
-    </div>
+      </div>
+    </GradientCard>
   );
 }
