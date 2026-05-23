@@ -188,4 +188,39 @@
   .kbd {
     @apply inline-flex items-center px-2 py-1 text-xs font-mono bg-muted border rounded-md;
   }
+
+  /* Auth halo background. Swap --halo-core / --halo-mid to retint. */
+  .halo-glow {
+    background: radial-gradient(
+      circle at center,
+      hsl(var(--halo-core) / 0.95) 0%,
+      hsl(var(--halo-mid) / 0.75) 28%,
+      hsl(var(--halo-mid) / 0.35) 48%,
+      transparent 70%
+    );
+    animation: halo-pulse 8s ease-in-out infinite;
+  }
+  .halo-bloom {
+    background: radial-gradient(circle at center, hsl(var(--halo-core) / 0.6) 0%, transparent 65%);
+    filter: blur(60px);
+    mix-blend-mode: screen;
+  }
+  .portrait-mask {
+    -webkit-mask-image: radial-gradient(circle at center, #000 55%, transparent 78%);
+            mask-image: radial-gradient(circle at center, #000 55%, transparent 78%);
+  }
 }
+
+@keyframes halo-pulse {
+  0%, 100% { opacity: 0.92; transform: scale(1); }
+  50%      { opacity: 1;    transform: scale(1.03); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .halo-glow { animation: none; }
+}
+
+:root {
+  --halo-core: 38 100% 62%;
+  --halo-mid:  24 92% 46%;
+}
+
