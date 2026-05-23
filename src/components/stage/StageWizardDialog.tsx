@@ -109,7 +109,7 @@ export function StageWizardDialog({ open, onOpenChange, onCreated }: Props) {
           outline: plan.outline,
           generated_at: new Date().toISOString(),
           model: "google/gemini-3-flash-preview",
-        },
+        } as any,
       })
       .select("id")
       .single();
