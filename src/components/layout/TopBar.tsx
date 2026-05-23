@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import {
   Search,
   Plus,
@@ -7,24 +9,46 @@ import {
   Command,
   Moon,
   Sun,
+  LogOut,
+  User,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { SearchDialog } from "@/components/ui/SearchDialog";
 import { useTheme } from "@/hooks/use-theme";
+import { useAuth } from "@/hooks/use-auth";
+
 
 export function TopBar() {
   const [searchOpen, setSearchOpen] = useState(false);
   const { theme, toggle } = useTheme();
+  const { user, signOut } = useAuth();
+  const navigate = useNavigate();
   const isDark = theme === "dark" || (theme === "system" && typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches);
   const toggleTheme = toggle;
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+      toast.success("Signed out");
+      navigate("/auth", { replace: true });
+    } catch (e: any) {
+      toast.error(e?.message ?? "Sign out failed");
+    }
+  };
+
+  const email = user?.email ?? "";
+  const initials = (email.split("@")[0] || "U").slice(0, 2).toUpperCase();
+
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -132,6 +156,36 @@ export function TopBar() {
                 3
               </Badge>
             </Button>
+
+            {/* Account menu */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-2xl">
+                  <Avatar className="h-7 w-7">
+                    <AvatarFallback className="bg-gradient-primary text-white text-xs">
+                      {initials}
+                    </AvatarFallback>
+                  </Avatar>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56 glass-card">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="text-sm font-medium truncate">{email || "Account"}</div>
+                  <div className="text-xs text-muted-foreground">Signed in</div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => navigate("/settings")}>
+                  <User className="mr-2 h-4 w-4" />
+                  Settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
           </div>
         </div>
       </header>
