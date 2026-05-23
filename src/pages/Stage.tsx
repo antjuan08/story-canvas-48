@@ -145,33 +145,35 @@ export function Stage() {
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((p) => (
-            <div key={p.id} className="glass-card p-5 hover:shadow-apple-lg transition-apple group">
-              <div className="flex items-start justify-between mb-3">
-                <Badge variant="secondary" className="rounded-full capitalize">{TEMPLATE_LABEL[p.template_type] ?? p.template_type}</Badge>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2 opacity-0 group-hover:opacity-100 transition-apple">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => openEdit(p)}><Edit3 className="h-4 w-4 mr-2" /> Edit</DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleDelete(p)} className="text-destructive"><Trash2 className="h-4 w-4 mr-2" /> Delete</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-              <button onClick={() => openEdit(p)} className="text-left w-full">
-                <h3 className="font-semibold text-lg line-clamp-2 mb-2">{p.title}</h3>
-              </button>
-              {p.tags && p.tags.length > 0 && (
-                <div className="flex flex-wrap gap-1 mt-2">
-                  {p.tags.slice(0, 4).map((t) => (
-                    <Badge key={t} variant="outline" className="rounded-full text-xs">{t}</Badge>
-                  ))}
+            <GradientCard key={p.id} className="h-full">
+              <div className="p-5">
+                <div className="flex items-start justify-between mb-3">
+                  <Badge variant="secondary" className="rounded-full capitalize bg-white/10 text-white border-white/10 hover:bg-white/15">{TEMPLATE_LABEL[p.template_type] ?? p.template_type}</Badge>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-8 w-8 -mr-2 text-white/70 hover:text-white hover:bg-white/10 opacity-0 group-hover:opacity-100 transition-apple">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem onClick={() => openEdit(p)}><Edit3 className="h-4 w-4 mr-2" /> Edit</DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => handleDelete(p)} className="text-destructive"><Trash2 className="h-4 w-4 mr-2" /> Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
-              )}
-              <p className="text-xs text-muted-foreground mt-3">Updated {new Date(p.updated_at).toLocaleDateString()}</p>
-            </div>
+                <button onClick={() => openEdit(p)} className="text-left w-full">
+                  <h3 className="font-semibold text-lg line-clamp-2 mb-2 text-white">{p.title}</h3>
+                </button>
+                {p.tags && p.tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1 mt-2">
+                    {p.tags.slice(0, 4).map((t) => (
+                      <Badge key={t} variant="outline" className="rounded-full text-xs border-white/15 text-white/80">{t}</Badge>
+                    ))}
+                  </div>
+                )}
+                <p className="text-xs text-white/60 mt-3">Updated {new Date(p.updated_at).toLocaleDateString()}</p>
+              </div>
+            </GradientCard>
           ))}
         </div>
       )}
