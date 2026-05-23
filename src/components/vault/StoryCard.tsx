@@ -34,7 +34,8 @@ const gradeColor: Record<string, string> = {
 export function StoryCard({ story, folders, onEdit, onDelete, onDuplicate, onMoveFolder }: Props) {
   const grade = gradeStory(story);
   return (
-    <div className="glass-card p-4 flex flex-col gap-3 hover:shadow-apple-lg transition-apple group">
+    <GradientCard className="h-full">
+      <div className="p-4 flex flex-col gap-3 h-full">
       {story.image_url && (
         <img src={story.image_url} alt="" className="rounded-xl aspect-video object-cover w-full" />
       )}
