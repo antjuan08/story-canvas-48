@@ -30,6 +30,7 @@ export function Stage() {
   const [activeFolder, setActiveFolder] = useState<string | "all">("all");
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<Presentation | null>(null);
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
 
