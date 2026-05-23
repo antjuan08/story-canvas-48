@@ -2,6 +2,7 @@ import { MoreVertical, Pencil, Trash2, Copy, FolderInput, ImageIcon, Music, Vide
 import { Story, Folder, gradeStory } from "@/hooks/use-stories";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { GradientCard } from "@/components/ui/gradient-card";
 import {
   DropdownMenu,
   DropdownMenuContent,
