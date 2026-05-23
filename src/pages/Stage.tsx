@@ -6,6 +6,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useFolders } from "@/hooks/use-stories";
 import { usePresentations, STAGE_TEMPLATES, type Presentation, type StageTemplate } from "@/hooks/use-presentations";
 import { PresentationEditorDialog } from "@/components/stage/PresentationEditorDialog";
+import { StageWizardDialog } from "@/components/stage/StageWizardDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -29,6 +30,7 @@ export function Stage() {
   const [activeFolder, setActiveFolder] = useState<string | "all">("all");
   const [editorOpen, setEditorOpen] = useState(false);
   const [editing, setEditing] = useState<Presentation | null>(null);
+  const [wizardOpen, setWizardOpen] = useState(false);
   const [folderDialogOpen, setFolderDialogOpen] = useState(false);
   const [newFolderName, setNewFolderName] = useState("");
 
@@ -42,7 +44,7 @@ export function Stage() {
     });
   }, [presentations, search, activeTemplate, activeFolder]);
 
-  const openNew = () => { setEditing(null); setEditorOpen(true); };
+  const openNew = () => setWizardOpen(true);
   const openEdit = (p: Presentation) => { setEditing(p); setEditorOpen(true); };
 
   const handleDelete = async (p: Presentation) => {
@@ -172,6 +174,12 @@ export function Stage() {
           ))}
         </div>
       )}
+
+      <StageWizardDialog
+        open={wizardOpen}
+        onOpenChange={setWizardOpen}
+        onCreated={() => refetch()}
+      />
 
       <PresentationEditorDialog
         open={editorOpen}

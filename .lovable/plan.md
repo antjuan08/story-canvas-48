@@ -1,57 +1,69 @@
-# StoryYou — Master Update Plan
+## The Stage — Guided Creation Wizard
 
-This is a very large scope (auth, 10 DB tables, 7 reworked pages, community feed, licensing, analytics, collaboration). To ship reliably I'll break it into phases and confirm before each. Phase 1 lays the foundation everything else depends on.
+Replace the current "New presentation" dialog with a Typeform-style multi-step wizard that gathers the brief, then uses Lovable AI to pick matching stories from the user's Vault and assemble the presentation.
 
----
+### Flow (one question per step, with Back / Next)
 
-## Phase 1 — Foundation (this build)
+1. **Template** — Sermon · Keynote · Podcast · Book (cards, single select)
+2. **Title / working name** — short text
+3. **Topic** — what is it about? (text)
+4. **Audience** — who is it for? (text)
+5. **Desired outcome** — what should they think, feel, or do? (text)
+6. **Dynamics / tone** — chips (Inspirational, Funny, Reverent, Bold, Tender, Data-driven, Story-driven…) multi-select + free text
+7. **Pain points** — what struggle are you addressing? (textarea)
+8. **Solution / big idea** — your answer / through-line (textarea)
+9. **Length / depth** — slider (5–60 min, or chapter count for Book)
+10. **Review & generate** — summary of answers + "Build it"
 
-**Auth**
-- Enable email/password (auto-confirm ON so no verification step, per your spec).
-- Enable Google OAuth via Lovable Cloud managed social login. Apple is supported and can be added in Phase 1b. **Facebook and X (Twitter) are NOT supported by Lovable Cloud's managed auth** — I'll note this and we can revisit via direct Supabase config later.
-- `/auth` page with email + Google buttons, session listener, protected routes.
+### AI step (on "Build it")
 
-**Database schema (single migration)**
-All 10 tables from spec: `profiles`, `stories`, `folders`, `collections`, `collection_stories`, `story_collaborators`, `presentations`, `presentation_stories`, `recordings`, `community_posts`, `license_requests`.
-- `handle_new_user` trigger with EXCEPTION block → auto-insert profile row.
-- `update_updated_at_column` trigger on stories/profiles/presentations.
-- RLS on every table per Section 12.
-- Storage buckets: `profile-avatars` (public), `story-media` (public), `recordings` (public).
+- New edge function `stage-architect` (Lovable AI Gateway, default `google/gemini-3-flash-preview`, no API key needed).
+- Server fetches the user's stories (`stories` rows for `user_id`) with `id, title, body, tags, category, grade`.
+- Sends brief + compact story list to the model via **tool calling** (structured output) to return:
+  ```
+  {
+    outline: [{ section_title, beat, story_ids: [], notes }],
+    suggested_tags: [],
+    summary: ""
+  }
+  ```
+- Saves a new `presentations` row with:
+  - `title`, `template_type`, `tags`
+  - `content`: `{ brief, outline, summary, generated_at, model }`
+- Inserts matching rows into `presentation_stories` (`presentation_id`, `story_id`, `position`) for each AI-picked story.
+- Returns the new presentation; UI navigates to edit view (existing `PresentationEditorDialog`) with the outline visible.
 
-**Sidebar rename + reorder**
-Dashboard → The Vault → The Stage → Recordings → Storytellers → Analytics → Settings. Routes: `/dashboard`, `/vault`, `/stage`, `/recordings`, `/storytellers`, `/analytics`, `/settings`. Old `/library`, `/keynotes`, `/record` redirect to new paths.
+### UI pieces
 
-**Layout/framing fix carry-over**
-Keep the existing centered max-w-[1600px] container; verify nothing leaks off-screen at 1010px.
+- New `src/components/stage/StageWizardDialog.tsx` — multi-step dialog with progress dots, Back/Next, Enter to advance, Esc to close-with-confirm. Reuses shadcn `Dialog`, `Input`, `Textarea`, `Badge`, `Slider`, `Button`.
+- New `src/hooks/use-stage-architect.ts` — wraps `supabase.functions.invoke("stage-architect", { body: brief })`, handles 402/429 toasts.
+- Update `src/pages/Stage.tsx`:
+  - "New presentation" button and the empty-state "Create your first" button open `StageWizardDialog` instead of `PresentationEditorDialog`.
+  - Keep `PresentationEditorDialog` for the **Edit** action on existing cards.
+- Generating state: full-screen-ish overlay inside the dialog with a friendly "Curating stories from your vault…" animation.
 
-## Phase 2 — The Vault (next build)
-Stories CRUD, image/audio/video upload to `story-media`, tags, folders, collections, search, sections, ellipsis menu actions, simple heuristic grading (A–D).
+### Backend
 
-## Phase 3 — Dashboard + The Stage
-Rotating story carousel from user's stories, 3 analytics count cards, grading panel. Stage template selector (Sermon/Keynote/Podcast/Book), folder/collection/tag.
+- `supabase/functions/stage-architect/index.ts`
+  - Validates JWT, reads brief with zod.
+  - Loads user's stories via service-role client (RLS-respecting by filtering on the authed `user_id`).
+  - Calls Lovable AI Gateway with a `build_presentation` tool schema (sections + story_ids).
+  - Returns JSON; the client does the inserts (so RLS stays user-scoped) OR the function does inserts as the user — recommended: **client-side insert** with the returned plan for simplicity and safety.
+- `supabase/config.toml` — add `verify_jwt = true` block for `stage-architect`.
 
-## Phase 4 — Recordings page rebuild
-Move existing recording UI to `/recordings`, add playlists/folders, link to stories/presentations, scaffold "AI Analysis Coming Soon" card.
+### Behavior details
 
-## Phase 5 — Storytellers + Licensing
-Community feed, public/private toggle on stories, license request flow, cross-post share-link export.
+- If the user has **zero stories**, the wizard still runs but the outline contains placeholder beats with a banner: "Record or write stories in The Vault to let AI weave them in."
+- Tags from steps 6/8 are merged into the presentation's `tags`.
+- The brief is stored in `content.brief` so the user can re-run / refine later (future: a "Regenerate outline" button).
+- All errors surfaced as `sonner` toasts; rate-limit (429) and credits (402) get specific messages.
 
-## Phase 6 — Analytics + Settings + Collaboration + Responsive polish
-Recharts (growth, variety, impact). Full settings sections. Story collaborators with perspectives + merge. Mobile bottom nav, sheet modals, 44px tap targets.
+### Files to add / change
 
----
+- add `src/components/stage/StageWizardDialog.tsx`
+- add `src/hooks/use-stage-architect.ts`
+- add `supabase/functions/stage-architect/index.ts`
+- edit `supabase/config.toml` (function block)
+- edit `src/pages/Stage.tsx` (swap dialog for new flow on create)
 
-## Technical notes
-- Profiles trigger uses `SECURITY DEFINER` + `EXCEPTION WHEN unique_violation THEN RETURN NEW;`
-- Roles aren't part of spec yet — skipping the `user_roles` table until needed.
-- Avatar/media uploads use signed paths `{user_id}/{filename}` so RLS works.
-- Existing local `mediaStore`/`recordingsStore` (zustand) stay for now; Phase 2 migrates Vault to Supabase, Phase 4 migrates Recordings.
-- Charts library: Recharts (already in shadcn).
-- Facebook/X social login: out of scope until we connect external Supabase or use a third-party OAuth broker.
-
-## What I'd like to confirm before starting Phase 1
-1. **Auto-confirm email signup**: you said disable verification → I'll set `auto_confirm_email: true`. ✅ assumed yes.
-2. **Facebook/X auth**: OK to ship Google (+ Apple optional) now and defer FB/X? 
-3. **Phase 1 only this turn**, then I pause for your go-ahead on Phase 2? Or do you want me to chain through all phases without stopping?
-
-Reply "go" (or with answers) and I'll execute Phase 1.
+No database migrations needed — uses existing `presentations`, `presentation_stories`, `stories` tables.
