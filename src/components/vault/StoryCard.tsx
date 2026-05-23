@@ -53,7 +53,7 @@ export function StoryCard({ story, folders, onEdit, onDelete, onDuplicate, onMov
           </div>
           <h3 className="font-semibold truncate">{story.title}</h3>
           {story.body && (
-            <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{story.body}</p>
+            <p className="text-sm text-white/70 line-clamp-2 mt-1">{story.body}</p>
           )}
         </div>
 
