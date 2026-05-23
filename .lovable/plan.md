@@ -1,69 +1,51 @@
-## The Stage — Guided Creation Wizard
+# Auth Page Halo Redesign
 
-Replace the current "New presentation" dialog with a Typeform-style multi-step wizard that gathers the brief, then uses Lovable AI to pick matching stories from the user's Vault and assemble the presentation.
+Reimagine `/auth` to match the Superpower reference: a dark, cinematic page with a large warm radial halo glowing behind a portrait image, with the sign-in card floating to the side.
 
-### Flow (one question per step, with Back / Next)
+## Layout
 
-1. **Template** — Sermon · Keynote · Podcast · Book (cards, single select)
-2. **Title / working name** — short text
-3. **Topic** — what is it about? (text)
-4. **Audience** — who is it for? (text)
-5. **Desired outcome** — what should they think, feel, or do? (text)
-6. **Dynamics / tone** — chips (Inspirational, Funny, Reverent, Bold, Tender, Data-driven, Story-driven…) multi-select + free text
-7. **Pain points** — what struggle are you addressing? (textarea)
-8. **Solution / big idea** — your answer / through-line (textarea)
-9. **Length / depth** — slider (5–60 min, or chapter count for Book)
-10. **Review & generate** — summary of answers + "Build it"
+Split the screen into two zones on desktop, stacked on mobile:
 
-### AI step (on "Build it")
+```text
++---------------------------------------------------+
+|                                  .  HALO  .       |
+|   StoryYou                      .         .       |
+|   Your stories. Your stage.    .  PERSON  .       |
+|                                 .         .       |
+|   [ Auth card: Google/Apple,     .       .        |
+|     email + password,             . . . .         |
+|     sign in / sign up tabs ]                      |
+|                                                   |
+|   Trusted · Private · Yours                       |
++---------------------------------------------------+
+```
 
-- New edge function `stage-architect` (Lovable AI Gateway, default `google/gemini-3-flash-preview`, no API key needed).
-- Server fetches the user's stories (`stories` rows for `user_id`) with `id, title, body, tags, category, grade`.
-- Sends brief + compact story list to the model via **tool calling** (structured output) to return:
-  ```
-  {
-    outline: [{ section_title, beat, story_ids: [], notes }],
-    suggested_tags: [],
-    summary: ""
-  }
-  ```
-- Saves a new `presentations` row with:
-  - `title`, `template_type`, `tags`
-  - `content`: `{ brief, outline, summary, generated_at, model }`
-- Inserts matching rows into `presentation_stories` (`presentation_id`, `story_id`, `position`) for each AI-picked story.
-- Returns the new presentation; UI navigates to edit view (existing `PresentationEditorDialog`) with the outline visible.
+- Background: near-black (`hsl(0 0% 4%)`-ish) with a single huge radial-gradient "sun" halo in warm amber tones (configurable via CSS variables).
+- Portrait: a silhouetted person image sits centered inside the halo on the right half. Edges feather into the dark background. On mobile the halo + image become a top hero band above the card.
+- Auth card: keeps current glass styling but lighter-weight — transparent dark glass over the halo, rounded-2xl, soft border, all current functionality intact (Google/Apple OAuth, email tabs, validation).
+- Small stat row at the bottom mirroring the reference ("Private by default", "Yours forever", "Made for storytellers") — purely decorative.
 
-### UI pieces
+## Image injection
 
-- New `src/components/stage/StageWizardDialog.tsx` — multi-step dialog with progress dots, Back/Next, Enter to advance, Esc to close-with-confirm. Reuses shadcn `Dialog`, `Input`, `Textarea`, `Badge`, `Slider`, `Button`.
-- New `src/hooks/use-stage-architect.ts` — wraps `supabase.functions.invoke("stage-architect", { body: brief })`, handles 402/429 toasts.
-- Update `src/pages/Stage.tsx`:
-  - "New presentation" button and the empty-state "Create your first" button open `StageWizardDialog` instead of `PresentationEditorDialog`.
-  - Keep `PresentationEditorDialog` for the **Edit** action on existing cards.
-- Generating state: full-screen-ish overlay inside the dialog with a friendly "Curating stories from your vault…" animation.
+The portrait is swappable in one place:
 
-### Backend
+- Add `src/assets/auth-portrait.jpg` as the default (generated with imagegen: silhouetted person facing the halo, warm rim light, transparent-feeling edges).
+- In `Auth.tsx` import it as `authPortrait` and render in an `<img>` with `object-cover`, masked by a radial CSS mask so the edges blend into the halo.
+- Document at the top of the file: "Replace `src/assets/auth-portrait.jpg` to swap the hero image."
 
-- `supabase/functions/stage-architect/index.ts`
-  - Validates JWT, reads brief with zod.
-  - Loads user's stories via service-role client (RLS-respecting by filtering on the authed `user_id`).
-  - Calls Lovable AI Gateway with a `build_presentation` tool schema (sections + story_ids).
-  - Returns JSON; the client does the inserts (so RLS stays user-scoped) OR the function does inserts as the user — recommended: **client-side insert** with the returned plan for simplicity and safety.
-- `supabase/config.toml` — add `verify_jwt = true` block for `stage-architect`.
+## Halo implementation
 
-### Behavior details
+Pure CSS, no extra deps:
 
-- If the user has **zero stories**, the wizard still runs but the outline contains placeholder beats with a banner: "Record or write stories in The Vault to let AI weave them in."
-- Tags from steps 6/8 are merged into the presentation's `tags`.
-- The brief is stored in `content.brief` so the user can re-run / refine later (future: a "Regenerate outline" button).
-- All errors surfaced as `sonner` toasts; rate-limit (429) and credits (402) get specific messages.
+- A absolutely-positioned `div` behind the image using `background: radial-gradient(circle at center, hsl(var(--halo-core)) 0%, hsl(var(--halo-mid)) 35%, transparent 70%)`.
+- Add halo tokens to `src/index.css` under `:root` and `.dark` (warm amber default: core `38 100% 62%`, mid `28 90% 45%`).
+- Soft `blur-3xl` + `mix-blend-screen` on a second layer for extra glow bloom.
+- Subtle slow pulse animation (8s ease-in-out) on the halo opacity, respecting `prefers-reduced-motion`.
 
-### Files to add / change
+## Files
 
-- add `src/components/stage/StageWizardDialog.tsx`
-- add `src/hooks/use-stage-architect.ts`
-- add `supabase/functions/stage-architect/index.ts`
-- edit `supabase/config.toml` (function block)
-- edit `src/pages/Stage.tsx` (swap dialog for new flow on create)
+- edit `src/pages/Auth.tsx` — new two-column layout, halo + portrait, keep all auth logic untouched
+- edit `src/index.css` — add `--halo-core`, `--halo-mid`, `.halo-glow` utility, pulse keyframes
+- add `src/assets/auth-portrait.jpg` — generated silhouette portrait against warm halo (replaceable)
 
-No database migrations needed — uses existing `presentations`, `presentation_stories`, `stories` tables.
+No backend, routing, or auth-logic changes.
