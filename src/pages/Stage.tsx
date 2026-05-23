@@ -16,6 +16,7 @@ import {
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { GradientCard } from "@/components/ui/gradient-card";
 import { cn } from "@/lib/utils";
 
 const TEMPLATE_LABEL: Record<string, string> = Object.fromEntries(STAGE_TEMPLATES.map((t) => [t.value, t.label]));
