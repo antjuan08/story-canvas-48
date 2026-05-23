@@ -44,7 +44,7 @@ export function Stage() {
     });
   }, [presentations, search, activeTemplate, activeFolder]);
 
-  const openNew = () => { setEditing(null); setEditorOpen(true); };
+  const openNew = () => setWizardOpen(true);
   const openEdit = (p: Presentation) => { setEditing(p); setEditorOpen(true); };
 
   const handleDelete = async (p: Presentation) => {
