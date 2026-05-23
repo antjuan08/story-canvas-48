@@ -106,12 +106,13 @@ export function StoryCard({ story, folders, onEdit, onDelete, onDuplicate, onMov
         </div>
       )}
 
-      <div className="flex items-center gap-3 text-xs text-muted-foreground mt-auto pt-1">
+      <div className="flex items-center gap-3 text-xs text-white/60 mt-auto pt-1">
         {story.image_url && <ImageIcon className="h-3.5 w-3.5" />}
         {story.audio_url && <Music className="h-3.5 w-3.5" />}
         {story.video_url && <Video className="h-3.5 w-3.5" />}
         <span className="ml-auto">{new Date(story.updated_at).toLocaleDateString()}</span>
       </div>
-    </div>
+      </div>
+    </GradientCard>
   );
 }
