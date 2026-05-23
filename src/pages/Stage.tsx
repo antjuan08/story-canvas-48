@@ -175,6 +175,12 @@ export function Stage() {
         </div>
       )}
 
+      <StageWizardDialog
+        open={wizardOpen}
+        onOpenChange={setWizardOpen}
+        onCreated={() => refetch()}
+      />
+
       <PresentationEditorDialog
         open={editorOpen}
         onOpenChange={setEditorOpen}
