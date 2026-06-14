@@ -6,6 +6,7 @@ import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CloudsBackdrop } from "@/components/visuals/CloudsBackdrop";
+import { CloudAddButton } from "@/components/visuals/CloudAddButton";
 import { useStories, type Story } from "@/hooks/use-stories";
 import { StoryEditorDialog } from "@/components/vault/StoryEditorDialog";
 import { supabase } from "@/integrations/supabase/client";
@@ -81,7 +82,7 @@ export default function Stories() {
       <TabNav active="Stories" />
 
       {/* White clouds drift across the Stories backdrop */}
-      <CloudsBackdrop className="z-0 opacity-40" variant="white" />
+      <CloudsBackdrop className="z-0 opacity-40" variant="light" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
         <style>{`
@@ -158,6 +159,13 @@ export default function Stories() {
             ))}
           </div>
         )}
+
+        <div className="flex justify-center my-10">
+          <CloudAddButton
+            onClick={() => { setEditing(null); setOpen(true); }}
+            label="Add a story"
+          />
+        </div>
 
         {filtered.length === 0 ? (
           <EmptyState />
