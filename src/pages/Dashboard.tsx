@@ -37,6 +37,7 @@ export function Dashboard() {
       <CloudsBackdrop className="opacity-60" variant={isDark ? "dark" : "light"} />
       <div className="relative z-10">
         <PromptWorkspace activeTab="Stories" />
+        <StickFigureStrip />
       </div>
     </div>
   );
