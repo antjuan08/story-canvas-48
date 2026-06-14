@@ -13,7 +13,7 @@ import Keynote from "@/pages/tabs/Keynote";
 import Podcast from "@/pages/tabs/Podcast";
 import Book from "@/pages/tabs/Book";
 import Reimagined from "@/pages/tabs/Reimagined";
-import Feedback from "@/pages/tabs/Feedback";
+
 import { Settings } from "@/pages/Settings";
 import Welcome from "@/pages/Welcome";
 import Profile from "@/pages/Profile";
