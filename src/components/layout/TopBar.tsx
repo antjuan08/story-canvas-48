@@ -20,7 +20,7 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { SearchDialog } from "@/components/ui/SearchDialog";
 import { useAuth } from "@/hooks/use-auth";
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme, type Theme } from "@/hooks/use-theme";
 import { NAV_TABS } from "@/components/nav/TabNav";
 import { TrialBanner } from "@/components/billing/TrialBanner";
 import { cn } from "@/lib/utils";
