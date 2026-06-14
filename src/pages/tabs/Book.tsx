@@ -48,17 +48,17 @@ export default function Book() {
       <TabNav active="Book" />
 
       <div className="max-w-7xl mx-auto px-6 pt-8">
-        <div className="flex items-end justify-between gap-6 mb-6">
-          <div className="flex items-center gap-6">
-            <img src={bookIllustration} alt="Stick figure student in a library" width={140} height={140} className="w-32 h-32 object-contain shrink-0" loading="lazy" />
+        <div className="grid md:grid-cols-[360px_1fr] items-center gap-8 mb-6">
+          <img src={bookIllustration} alt="Stick figure student in a library" className="w-full max-w-[360px] object-contain" loading="lazy" />
+          <div className="flex items-end justify-between gap-6">
             <div>
               <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">The library.</h1>
               <p className="text-sm text-foreground/60 mt-1">Chapter your stories. Begin a book.</p>
             </div>
+            <Button onClick={() => setPickerOpen(true)} className="rounded-full">
+              <Plus className="h-4 w-4 mr-2" /> Add a book
+            </Button>
           </div>
-          <Button onClick={() => setPickerOpen(true)} className="rounded-full">
-            <Plus className="h-4 w-4 mr-2" /> Add a book
-          </Button>
         </div>
 
         {books.length > 0 && (

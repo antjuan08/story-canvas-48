@@ -38,8 +38,8 @@ export default function Keynote() {
       <TabNav active="Keynote" />
 
       <div className="max-w-6xl mx-auto px-6 pt-8">
-        <div className="flex items-center gap-6 mb-2">
-          <img src={keynoteIllustration} alt="Stick figure giving a keynote talk" width={140} height={140} className="w-32 h-32 object-contain shrink-0" loading="lazy" />
+        <div className="grid md:grid-cols-[360px_1fr] items-center gap-8 mb-2">
+          <img src={keynoteIllustration} alt="Stick figure giving a keynote talk" className="w-full max-w-[360px] object-contain" loading="lazy" />
           <div>
             <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">On the stage.</h1>
             <p className="text-sm text-foreground/60 mt-1">Build a talk. Weave your stories in.</p>
