@@ -147,7 +147,7 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
             </svg>
 
             {/* Cloud content — generous insets so the textarea + action row sit fully inside the cloud body */}
-            <div className="relative px-12 sm:px-20 md:px-28 lg:px-32 pt-20 sm:pt-24 pb-16 sm:pb-20">
+            <div className="relative px-12 sm:px-20 md:px-28 lg:px-32 pt-24 sm:pt-28 pb-20 sm:pb-24">
               <textarea
                 ref={textareaRef}
                 value={text}
