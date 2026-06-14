@@ -14,6 +14,10 @@ import Podcast from "@/pages/tabs/Podcast";
 import Book from "@/pages/tabs/Book";
 import Reimagined from "@/pages/tabs/Reimagined";
 import { Settings } from "@/pages/Settings";
+import Welcome from "@/pages/Welcome";
+import Profile from "@/pages/Profile";
+import Community from "@/pages/Community";
+import BillingReturn from "@/pages/BillingReturn";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +45,10 @@ const App = () => (
             <Route path="/podcast" element={<Protected><Podcast /></Protected>} />
             <Route path="/book" element={<Protected><Book /></Protected>} />
             <Route path="/reimagined" element={<Protected><Reimagined /></Protected>} />
+            <Route path="/community" element={<Protected><Community /></Protected>} />
+            <Route path="/profile" element={<Protected><Profile /></Protected>} />
+            <Route path="/welcome" element={<Protected><Welcome /></Protected>} />
+            <Route path="/billing/return" element={<Protected><BillingReturn /></Protected>} />
             <Route path="/settings" element={<Protected><Settings /></Protected>} />
 
             {/* Legacy redirects */}
@@ -50,7 +58,7 @@ const App = () => (
             <Route path="/keynotes" element={<Navigate to="/keynote" replace />} />
             <Route path="/recordings" element={<Navigate to="/podcast" replace />} />
             <Route path="/record" element={<Navigate to="/podcast" replace />} />
-            <Route path="/storytellers" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/storytellers" element={<Navigate to="/community" replace />} />
             <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
 
             <Route path="*" element={<NotFound />} />
