@@ -47,7 +47,7 @@ const App = () => (
             <Route path="/podcast" element={<Protected><Podcast /></Protected>} />
             <Route path="/book" element={<Protected><Book /></Protected>} />
             <Route path="/reimagined" element={<Protected><Reimagined /></Protected>} />
-            <Route path="/feedback" element={<Protected><Feedback /></Protected>} />
+            <Route path="/feedback" element={<Navigate to="/keynote" replace />} />
             <Route path="/community" element={<Protected><Community /></Protected>} />
             <Route path="/profile" element={<Protected><Profile /></Protected>} />
             <Route path="/welcome" element={<Protected><Welcome /></Protected>} />
