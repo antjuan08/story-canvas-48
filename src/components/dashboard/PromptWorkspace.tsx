@@ -130,24 +130,25 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
           )}
 
           <div className="relative w-full group">
-            {/* Cloud-shaped backdrop */}
+            {/* Cloud-shaped backdrop — inked with --foreground so it inverts with the theme
+                 (charcoal cloud on cream light mode, bone cloud on charcoal dark mode). */}
             <svg
               viewBox="0 0 200 110"
               preserveAspectRatio="none"
-              className="absolute inset-0 w-full h-full drop-shadow-md transition-all group-focus-within:drop-shadow-xl"
+              className="absolute inset-0 w-full h-full drop-shadow-xl transition-all group-focus-within:drop-shadow-2xl"
               aria-hidden
             >
               <path
                 d="M40,80 C18,80 10,55 30,48 C28,28 58,18 72,32 C82,16 116,18 124,38 C148,30 172,46 168,66 C188,70 188,90 168,92 L48,92 C30,92 26,84 40,80 Z"
-                fill="hsl(var(--background) / 0.92)"
-                stroke="hsl(var(--foreground) / 0.18)"
+                fill="hsl(var(--foreground))"
+                stroke="hsl(var(--foreground))"
                 strokeWidth="0.5"
                 vectorEffect="non-scaling-stroke"
               />
             </svg>
 
-            {/* Cloud content (inset so it fits inside the cloud body) */}
-            <div className="relative px-12 sm:px-20 pt-12 pb-10">
+            {/* Cloud content — generous insets so the textarea + action row sit fully inside the cloud body */}
+            <div className="relative px-10 sm:px-16 md:px-24 pt-16 sm:pt-20 pb-14 sm:pb-16">
               <textarea
                 ref={textareaRef}
                 value={text}
@@ -161,9 +162,9 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
                 rows={2}
                 placeholder={PLACEHOLDER[activeTab]}
                 disabled={saving}
-                className="w-full resize-none bg-transparent text-base text-foreground placeholder:text-foreground/40 outline-none disabled:opacity-60 text-center"
+                className="w-full resize-none bg-transparent text-base text-background placeholder:text-background/50 outline-none disabled:opacity-60 text-center"
               />
-              <div className="flex items-center justify-between mt-3">
+              <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-1">
                   <IconBtn label="Attach"><Paperclip className="h-4 w-4" /></IconBtn>
                   <IconBtn label="Dictate"><Mic className="h-4 w-4" /></IconBtn>
@@ -176,8 +177,8 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
                     className={cn(
                       "h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition-colors",
                       text.trim() && !refining && !saving
-                        ? "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
-                        : "text-foreground/30",
+                        ? "text-background/80 hover:text-background hover:bg-background/10"
+                        : "text-background/40",
                     )}
                   >
                     {refining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
@@ -191,8 +192,8 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
                   className={cn(
                     "h-9 w-9 rounded-full flex items-center justify-center transition-all",
                     text.trim() && !saving && !refining
-                      ? "bg-foreground text-background hover:scale-105"
-                      : "bg-foreground/10 text-foreground/40",
+                      ? "bg-background text-foreground hover:scale-105"
+                      : "bg-background/15 text-background/50",
                   )}
                 >
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
