@@ -85,7 +85,9 @@ export default {
         xs: "2px",
       },
       fontFamily: {
-        sans: ["-apple-system", "BlinkMacSystemFont", "SF Pro Display", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+        sans: ["Inter", "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Helvetica Neue", "Arial", "sans-serif"],
+        serif: ["Fraunces", "ui-serif", "Georgia", "serif"],
+        display: ["Fraunces", "ui-serif", "Georgia", "serif"],
       },
       keyframes: {
         "accordion-down": {
