@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useStories } from "@/hooks/use-stories";
+import { useDictation } from "@/hooks/use-dictation";
 import { cn } from "@/lib/utils";
 import { TabNav } from "@/components/nav/TabNav";
 
@@ -44,6 +45,11 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
   const [floating, setFloating] = useState<string | null>(null);
   const [recentClouds, setRecentClouds] = useState<CloudItem[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const dictation = useDictation({
+    onTranscript: (chunk) => {
+      setText((prev) => (prev ? prev.replace(/\s+$/, "") + " " : "") + chunk.trim());
+    },
+  });
 
   useEffect(() => {
     const filter = activeTab.toLowerCase();
@@ -160,7 +166,13 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-1">
                   <IconBtn label="Attach"><Paperclip className="h-4 w-4" /></IconBtn>
-                  <IconBtn label="Dictate"><Mic className="h-4 w-4" /></IconBtn>
+                  <IconBtn
+                    label={dictation.listening ? "Stop dictation" : "Dictate"}
+                    onClick={dictation.toggle}
+                    active={dictation.listening}
+                  >
+                    <Mic className={cn("h-4 w-4", dictation.listening && "animate-pulse")} />
+                  </IconBtn>
                   <button
                     type="button"
                     onClick={handleRefine}
@@ -208,12 +220,27 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
   );
 }
 
-function IconBtn({ children, label }: { children: React.ReactNode; label: string }) {
+function IconBtn({
+  children,
+  label,
+  onClick,
+  active,
+}: {
+  children: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+  active?: boolean;
+}) {
   return (
     <button
       type="button"
       aria-label={label}
-      className="h-9 w-9 rounded-full flex items-center justify-center text-background hover:bg-background/10 transition-colors"
+      aria-pressed={active}
+      onClick={onClick}
+      className={cn(
+        "h-9 w-9 rounded-full flex items-center justify-center text-background transition-colors",
+        active ? "bg-background/20" : "hover:bg-background/10",
+      )}
     >
       {children}
     </button>
