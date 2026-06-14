@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Cloud, Loader2, Mic, Paperclip } from "lucide-react";
+import { ArrowUp, Cloud, Loader2, Mic, Paperclip, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -40,6 +40,7 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
   const { stories, refetch } = useStories();
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
+  const [refining, setRefining] = useState(false);
   const [floating, setFloating] = useState<string | null>(null);
   const [recentClouds, setRecentClouds] = useState<CloudItem[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -86,6 +87,25 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
       setRecentClouds((prev) => [{ id: data.id, title: data.title }, ...prev].slice(0, 8));
       refetch();
     }, 1500);
+  };
+
+  const handleRefine = async () => {
+    if (!text.trim() || refining || saving) return;
+    setRefining(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("refine-story", {
+        body: { text: text.trim() },
+      });
+      if (error || data?.error) throw new Error(error?.message ?? data?.error ?? "Refine failed");
+      if (data?.refined) {
+        setText(data.refined);
+        toast.success("Refined by AI — tweak then send");
+      }
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setRefining(false);
+    }
   };
 
   return (
