@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { StoryPicker } from "@/components/builders/StoryPicker";
+import { ItemOverflowMenu } from "@/components/shared/ItemOverflowMenu";
 import { cn } from "@/lib/utils";
 import bookIllustration from "@/assets/illustration-book.png";
 
