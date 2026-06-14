@@ -455,8 +455,19 @@ function PolishPreview({
       <textarea
         value={text}
         onChange={(e) => onChangeText(e.target.value)}
-        rows={5}
-        className="w-full resize-none bg-transparent text-sm leading-relaxed text-background placeholder:text-background/40 outline-none max-h-60"
+        ref={(el) => {
+          if (el) {
+            el.style.height = "auto";
+            el.style.height = `${el.scrollHeight}px`;
+          }
+        }}
+        onInput={(e) => {
+          const el = e.currentTarget;
+          el.style.height = "auto";
+          el.style.height = `${el.scrollHeight}px`;
+        }}
+        rows={3}
+        className="w-full resize-none bg-transparent text-[13px] leading-relaxed text-background placeholder:text-background/40 outline-none overflow-hidden"
       />
       <div className="flex items-center justify-between mt-1">
         <div className="flex items-center gap-1">
