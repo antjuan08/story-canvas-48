@@ -11,6 +11,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useStories, uploadStoryMedia } from "@/hooks/use-stories";
 import { ItemOverflowMenu } from "@/components/shared/ItemOverflowMenu";
+import { ReimaginedPlayer } from "@/components/reimagined/ReimaginedPlayer";
 import reimaginedIllustration from "@/assets/illustration-reimagined.png";
 
 type Item = {
@@ -70,19 +71,21 @@ function ReelCard({ item, onDeleted }: { item: Item; onDeleted: () => void }) {
       <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
         <ItemOverflowMenu kind="reimagined" item={item} table="reimagined_stories" onDeleted={onDeleted} />
       </div>
-      <div className="aspect-video bg-foreground/5 relative overflow-hidden">
+      <div className="relative">
         {hasVideo ? (
-          <video src={item.video_url!} poster={item.cover_url ?? undefined} controls className="w-full h-full object-cover" />
-        ) : item.cover_url ? (
-          <img src={item.cover_url} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
+          <ReimaginedPlayer src={item.video_url!} poster={item.cover_url} title={item.title} />
         ) : (
-          <div className="absolute inset-0 grid place-items-center text-foreground/40">
-            <Loader2 className="h-6 w-6 animate-spin" />
-          </div>
-        )}
-        {!hasVideo && (
-          <div className="absolute bottom-2 left-2 right-2 text-[10px] uppercase tracking-widest bg-background/90 backdrop-blur px-3 py-1.5 rounded-full text-foreground/70 flex items-center gap-2">
-            <Film className="h-3 w-3" /> Video render queued · {item.duration_seconds ?? 30}s
+          <div className="aspect-video bg-foreground/5 relative overflow-hidden">
+            {item.cover_url ? (
+              <img src={item.cover_url} alt={item.title} className="w-full h-full object-cover" loading="lazy" />
+            ) : (
+              <div className="absolute inset-0 grid place-items-center text-foreground/40">
+                <Loader2 className="h-6 w-6 animate-spin" />
+              </div>
+            )}
+            <div className="absolute bottom-2 left-2 right-2 text-[10px] uppercase tracking-widest bg-background/90 backdrop-blur px-3 py-1.5 rounded-full text-foreground/70 flex items-center gap-2">
+              <Film className="h-3 w-3" /> Video render queued · {item.duration_seconds ?? 30}s
+            </div>
           </div>
         )}
       </div>

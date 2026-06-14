@@ -1,4 +1,6 @@
 /** Animated drifting clouds. Variants: "dark" (cream clouds on dark), "light" (ink clouds on cream), "white" (white clouds, transparent bg). */
+import { RainBurst } from "./RainBurst";
+
 type Variant = "dark" | "light" | "white";
 
 export function CloudsBackdrop({ className = "", variant = "dark" }: { className?: string; variant?: Variant }) {
@@ -11,7 +13,11 @@ export function CloudsBackdrop({ className = "", variant = "dark" }: { className
       `}</style>
       <Cloud v={variant} className="absolute top-[8%] left-[6%] w-44 opacity-90" style={{ animation: "cb-drift-1 22s ease-in-out infinite" }} />
       <Cloud v={variant} className="absolute top-[14%] left-[40%] w-64 opacity-70" style={{ animation: "cb-drift-2 28s ease-in-out infinite" }} />
-      <Cloud v={variant} className="absolute top-[6%] right-[10%] w-52 opacity-85" style={{ animation: "cb-drift-1 26s ease-in-out infinite" }} />
+      {/* Right-side cloud sprinkles drops on every theme inversion */}
+      <div className="absolute top-[6%] right-[10%] w-52" style={{ animation: "cb-drift-1 26s ease-in-out infinite" }}>
+        <Cloud v={variant} className="w-full opacity-90" />
+        <RainBurst />
+      </div>
       <Cloud v={variant} className="absolute top-[38%] left-[18%] w-36 opacity-60" style={{ animation: "cb-float 10s ease-in-out infinite" }} />
       <Cloud v={variant} className="absolute top-[44%] right-[22%] w-48 opacity-65" style={{ animation: "cb-drift-2 32s ease-in-out infinite" }} />
       <Cloud v={variant} className="absolute bottom-[18%] left-[8%] w-40 opacity-70" style={{ animation: "cb-drift-1 30s ease-in-out infinite" }} />
