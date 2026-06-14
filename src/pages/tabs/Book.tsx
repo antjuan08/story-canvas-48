@@ -10,8 +10,10 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { StoryPicker } from "@/components/builders/StoryPicker";
 import { cn } from "@/lib/utils";
 import bookIllustration from "@/assets/illustration-book.png";
+
 
 type Book = {
   id: string; title: string; template: string; premise: string | null;
@@ -159,16 +161,21 @@ function NewBookDialog({ templateId, onClose, onSaved }: { templateId: string | 
   const { user } = useAuth();
   const [title, setTitle] = useState("");
   const [premise, setPremise] = useState("");
+  const [storyIds, setStoryIds] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
   const tmpl = BOOK_TEMPLATES.find((t) => t.id === templateId);
 
-  useEffect(() => { if (!templateId) { setTitle(""); setPremise(""); } }, [templateId]);
+  useEffect(() => { if (!templateId) { setTitle(""); setPremise(""); setStoryIds([]); } }, [templateId]);
 
   const save = async () => {
     if (!user || !title.trim()) return;
     setBusy(true);
     const { error } = await supabase.from("books").insert({
-      user_id: user.id, title: title.trim(), template: templateId!, premise: premise.trim() || null, payload: {},
+      user_id: user.id,
+      title: title.trim(),
+      template: templateId!,
+      premise: premise.trim() || null,
+      payload: { story_ids: storyIds },
     });
     setBusy(false);
     if (error) { toast.error(error.message); return; }
@@ -178,16 +185,28 @@ function NewBookDialog({ templateId, onClose, onSaved }: { templateId: string | 
 
   return (
     <Dialog open={!!templateId} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-y-auto">
         <DialogHeader>
           <div className="text-xs uppercase tracking-widest text-foreground/50">{tmpl?.label}</div>
           <DialogTitle className="font-serif text-2xl">New book</DialogTitle>
         </DialogHeader>
-        <div className="space-y-4 py-2">
+        <div className="space-y-5 py-2">
           <div className="space-y-2"><Label>Title</Label>
             <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Working title" /></div>
           <div className="space-y-2"><Label>Premise</Label>
             <Textarea value={premise} onChange={(e) => setPremise(e.target.value)} rows={4} placeholder="In one paragraph, what is this book about?" /></div>
+
+          <div className="space-y-2 pt-2 border-t border-foreground/10">
+            <Label className="text-sm">Source stories</Label>
+            <p className="text-xs text-foreground/55">Pull from your library, or let AI choose the stories most likely to anchor this book.</p>
+            <StoryPicker
+              purpose="book"
+              context={`Template: ${tmpl?.label}\nTitle: ${title}\nPremise: ${premise}`}
+              selected={storyIds}
+              onChange={setStoryIds}
+              max={8}
+            />
+          </div>
         </div>
         <DialogFooter>
           <Button onClick={save} disabled={busy || !title.trim()}>
@@ -198,3 +217,4 @@ function NewBookDialog({ templateId, onClose, onSaved }: { templateId: string | 
     </Dialog>
   );
 }
+
