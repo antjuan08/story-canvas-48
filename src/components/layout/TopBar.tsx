@@ -133,25 +133,6 @@ export function TopBar() {
             </Button>
 
 
-            <div className="hidden sm:flex items-center gap-0.5 rounded-full border border-foreground/10 p-0.5">
-              {([
-                { v: "light", I: Sun },
-                { v: "dark", I: Moon },
-                { v: "system", I: Monitor },
-              ] as const).map(({ v, I }) => (
-                <button
-                  key={v}
-                  onClick={() => setTheme(v)}
-                  aria-label={`${v} theme`}
-                  className={cn(
-                    "h-7 w-7 rounded-full flex items-center justify-center transition",
-                    theme === v ? "bg-foreground text-background" : "text-foreground/60 hover:text-foreground",
-                  )}
-                >
-                  <I className="h-3.5 w-3.5" />
-                </button>
-              ))}
-            </div>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
