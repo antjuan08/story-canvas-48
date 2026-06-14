@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Cloud, Loader2, Mic, Paperclip, Sparkles } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { ArrowUp, Check, Cloud, Loader2, Mic, Paperclip, Pencil, RotateCcw, Sparkles, Square } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useStories } from "@/hooks/use-stories";
-import { useDictation } from "@/hooks/use-dictation";
 import { cn } from "@/lib/utils";
-import { TabNav } from "@/components/nav/TabNav";
 
 export const TABS = [
   { label: "Stories", path: "/stories" },
@@ -36,27 +35,46 @@ const HEADING: Record<TabLabel, string> = {
 
 interface CloudItem { id: string; title: string }
 
+type Mode = "idle" | "recording" | "transcribing" | "polishing" | "preview";
+
+async function blobToBase64(blob: Blob): Promise<string> {
+  const buf = await blob.arrayBuffer();
+  let binary = "";
+  const bytes = new Uint8Array(buf);
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode.apply(null, Array.from(bytes.subarray(i, i + chunk)) as any);
+  }
+  return btoa(binary);
+}
+
 export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
   const { user } = useAuth();
   const { stories, refetch } = useStories();
+  const navigate = useNavigate();
+
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
   const [refining, setRefining] = useState(false);
   const [floating, setFloating] = useState<string | null>(null);
   const [recentClouds, setRecentClouds] = useState<CloudItem[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const dictation = useDictation({
-    onTranscript: (chunk) => {
-      setText((prev) => (prev ? prev.replace(/\s+$/, "") + " " : "") + chunk.trim());
-    },
-  });
+
+  // Recording / polish state machine
+  const [mode, setMode] = useState<Mode>("idle");
+  const [elapsed, setElapsed] = useState(0);
+  const [polishTitle, setPolishTitle] = useState<string>("");
+  const [polishText, setPolishText] = useState<string>("");
+  const mrRef = useRef<MediaRecorder | null>(null);
+  const chunksRef = useRef<Blob[]>([]);
+  const tickRef = useRef<number | null>(null);
 
   useEffect(() => {
     const filter = activeTab.toLowerCase();
     const filtered = activeTab === "Stories"
       ? stories
       : stories.filter((s) => s.category === filter || (s.tags ?? []).includes(filter));
-    setRecentClouds(filtered.slice(0, 8).map((s) => ({ id: s.id, title: s.title })));
+    setRecentClouds(filtered.slice(0, 4).map((s) => ({ id: s.id, title: s.title })));
   }, [stories, activeTab]);
 
   useEffect(() => {
@@ -64,17 +82,128 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
     if (!el) return;
     el.style.height = "auto";
     el.style.height = Math.min(el.scrollHeight, 240) + "px";
-  }, [text]);
+  }, [text, mode]);
+
+  useEffect(() => () => {
+    if (tickRef.current) window.clearInterval(tickRef.current);
+    try { mrRef.current?.stream?.getTracks().forEach((t) => t.stop()); } catch {}
+  }, []);
+
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const candidates = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"];
+      const mimeType = candidates.find((t) => (window as any).MediaRecorder?.isTypeSupported?.(t)) || "";
+      const mr = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
+      chunksRef.current = [];
+      mr.ondataavailable = (e) => e.data.size && chunksRef.current.push(e.data);
+      mr.onstop = async () => {
+        stream.getTracks().forEach((t) => t.stop());
+        if (tickRef.current) { window.clearInterval(tickRef.current); tickRef.current = null; }
+        const type = mr.mimeType || "audio/webm";
+        const blob = new Blob(chunksRef.current, { type });
+        setMode("transcribing");
+        try {
+          const base64 = await blobToBase64(blob);
+          const { data, error } = await supabase.functions.invoke("audio-ai", {
+            body: { action: "transcribe", audioBase64: base64, mimeType: type },
+          });
+          if (error) throw error;
+          if (data?.error) throw new Error(data.error);
+          const transcript = (data?.transcript || "").trim();
+          if (!transcript) {
+            toast.info("No speech detected");
+            setMode("idle");
+            return;
+          }
+          // Auto-polish before sending to the cloud
+          setMode("polishing");
+          const refined = await supabase.functions.invoke("refine-story", {
+            body: { text: transcript },
+          });
+          if (refined.error || refined.data?.error) {
+            // Fall back to raw transcript if refine fails
+            setPolishTitle("");
+            setPolishText(transcript);
+          } else {
+            setPolishTitle((refined.data?.title || "").toString().slice(0, 80));
+            setPolishText((refined.data?.refined || transcript).toString());
+          }
+          setMode("preview");
+        } catch (e: any) {
+          toast.error(e?.message || "Transcription failed");
+          setMode("idle");
+        }
+      };
+      mrRef.current = mr;
+      mr.start(250);
+      setElapsed(0);
+      setMode("recording");
+      tickRef.current = window.setInterval(() => setElapsed((s) => s + 1), 1000);
+    } catch {
+      toast.error("Could not access microphone");
+    }
+  };
+
+  const stopRecording = () => {
+    try { mrRef.current?.stop(); } catch {}
+  };
+
+  const toggleMic = () => {
+    if (mode === "recording") stopRecording();
+    else if (mode === "idle") startRecording();
+  };
+
+  const cancelPreview = () => {
+    setPolishText(""); setPolishTitle(""); setMode("idle");
+  };
+
+  const editPreview = () => {
+    setText(polishText);
+    setPolishText(""); setPolishTitle(""); setMode("idle");
+    setTimeout(() => textareaRef.current?.focus(), 0);
+  };
+
+  const sendPreview = async () => {
+    if (!user || !polishText.trim() || saving) return;
+    setSaving(true);
+    const title = (polishTitle || polishText.trim().split(/\n|\.|—|–/)[0]).slice(0, 80) || "Untitled";
+    setFloating(title);
+    const category = activeTab === "Stories" ? null : activeTab.toLowerCase();
+    const { data, error } = await supabase
+      .from("stories")
+      .insert({ user_id: user.id, title, body: polishText.trim(), category, tags: [activeTab.toLowerCase()] })
+      .select("id, title")
+      .single();
+    setSaving(false);
+    if (error || !data) {
+      setFloating(null);
+      toast.error(error?.message ?? "Couldn't save");
+      return;
+    }
+    setTimeout(() => {
+      setFloating(null);
+      setPolishText(""); setPolishTitle(""); setMode("idle");
+      setRecentClouds((prev) => [{ id: data.id, title: data.title }, ...prev].slice(0, 4));
+      refetch();
+    }, 1500);
+  };
 
   const handleSubmit = async () => {
     if (!user || !text.trim() || saving) return;
     setSaving(true);
-    setFloating(text.trim().slice(0, 60));
-
-    const title = text.trim().split(/\n|\.|—|–/)[0].slice(0, 80) || "Untitled";
     const body = text.trim();
-    const category = activeTab === "Stories" ? null : activeTab.toLowerCase();
+    setFloating(body.slice(0, 60));
 
+    // Get an AI-generated title (fall back to first sentence)
+    let title = body.split(/\n|\.|—|–/)[0].slice(0, 80) || "Untitled";
+    try {
+      const { data } = await supabase.functions.invoke("refine-story", { body: { text: body } });
+      const aiTitle = (data?.title || "").toString().trim();
+      if (aiTitle) title = aiTitle.slice(0, 80);
+    } catch { /* keep fallback */ }
+
+    const category = activeTab === "Stories" ? null : activeTab.toLowerCase();
     const { data, error } = await supabase
       .from("stories")
       .insert({ user_id: user.id, title, body, category, tags: [activeTab.toLowerCase()] })
@@ -90,7 +219,7 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
     setTimeout(() => {
       setFloating(null);
       setText("");
-      setRecentClouds((prev) => [{ id: data.id, title: data.title }, ...prev].slice(0, 8));
+      setRecentClouds((prev) => [{ id: data.id, title: data.title }, ...prev].slice(0, 4));
       refetch();
     }, 1500);
   };
@@ -114,9 +243,12 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
     }
   };
 
+  const mm = String(Math.floor(elapsed / 60)).padStart(2, "0");
+  const ss = String(elapsed % 60).padStart(2, "0");
+
   return (
     <div className="min-h-[calc(100vh-7rem)] flex flex-col">
-      <CloudShelf clouds={recentClouds} />
+      <CloudShelf clouds={recentClouds} onOpen={(id) => navigate(`/stories?story=${id}`)} />
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pt-2 md:pt-4 pb-10">
         <div className="relative w-full max-w-3xl">
@@ -129,8 +261,6 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
           )}
 
           <div className="relative w-full group">
-            {/* Cloud-shaped backdrop — inked with --foreground so it inverts with the theme
-                 (charcoal cloud on cream light mode, bone cloud on charcoal dark mode). */}
             <svg
               viewBox="0 0 200 110"
               preserveAspectRatio="none"
@@ -146,64 +276,78 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
               />
             </svg>
 
-            {/* Cloud content — generous insets so the textarea + action row sit fully inside the cloud body */}
             <div className="relative px-12 sm:px-20 md:px-28 lg:px-32 pt-24 sm:pt-28 pb-20 sm:pb-24">
-              <textarea
-                ref={textareaRef}
-                value={text}
-                onChange={(e) => setText(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                    e.preventDefault();
-                    handleSubmit();
-                  }
-                }}
-                rows={2}
-                placeholder={PLACEHOLDER[activeTab]}
-                disabled={saving}
-                className="w-full resize-none bg-transparent text-base text-background placeholder:text-background/50 outline-none disabled:opacity-60 text-center"
-              />
-              <div className="flex items-center justify-between mt-4">
-                <div className="flex items-center gap-1">
-                  <IconBtn label="Attach"><Paperclip className="h-4 w-4" /></IconBtn>
-                  <IconBtn
-                    label={dictation.listening ? "Stop dictation" : "Dictate"}
-                    onClick={dictation.toggle}
-                    active={dictation.listening}
-                  >
-                    <Mic className={cn("h-4 w-4", dictation.listening && "animate-pulse")} />
-                  </IconBtn>
-                  <button
-                    type="button"
-                    onClick={handleRefine}
-                    disabled={!text.trim() || refining || saving}
-                    aria-label="Refine with AI"
-                    title="Refine with AI"
-                    className={cn(
-                      "h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition-colors",
-                      text.trim() && !refining && !saving
-                        ? "text-background hover:bg-background/10"
-                        : "text-background/50",
-                    )}
-                  >
-                    {refining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                    Refine
-                  </button>
-                </div>
-                <button
-                  onClick={handleSubmit}
-                  disabled={!text.trim() || saving || refining}
-                  aria-label="Send"
-                  className={cn(
-                    "h-9 w-9 rounded-full flex items-center justify-center transition-all",
-                    text.trim() && !saving && !refining
-                      ? "bg-background text-foreground hover:scale-105"
-                      : "bg-background/15 text-background/50",
-                  )}
-                >
-                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
-                </button>
-              </div>
+              {mode === "recording" ? (
+                <RecordingView elapsed={`${mm}:${ss}`} onStop={stopRecording} />
+              ) : mode === "transcribing" || mode === "polishing" ? (
+                <BusyView label={mode === "transcribing" ? "Transcribing…" : "Polishing your story…"} />
+              ) : mode === "preview" ? (
+                <PolishPreview
+                  title={polishTitle}
+                  text={polishText}
+                  onChangeText={setPolishText}
+                  onChangeTitle={setPolishTitle}
+                  onSend={sendPreview}
+                  onEdit={editPreview}
+                  onRedo={cancelPreview}
+                  sending={saving}
+                />
+              ) : (
+                <>
+                  <textarea
+                    ref={textareaRef}
+                    value={text}
+                    onChange={(e) => setText(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                        e.preventDefault();
+                        handleSubmit();
+                      }
+                    }}
+                    rows={2}
+                    placeholder={PLACEHOLDER[activeTab]}
+                    disabled={saving}
+                    className="w-full resize-none bg-transparent text-base text-background placeholder:text-background/50 outline-none disabled:opacity-60 text-center"
+                  />
+                  <div className="flex items-center justify-between mt-4">
+                    <div className="flex items-center gap-1">
+                      <IconBtn label="Attach"><Paperclip className="h-4 w-4" /></IconBtn>
+                      <IconBtn label="Record" onClick={toggleMic}>
+                        <Mic className="h-4 w-4" />
+                      </IconBtn>
+                      <button
+                        type="button"
+                        onClick={handleRefine}
+                        disabled={!text.trim() || refining || saving}
+                        aria-label="Refine with AI"
+                        title="Refine with AI"
+                        className={cn(
+                          "h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition-colors",
+                          text.trim() && !refining && !saving
+                            ? "text-background hover:bg-background/10"
+                            : "text-background/50",
+                        )}
+                      >
+                        {refining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                        Refine
+                      </button>
+                    </div>
+                    <button
+                      onClick={handleSubmit}
+                      disabled={!text.trim() || saving || refining}
+                      aria-label="Send"
+                      className={cn(
+                        "h-9 w-9 rounded-full flex items-center justify-center transition-all",
+                        text.trim() && !saving && !refining
+                          ? "bg-background text-foreground hover:scale-105"
+                          : "bg-background/15 text-background/50",
+                      )}
+                    >
+                      {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
+                    </button>
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
@@ -247,8 +391,103 @@ function IconBtn({
   );
 }
 
+function RecordingView({ elapsed, onStop }: { elapsed: string; onStop: () => void }) {
+  return (
+    <div className="flex flex-col items-center gap-4 py-2">
+      <div className="flex items-center gap-2 text-background/90">
+        <span className="relative inline-flex h-2.5 w-2.5">
+          <span className="absolute inset-0 rounded-full bg-red-500 animate-ping opacity-75" />
+          <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500" />
+        </span>
+        <span className="text-sm font-medium tracking-wide">Recording</span>
+        <span className="text-sm tabular-nums text-background/70">{elapsed}</span>
+      </div>
+      <div className="w-full max-w-md h-1.5 rounded-full bg-background/15 overflow-hidden">
+        <div className="h-full w-1/3 bg-background/70 rounded-full animate-[record-slide_1.4s_ease-in-out_infinite]" />
+      </div>
+      <button
+        type="button"
+        onClick={onStop}
+        className="mt-1 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-background text-foreground text-sm font-medium hover:scale-105 transition-transform"
+      >
+        <Square className="h-3.5 w-3.5 fill-current" />
+        Stop &amp; transcribe
+      </button>
+      <style>{`@keyframes record-slide{0%{transform:translateX(-100%)}50%{transform:translateX(150%)}100%{transform:translateX(-100%)}}`}</style>
+    </div>
+  );
+}
 
-function CloudShelf({ clouds }: { clouds: CloudItem[] }) {
+function BusyView({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col items-center gap-3 py-4 text-background/90">
+      <Loader2 className="h-5 w-5 animate-spin" />
+      <span className="text-sm">{label}</span>
+    </div>
+  );
+}
+
+function PolishPreview({
+  title, text, onChangeTitle, onChangeText, onSend, onEdit, onRedo, sending,
+}: {
+  title: string; text: string;
+  onChangeTitle: (v: string) => void;
+  onChangeText: (v: string) => void;
+  onSend: () => void; onEdit: () => void; onRedo: () => void;
+  sending: boolean;
+}) {
+  return (
+    <div className="flex flex-col gap-3">
+      <div className="flex items-center gap-2 text-background/70 text-[10px] uppercase tracking-widest">
+        <Sparkles className="h-3 w-3" /> AI polished — review before it floats up
+      </div>
+      <input
+        value={title}
+        onChange={(e) => onChangeTitle(e.target.value)}
+        placeholder="Title"
+        className="w-full bg-transparent border-b border-background/20 text-background placeholder:text-background/40 text-lg font-serif outline-none pb-1"
+      />
+      <textarea
+        value={text}
+        onChange={(e) => onChangeText(e.target.value)}
+        rows={5}
+        className="w-full resize-none bg-transparent text-sm leading-relaxed text-background placeholder:text-background/40 outline-none max-h-60"
+      />
+      <div className="flex items-center justify-between mt-1">
+        <div className="flex items-center gap-1">
+          <button
+            type="button" onClick={onRedo}
+            className="h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-xs text-background hover:bg-background/10"
+            title="Discard and record again"
+          >
+            <RotateCcw className="h-3.5 w-3.5" /> Redo
+          </button>
+          <button
+            type="button" onClick={onEdit}
+            className="h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-xs text-background hover:bg-background/10"
+            title="Edit in the main box"
+          >
+            <Pencil className="h-3.5 w-3.5" /> Edit
+          </button>
+        </div>
+        <button
+          type="button" onClick={onSend} disabled={sending || !text.trim()}
+          className={cn(
+            "h-9 px-4 inline-flex items-center gap-1.5 rounded-full text-xs font-medium transition-all",
+            !sending && text.trim()
+              ? "bg-background text-foreground hover:scale-105"
+              : "bg-background/15 text-background/50",
+          )}
+        >
+          {sending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+          Send to cloud
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function CloudShelf({ clouds, onOpen }: { clouds: CloudItem[]; onOpen: (id: string) => void }) {
   if (clouds.length === 0) {
     return (
       <div className="flex justify-center items-center gap-2 pt-8 text-foreground/40 text-sm">
@@ -260,14 +499,20 @@ function CloudShelf({ clouds }: { clouds: CloudItem[] }) {
   return (
     <div className="flex flex-wrap justify-center gap-3 pt-10 px-4 max-w-5xl mx-auto">
       {clouds.map((c, i) => (
-        <div key={c.id} className="group relative animate-cloud-pop" style={{ animationDelay: `${i * 60}ms` }}>
+        <button
+          key={c.id}
+          onClick={() => onOpen(c.id)}
+          className="group relative animate-cloud-pop focus:outline-none"
+          style={{ animationDelay: `${i * 60}ms` }}
+          title={c.title}
+        >
           <div className="animate-cloud-drift">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/70 border border-foreground/10 backdrop-blur-sm shadow-sm hover:shadow-md hover:border-foreground/20 transition-all cursor-default">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-background/70 border border-foreground/10 backdrop-blur-sm shadow-sm group-hover:shadow-md group-hover:border-foreground/30 group-focus-visible:ring-2 group-focus-visible:ring-foreground/40 transition-all cursor-pointer">
               <Cloud className="h-3.5 w-3.5 text-foreground/50" />
-              <span className="text-xs text-foreground/70 max-w-[10rem] truncate">{c.title}</span>
+              <span className="text-xs text-foreground/80 max-w-[10rem] truncate">{c.title}</span>
             </div>
           </div>
-        </div>
+        </button>
       ))}
     </div>
   );
