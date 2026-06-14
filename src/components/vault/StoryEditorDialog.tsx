@@ -199,17 +199,42 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Folder</Label>
+              <div className="flex items-center justify-between">
+                <Label>Folder</Label>
+                <button
+                  type="button"
+                  onClick={() => setCreatingFolder((v) => !v)}
+                  className="text-xs text-primary hover:underline flex items-center gap-1"
+                >
+                  <FolderPlus className="h-3 w-3" /> New
+                </button>
+              </div>
               <Select value={folderId || "none"} onValueChange={(v) => setFolderId(v === "none" ? "" : v)}>
                 <SelectTrigger><SelectValue placeholder="No folder" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">No folder</SelectItem>
-                  {folders.map((f) => (
+                  {localFolders.map((f) => (
                     <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {creatingFolder && (
+                <div className="flex items-center gap-2 pt-1">
+                  <Input
+                    autoFocus
+                    value={newFolderName}
+                    onChange={(e) => setNewFolderName(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); createFolder(); } }}
+                    placeholder="Folder name"
+                    className="h-8 text-sm"
+                  />
+                  <Button size="sm" disabled={savingFolder} onClick={createFolder}>
+                    {savingFolder ? <Loader2 className="h-3 w-3 animate-spin" /> : "Add"}
+                  </Button>
+                </div>
+              )}
             </div>
+
           </div>
 
           <div className="space-y-1.5">
