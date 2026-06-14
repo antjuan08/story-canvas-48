@@ -162,30 +162,28 @@ export default function Stories() {
         {filtered.length === 0 ? (
           <EmptyState />
         ) : view === "grid" ? (
-          <div className="flex flex-wrap gap-6 items-end justify-center pb-20">
+          <div className="flex flex-wrap gap-6 items-center justify-center pb-20">
             {filtered.map((s, i) => (
               <button
                 key={s.id}
                 onClick={() => openStory(s)}
                 className={cn(
-                  "bubble group relative rounded-full p-5 text-left flex flex-col justify-end border border-foreground/15 shadow-md transition-shadow",
+                  "bubble group relative rounded-full p-6 text-center flex flex-col items-center justify-center border border-foreground/15 shadow-md transition-shadow overflow-hidden",
                   BUBBLE_FILLS[i % BUBBLE_FILLS.length],
                 )}
                 style={{
                   width: bubblePx,
                   height: bubblePx,
                   animationDelay: `${(i % 7) * 0.4}s`,
-                  transform: `translateY(${(i % 3) * 6}px)`,
                 }}
               >
-                <div className="absolute top-4 right-4 h-2 w-2 rounded-full bg-black/40" />
                 {s.category && (
-                  <div className="absolute top-3 left-4 text-[9px] uppercase tracking-widest text-black/60">{s.category}</div>
+                  <div className="text-[9px] uppercase tracking-widest text-black/60 mb-1">{s.category}</div>
                 )}
-                <h3 className="font-serif text-base leading-tight line-clamp-2 text-black">{s.title}</h3>
-                <p className="text-[11px] text-black/70 mt-1.5 line-clamp-3">{s.body?.slice(0, 90) ?? "—"}</p>
+                <h3 className="font-serif text-base leading-tight line-clamp-2 text-black px-2">{s.title}</h3>
+                <p className="text-[11px] text-black/70 mt-1.5 line-clamp-2 px-2">{s.body?.slice(0, 80) ?? "—"}</p>
                 {(s.tags ?? []).length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2">
+                  <div className="flex flex-wrap gap-1 mt-2 justify-center">
                     {(s.tags ?? []).slice(0, 2).map((t) => (
                       <span key={t} className="text-[9px] px-1.5 py-0.5 rounded-full bg-black/10 text-black/70">#{t}</span>
                     ))}
@@ -194,6 +192,7 @@ export default function Stories() {
               </button>
             ))}
           </div>
+
         ) : (
           <div className="divide-y divide-foreground/10 rounded-2xl border border-foreground/10 bg-background/60 overflow-hidden">
             {filtered.map((s) => (

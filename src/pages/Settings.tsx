@@ -4,7 +4,7 @@ import { useTheme, Theme } from "@/hooks/use-theme";
 
 const options: { value: Theme; label: string; icon: typeof Sun; desc: string }[] = [
   { value: "light", label: "Light", icon: Sun, desc: "Bright and crisp." },
-  { value: "dark", label: "Dark", icon: Moon, desc: "Syncra purple glow." },
+  { value: "dark", label: "Dark", icon: Moon, desc: "Quiet, focused, low-light." },
   { value: "system", label: "System", icon: Monitor, desc: "Follow your OS." },
 ];
 
