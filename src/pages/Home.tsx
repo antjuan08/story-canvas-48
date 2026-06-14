@@ -52,13 +52,14 @@ export default function Home() {
     } finally { setBusy(false); }
   };
 
-  const handleGoogle = async () => {
+  const handleOAuth = async (provider: "google" | "apple") => {
     setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
+    const result = await lovable.auth.signInWithOAuth(provider, {
       redirect_uri: `${window.location.origin}/dashboard`,
     });
     if (result.error) { toast.error(result.error.message ?? "Sign-in failed"); setBusy(false); }
   };
+
 
   return (
     <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: CREAM, color: INK }}>
