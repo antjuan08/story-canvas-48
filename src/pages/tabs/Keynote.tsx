@@ -113,6 +113,7 @@ export default function Keynote() {
       </div>
 
       <KeynoteWizard open={open} onOpenChange={setOpen} onSaved={(k) => { refetch(); setSelected(k); }} />
+      <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} />
     </div>
   );
 }
