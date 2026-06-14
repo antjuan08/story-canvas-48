@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, Command, LogOut, Settings as SettingsIcon, Menu, Sun, Moon, Monitor } from "lucide-react";
+import { Search, Command, LogOut, Settings as SettingsIcon, Menu, Sun, Moon, Monitor, User as UserIcon, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,6 +17,7 @@ import { SearchDialog } from "@/components/ui/SearchDialog";
 import { useAuth } from "@/hooks/use-auth";
 import { useTheme } from "@/hooks/use-theme";
 import { NAV_TABS } from "@/components/nav/TabNav";
+import { TrialBanner } from "@/components/billing/TrialBanner";
 import { cn } from "@/lib/utils";
 
 export function TopBar() {
@@ -120,6 +121,7 @@ export function TopBar() {
           </nav>
 
           <div className="flex items-center gap-2 shrink-0">
+            <TrialBanner />
             <Button
               variant="ghost"
               size="icon"
@@ -129,6 +131,7 @@ export function TopBar() {
             >
               <Search className="h-4 w-4" />
             </Button>
+
 
             <div className="hidden sm:flex items-center gap-0.5 rounded-full border border-foreground/10 p-0.5">
               {([
@@ -167,6 +170,12 @@ export function TopBar() {
                 <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="sm:hidden">
                   {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
                   Toggle theme
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/profile")}>
+                  <UserIcon className="mr-2 h-4 w-4" /> Profile & billing
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/community")}>
+                  <Users className="mr-2 h-4 w-4" /> Community
                 </DropdownMenuItem>
                 <DropdownMenuItem onClick={() => navigate("/settings")}>
                   <SettingsIcon className="mr-2 h-4 w-4" /> Settings

@@ -9,14 +9,18 @@ const COLS: { title: string; links: { label: string; to: string }[] }[] = [
     { label: "Book", to: "/book" },
     { label: "Reimagined", to: "/reimagined" },
   ]},
-  { title: "Stories", links: [
-    { label: "All stories", to: "/stories" },
-    { label: "New story", to: "/dashboard" },
-    { label: "Reimagined", to: "/reimagined" },
+  { title: "You", links: [
+    { label: "Profile", to: "/profile" },
+    { label: "Billing", to: "/profile" },
+    { label: "Brand voice", to: "/profile" },
   ]},
-  { title: "Keynotes", links: [
-    { label: "Build a keynote", to: "/keynote" },
-    { label: "My keynotes", to: "/keynote" },
+  { title: "Community", links: [
+    { label: "Community feed", to: "/community" },
+    { label: "Share a story", to: "/community" },
+  ]},
+  { title: "Plans", links: [
+    { label: "Pricing", to: "/welcome" },
+    { label: "Buy credits", to: "/profile" },
   ]},
   { title: "Company", links: [
     { label: "About", to: "/" },
@@ -25,10 +29,6 @@ const COLS: { title: string; links: { label: string; to: string }[] }[] = [
   { title: "Contact", links: [
     { label: "Support", to: "/" },
     { label: "Press", to: "/" },
-  ]},
-  { title: "Careers", links: [
-    { label: "Open roles", to: "/" },
-    { label: "Culture", to: "/" },
   ]},
 ];
 
