@@ -37,19 +37,15 @@ export default function Keynote() {
     <div className="min-h-[calc(100vh-7rem)]">
       <TabNav active="Keynote" />
 
-      <div className="max-w-6xl mx-auto px-6 pt-8">
-        <div className="grid md:grid-cols-[360px_1fr] items-center gap-8 mb-2">
-          <img src={keynoteIllustration} alt="Stick figure giving a keynote talk" className="w-full max-w-[360px] object-contain" loading="lazy" />
-          <div>
-            <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">On the stage.</h1>
-            <p className="text-sm text-foreground/60 mt-1">Build a talk. Weave your stories in.</p>
-          </div>
-        </div>
-      </div>
-
-      <div className="max-w-6xl mx-auto px-6 pt-8 pb-20 grid lg:grid-cols-[1fr_2fr] gap-10">
-        {/* LEFT — list */}
+      <div className="max-w-6xl mx-auto px-6 pt-8 pb-20 grid lg:grid-cols-[1fr_2fr] gap-10 items-start">
+        {/* LEFT — illustration + saved keynotes */}
         <aside>
+          <img
+            src={keynoteIllustration}
+            alt="Stick figure giving a keynote talk"
+            className="w-full max-w-[360px] object-contain mb-6"
+            loading="lazy"
+          />
           <div className="flex items-center justify-between mb-5">
             <h2 className="font-serif text-2xl">Saved keynotes</h2>
             <ViewToggle value={view} onChange={setView} />
@@ -81,11 +77,11 @@ export default function Keynote() {
           )}
         </aside>
 
-        {/* RIGHT — builder/preview */}
+        {/* RIGHT — builder/preview, lifted to sit at the same level as the illustration */}
         <section>
           <div className="rounded-3xl border border-foreground/10 bg-background/80 p-8 min-h-[60vh] relative">
             {!selected ? (
-              <div className="text-center py-20">
+              <div className="text-center py-16">
                 <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">Build a keynote.</h1>
                 <p className="text-foreground/60 mt-3 max-w-md mx-auto">
                   Answer five quick questions. AI weaves your stories into a talkable outline.
@@ -105,6 +101,7 @@ export default function Keynote() {
     </div>
   );
 }
+
 
 function KeynoteView({ k, onClose }: { k: Keynote; onClose: () => void }) {
   const p = k.payload ?? {};

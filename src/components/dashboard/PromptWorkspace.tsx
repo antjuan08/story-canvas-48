@@ -110,17 +110,15 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
 
   return (
     <div className="min-h-[calc(100vh-7rem)] flex flex-col">
-      <TabNav />
-
       <CloudShelf clouds={recentClouds} />
 
-      <div className="flex-1 flex flex-col items-center justify-start md:justify-center px-4 pt-4 md:pt-10 pb-10">
-        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-center max-w-3xl text-foreground">
+      <div className="flex-1 flex flex-col items-center justify-start px-4 pt-2 md:pt-4 pb-10">
+        <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-light tracking-tight text-center max-w-3xl text-foreground">
           {HEADING[activeTab]}
         </h1>
 
 
-        <div className="relative w-full max-w-2xl mt-10">
+        <div className="relative w-full max-w-3xl mt-4 md:mt-6">
           {floating && (
             <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 -top-2 z-10 animate-story-to-cloud">
               <div className="px-4 py-2 rounded-2xl bg-foreground text-background text-sm shadow-lg max-w-xs truncate">
@@ -148,7 +146,7 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
             </svg>
 
             {/* Cloud content — generous insets so the textarea + action row sit fully inside the cloud body */}
-            <div className="relative px-10 sm:px-16 md:px-24 pt-16 sm:pt-20 pb-14 sm:pb-16">
+            <div className="relative px-12 sm:px-20 md:px-28 pt-20 sm:pt-24 pb-16 sm:pb-20">
               <textarea
                 ref={textareaRef}
                 value={text}
@@ -177,8 +175,8 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
                     className={cn(
                       "h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition-colors",
                       text.trim() && !refining && !saving
-                        ? "text-background/80 hover:text-background hover:bg-background/10"
-                        : "text-background/40",
+                        ? "text-background hover:bg-background/10"
+                        : "text-background/50",
                     )}
                   >
                     {refining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
@@ -216,12 +214,13 @@ function IconBtn({ children, label }: { children: React.ReactNode; label: string
     <button
       type="button"
       aria-label={label}
-      className="h-9 w-9 rounded-full flex items-center justify-center text-background/70 hover:text-background hover:bg-background/10 transition-colors"
+      className="h-9 w-9 rounded-full flex items-center justify-center text-background hover:bg-background/10 transition-colors"
     >
       {children}
     </button>
   );
 }
+
 
 function CloudShelf({ clouds }: { clouds: CloudItem[] }) {
   if (clouds.length === 0) {

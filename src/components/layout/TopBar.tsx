@@ -54,8 +54,8 @@ export function TopBar() {
   return (
     <>
       <header className="sticky top-0 z-30 h-14 w-full bg-background/70 backdrop-blur-md border-b border-foreground/5">
-        <div className="flex h-14 items-center justify-between px-4 md:px-6 gap-2">
-          <div className="flex items-center gap-2">
+        <div className="flex h-14 items-center justify-between px-4 md:px-6 gap-3">
+          <div className="flex items-center gap-2 shrink-0">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden rounded-full -ml-1">
@@ -87,23 +87,49 @@ export function TopBar() {
             </Sheet>
             <Link to="/dashboard" className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-xl bg-foreground text-background grid place-items-center font-serif text-sm">S</div>
-              <span className="font-serif text-lg tracking-tight">StoryYou</span>
+              <span className="font-serif text-lg tracking-tight hidden sm:inline">StoryYou</span>
             </Link>
           </div>
 
-          <Button
-            variant="ghost"
-            className="hidden md:flex items-center gap-2 rounded-full text-foreground/60 hover:text-foreground hover:bg-foreground/5"
-            onClick={() => setSearchOpen(true)}
-          >
-            <Search className="h-4 w-4" />
-            <span className="text-sm">Search…</span>
-            <kbd className="ml-2 inline-flex items-center gap-0.5 text-[10px] text-foreground/40">
-              <Command className="h-3 w-3" />K
-            </kbd>
-          </Button>
+          {/* Inline tab nav + magnifier search at the end (desktop only) */}
+          <nav className="hidden md:flex flex-1 justify-center min-w-0">
+            <div className="flex items-center gap-1 rounded-full border border-foreground/10 bg-background/70 backdrop-blur-sm p-1 shadow-sm">
+              {NAV_TABS.map((t) => {
+                const isActive = location.pathname === t.path;
+                return (
+                  <button
+                    key={t.label}
+                    onClick={() => navigate(t.path)}
+                    className={cn(
+                      "px-3.5 py-1.5 rounded-full text-sm font-medium transition-all",
+                      isActive ? "bg-foreground text-background" : "text-foreground/70 hover:text-foreground hover:bg-foreground/5",
+                    )}
+                  >
+                    {t.label}
+                  </button>
+                );
+              })}
+              <button
+                onClick={() => setSearchOpen(true)}
+                aria-label="Search"
+                className="ml-1 h-8 w-8 rounded-full flex items-center justify-center text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition"
+              >
+                <Search className="h-4 w-4" />
+              </button>
+            </div>
+          </nav>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 shrink-0">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="md:hidden rounded-full"
+              onClick={() => setSearchOpen(true)}
+              aria-label="Search"
+            >
+              <Search className="h-4 w-4" />
+            </Button>
+
             <div className="hidden sm:flex items-center gap-0.5 rounded-full border border-foreground/10 p-0.5">
               {([
                 { v: "light", I: Sun },
