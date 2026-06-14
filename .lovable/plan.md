@@ -1,51 +1,60 @@
-# Auth Page Halo Redesign
+# Plan: Home tab + 5 distinct content pages with AI builders
 
-Reimagine `/auth` to match the Superpower reference: a dark, cinematic page with a large warm radial halo glowing behind a portrait image, with the sign-in card floating to the side.
+## 1. Navigation — add Home pill
+- Update the `TABS` array in `src/components/dashboard/PromptWorkspace.tsx` (and any other shared nav) to prepend `Home` as the first pill, routing to `/`.
+- Active state matches the current route.
 
-## Layout
+## 2. Stories — bubble grid with view toggle
+File: `src/pages/tabs/Stories.tsx` (rewrite, drop PromptWorkspace wrapper).
+- Header: serif title + search input + view toggle (Bubbles / List).
+- **Bubbles view**: circular cards (varying soft pastel fills on cream bg), 100-char preview snippet, category dot, hover lifts.
+- **List view**: clean row layout — title, snippet, date, tag chips.
+- Data: existing `useStories` hook. Click → opens existing `StoryEditorDialog`.
+- Filter: search by title/body; tag chips along the top.
 
-Split the screen into two zones on desktop, stacked on mobile:
+## 3. Keynote — questionnaire wizard
+File: `src/pages/tabs/Keynote.tsx` (rewrite).
+- Two-pane layout: left = saved keynotes list (with thumbnail/list toggle); right = "Build a keynote" CTA → opens a multi-step questionnaire dialog:
+  1. Audience  2. Core message  3. Tone  4. Desired length  5. Stories to draw from (multi-select from vault)
+- On submit → calls edge function `keynote-builder` → AI returns structured talking points (title + 5–8 bullet points + opening/closing lines).
+- Result persisted in new `keynotes` table; displayed in a clean outline card.
 
-```text
-+---------------------------------------------------+
-|                                  .  HALO  .       |
-|   StoryYou                      .         .       |
-|   Your stories. Your stage.    .  PERSON  .       |
-|                                 .         .       |
-|   [ Auth card: Google/Apple,     .       .        |
-|     email + password,             . . . .         |
-|     sign in / sign up tabs ]                      |
-|                                                   |
-|   Trusted · Private · Yours                       |
-+---------------------------------------------------+
-```
+## 4. Podcast — + button wizard
+File: `src/pages/tabs/Podcast.tsx` (rewrite).
+- Magazine-style layout: feed of generated shows with cover blocks. Floating `+` FAB bottom-right.
+- `+` → wizard: show name, episode topic, format (interview/solo/narrative), length, **stories to pull from** (multi-select).
+- Submits to edge function `podcast-builder` → AI returns: episode title, intro script, segment outline (3–5 segments with talking points + story references), outro.
+- Persisted in new `podcasts` table.
+- Same thumbnail/list toggle as Stories/Keynote.
 
-- Background: near-black (`hsl(0 0% 4%)`-ish) with a single huge radial-gradient "sun" halo in warm amber tones (configurable via CSS variables).
-- Portrait: a silhouetted person image sits centered inside the halo on the right half. Edges feather into the dark background. On mobile the halo + image become a top hero band above the card.
-- Auth card: keeps current glass styling but lighter-weight — transparent dark glass over the halo, rounded-2xl, soft border, all current functionality intact (Google/Apple OAuth, email tabs, validation).
-- Small stat row at the bottom mirroring the reference ("Private by default", "Yours forever", "Made for storytellers") — purely decorative.
+## 5. Book — chapter spreads
+File: `src/pages/tabs/Book.tsx` (rewrite).
+- Open-book layout: two-column page spread (paper-cream pages with subtle shadow). Sidebar = chapter list. Each "chapter" = a saved story styled as a book page.
+- Reading-mode typography: Fraunces serif, drop cap on first letter, line-height generous.
+- No AI builder this round; pulls from `stories`.
 
-## Image injection
+## 6. Reimagined — collage / remix gallery
+File: `src/pages/tabs/Reimagined.tsx` (rewrite).
+- Broken-grid / collage layout: AI-generated alternate framings of existing stories (rendered as cards with the "what if" reimagined snippet).
+- Single "Reimagine a story" button → pick a story → edge function `reimagine-story` returns 3 alternate retellings (different POV/genre/era).
+- Visually: rotated polaroid-style cards on cream bg, hand-drawn dividers.
 
-The portrait is swappable in one place:
+## 7. Backend
+- **Migration**: create `keynotes`, `podcasts`, `reimagined_stories` tables. Each has `id`, `user_id`, `title`, `payload jsonb`, `created_at`, RLS scoped to `auth.uid()`, GRANTs for `authenticated` + `service_role`.
+- **Edge functions** (Lovable AI Gateway, model `google/gemini-2.5-flash`):
+  - `keynote-builder` — input: questionnaire + story IDs → structured keynote JSON.
+  - `podcast-builder` — input: questionnaire + story IDs → structured podcast outline JSON.
+  - `reimagine-story` — input: story_id + angle → 3 alternate versions.
+- All functions fetch referenced stories server-side via service-role client, include them in the prompt, return JSON.
 
-- Add `src/assets/auth-portrait.jpg` as the default (generated with imagegen: silhouetted person facing the halo, warm rim light, transparent-feeling edges).
-- In `Auth.tsx` import it as `authPortrait` and render in an `<img>` with `object-cover`, masked by a radial CSS mask so the edges blend into the halo.
-- Document at the top of the file: "Replace `src/assets/auth-portrait.jpg` to swap the hero image."
+## 8. Shared bits
+- New `ViewToggle` component (`src/components/ui/view-toggle.tsx`) — pill toggle for thumbnail/list.
+- Reuse Flow aesthetic (cream/Fraunces/Inter) across all pages, but each page gets a distinct layout primitive (bubbles, two-pane wizard, magazine feed, book spread, collage).
 
-## Halo implementation
+## Technical notes
+- All AI calls use `google/gemini-2.5-flash` via Lovable AI Gateway (no user key needed).
+- New tables follow the public-schema GRANT contract.
+- The existing Dashboard stays as the central prompt workspace; the 5 tabs become destinations with their own designs (no longer thin wrappers around PromptWorkspace).
+- Question copy / illustrations stay monochrome on tab pages to match the new Home aesthetic.
 
-Pure CSS, no extra deps:
-
-- A absolutely-positioned `div` behind the image using `background: radial-gradient(circle at center, hsl(var(--halo-core)) 0%, hsl(var(--halo-mid)) 35%, transparent 70%)`.
-- Add halo tokens to `src/index.css` under `:root` and `.dark` (warm amber default: core `38 100% 62%`, mid `28 90% 45%`).
-- Soft `blur-3xl` + `mix-blend-screen` on a second layer for extra glow bloom.
-- Subtle slow pulse animation (8s ease-in-out) on the halo opacity, respecting `prefers-reduced-motion`.
-
-## Files
-
-- edit `src/pages/Auth.tsx` — new two-column layout, halo + portrait, keep all auth logic untouched
-- edit `src/index.css` — add `--halo-core`, `--halo-mid`, `.halo-glow` utility, pulse keyframes
-- add `src/assets/auth-portrait.jpg` — generated silhouette portrait against warm halo (replaceable)
-
-No backend, routing, or auth-logic changes.
+Scope is large — ~6 new files, 5 rewrites, 1 migration, 3 edge functions. Approve to proceed and I'll build it in one pass.

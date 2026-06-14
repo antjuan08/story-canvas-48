@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import { ArrowUp, Cloud, Loader2, Mic, Paperclip } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useStories } from "@/hooks/use-stories";
 import { cn } from "@/lib/utils";
+import { TabNav } from "@/components/nav/TabNav";
 
 export const TABS = [
   { label: "Stories", path: "/stories" },
@@ -38,8 +38,6 @@ interface CloudItem { id: string; title: string }
 export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
   const { user } = useAuth();
   const { stories, refetch } = useStories();
-  const navigate = useNavigate();
-  const location = useLocation();
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
   const [floating, setFloating] = useState<string | null>(null);
@@ -92,28 +90,7 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
 
   return (
     <div className="min-h-[calc(100vh-7rem)] flex flex-col">
-      {/* Top tabs (Daydream pill nav) */}
-      <nav className="flex justify-center pt-2">
-        <div className="flex flex-wrap items-center justify-center gap-1 rounded-full border border-foreground/10 bg-background/70 backdrop-blur-sm p-1 shadow-sm">
-          {TABS.map((t) => {
-            const active = activeTab === t.label || location.pathname === t.path;
-            return (
-              <button
-                key={t.label}
-                onClick={() => navigate(t.path)}
-                className={cn(
-                  "px-4 py-1.5 rounded-full text-sm font-medium transition-all",
-                  active
-                    ? "bg-foreground text-background"
-                    : "text-foreground/70 hover:text-foreground hover:bg-foreground/5",
-                )}
-              >
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
-      </nav>
+      <TabNav active={activeTab} />
 
       <CloudShelf clouds={recentClouds} />
 
