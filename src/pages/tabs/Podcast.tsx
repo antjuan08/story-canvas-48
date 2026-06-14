@@ -77,18 +77,23 @@ export default function Podcast() {
         ) : view === "grid" ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map((p, i) => (
-              <button key={p.id} onClick={() => setSelected(p)} className="group text-left rounded-3xl bg-background/80 border border-foreground/10 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-0.5">
-                <div className={`h-32 ${COVERS[i % COVERS.length]} flex items-end p-4`}>
-                  <div className="text-background/90 text-xs uppercase tracking-widest">{p.show_name}</div>
+              <div key={p.id} className="relative group">
+                <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ItemOverflowMenu kind="podcast" item={p} table="podcasts" onDeleted={refetch} />
                 </div>
-                <div className="p-5">
-                  <div className="font-serif text-xl leading-tight line-clamp-2">{p.episode_title}</div>
-                  <p className="text-xs text-foreground/60 mt-2 line-clamp-2">{p.payload?.logline ?? p.topic ?? "—"}</p>
-                  <div className="text-[10px] text-foreground/50 mt-3 uppercase tracking-widest">
-                    {p.payload?.template ?? p.format} · {p.length}
+                <button onClick={() => setSelected(p)} className="w-full text-left rounded-3xl bg-background/80 border border-foreground/10 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-0.5">
+                  <div className={`h-32 ${COVERS[i % COVERS.length]} flex items-end p-4`}>
+                    <div className="text-background/90 text-xs uppercase tracking-widest">{p.show_name}</div>
                   </div>
-                </div>
-              </button>
+                  <div className="p-5">
+                    <div className="font-serif text-xl leading-tight line-clamp-2">{p.episode_title}</div>
+                    <p className="text-xs text-foreground/60 mt-2 line-clamp-2">{p.payload?.logline ?? p.topic ?? "—"}</p>
+                    <div className="text-[10px] text-foreground/50 mt-3 uppercase tracking-widest">
+                      {p.payload?.template ?? p.format} · {p.length}
+                    </div>
+                  </div>
+                </button>
+              </div>
             ))}
           </div>
         ) : (
