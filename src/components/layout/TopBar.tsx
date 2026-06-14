@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, Command, LogOut, Settings as SettingsIcon, Menu, Sun, Moon, Monitor, User as UserIcon, Users } from "lucide-react";
+import { Search, Command, LogOut, Settings as SettingsIcon, Menu, Sun, Moon, Monitor, User as UserIcon, Users, Palette } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,12 +10,17 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { SearchDialog } from "@/components/ui/SearchDialog";
 import { useAuth } from "@/hooks/use-auth";
-import { useTheme } from "@/hooks/use-theme";
+import { useTheme, type Theme } from "@/hooks/use-theme";
 import { NAV_TABS } from "@/components/nav/TabNav";
 import { TrialBanner } from "@/components/billing/TrialBanner";
 import { cn } from "@/lib/utils";
@@ -133,25 +138,6 @@ export function TopBar() {
             </Button>
 
 
-            <div className="hidden sm:flex items-center gap-0.5 rounded-full border border-foreground/10 p-0.5">
-              {([
-                { v: "light", I: Sun },
-                { v: "dark", I: Moon },
-                { v: "system", I: Monitor },
-              ] as const).map(({ v, I }) => (
-                <button
-                  key={v}
-                  onClick={() => setTheme(v)}
-                  aria-label={`${v} theme`}
-                  className={cn(
-                    "h-7 w-7 rounded-full flex items-center justify-center transition",
-                    theme === v ? "bg-foreground text-background" : "text-foreground/60 hover:text-foreground",
-                  )}
-                >
-                  <I className="h-3.5 w-3.5" />
-                </button>
-              ))}
-            </div>
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
@@ -167,10 +153,24 @@ export function TopBar() {
                   <div className="text-xs text-muted-foreground">Signed in</div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => setTheme(theme === "dark" ? "light" : "dark")} className="sm:hidden">
-                  {theme === "dark" ? <Sun className="mr-2 h-4 w-4" /> : <Moon className="mr-2 h-4 w-4" />}
-                  Toggle theme
-                </DropdownMenuItem>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    <Palette className="mr-2 h-4 w-4" /> Theme
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    <DropdownMenuRadioGroup value={theme} onValueChange={(v) => setTheme(v as Theme)}>
+                      <DropdownMenuRadioItem value="light">
+                        <Sun className="mr-2 h-4 w-4" /> Light
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="dark">
+                        <Moon className="mr-2 h-4 w-4" /> Dark
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="system">
+                        <Monitor className="mr-2 h-4 w-4" /> System
+                      </DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
                 <DropdownMenuItem onClick={() => navigate("/profile")}>
                   <UserIcon className="mr-2 h-4 w-4" /> Profile & billing
                 </DropdownMenuItem>
