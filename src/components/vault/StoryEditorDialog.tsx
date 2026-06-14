@@ -161,7 +161,15 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1.5">
               <Label htmlFor="category">Category</Label>
-              <Input id="category" value={category} onChange={(e) => setCategory(e.target.value)} placeholder="Faith, Business…" />
+              <Select value={category || "none"} onValueChange={(v) => setCategory(v === "none" ? "" : v)}>
+                <SelectTrigger id="category"><SelectValue placeholder="Choose a category" /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">Uncategorized</SelectItem>
+                  {STORY_CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>{c}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="space-y-1.5">
               <Label>Folder</Label>
