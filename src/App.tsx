@@ -14,7 +14,6 @@ import Podcast from "@/pages/tabs/Podcast";
 import Book from "@/pages/tabs/Book";
 import Reimagined from "@/pages/tabs/Reimagined";
 import { Settings } from "@/pages/Settings";
-import Auth from "@/pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -34,7 +33,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/auth" element={<Auth />} />
+            <Route path="/auth" element={<Navigate to="/" replace />} />
 
             <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
             <Route path="/stories" element={<Protected><Stories /></Protected>} />

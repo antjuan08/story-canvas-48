@@ -1,60 +1,87 @@
-# Plan: Home tab + 5 distinct content pages with AI builders
 
-## 1. Navigation — add Home pill
-- Update the `TABS` array in `src/components/dashboard/PromptWorkspace.tsx` (and any other shared nav) to prepend `Home` as the first pill, routing to `/`.
-- Active state matches the current route.
+# Plan: Unified Home + Themed Tabs + AI Video Reimagine
 
-## 2. Stories — bubble grid with view toggle
-File: `src/pages/tabs/Stories.tsx` (rewrite, drop PromptWorkspace wrapper).
-- Header: serif title + search input + view toggle (Bubbles / List).
-- **Bubbles view**: circular cards (varying soft pastel fills on cream bg), 100-char preview snippet, category dot, hover lifts.
-- **List view**: clean row layout — title, snippet, date, tag chips.
-- Data: existing `useStories` hook. Click → opens existing `StoryEditorDialog`.
-- Filter: search by title/body; tag chips along the top.
+## 1. Delete the standalone Auth page
+- Remove `/auth` route and `src/pages/Auth.tsx`.
+- `ProtectedRoute` redirects unauthenticated users to `/` (the new Home) instead of `/auth`.
 
-## 3. Keynote — questionnaire wizard
-File: `src/pages/tabs/Keynote.tsx` (rewrite).
-- Two-pane layout: left = saved keynotes list (with thumbnail/list toggle); right = "Build a keynote" CTA → opens a multi-step questionnaire dialog:
-  1. Audience  2. Core message  3. Tone  4. Desired length  5. Stories to draw from (multi-select from vault)
-- On submit → calls edge function `keynote-builder` → AI returns structured talking points (title + 5–8 bullet points + opening/closing lines).
-- Result persisted in new `keynotes` table; displayed in a clean outline card.
+## 2. Home page (`/`) becomes the auth + landing surface
+Rewrite `src/pages/Home.tsx`:
+- Keep the animated black-and-white cloud background + tree-on-tire-swing illustration.
+- Center card with two modes: **Sign up** (default, "Get started") and **Log in** (toggle link).
+  - Email + password, Google OAuth button.
+  - On success → navigate to `/dashboard`.
+- Footer nav (Product, Stories, Keynotes, Company, Contact, Careers) is REMOVED from the Home top/hero and moves into the new global `SiteFooter` (below).
 
-## 4. Podcast — + button wizard
-File: `src/pages/tabs/Podcast.tsx` (rewrite).
-- Magazine-style layout: feed of generated shows with cover blocks. Floating `+` FAB bottom-right.
-- `+` → wizard: show name, episode topic, format (interview/solo/narrative), length, **stories to pull from** (multi-select).
-- Submits to edge function `podcast-builder` → AI returns: episode title, intro script, segment outline (3–5 segments with talking points + story references), outro.
-- Persisted in new `podcasts` table.
-- Same thumbnail/list toggle as Stories/Keynote.
+## 3. Global `SiteFooter` shown after login
+- New `src/components/layout/SiteFooter.tsx` with columns: Product, Stories, Keynotes, Company, Contact, Careers.
+- Render inside `AppLayout` (so it appears on every protected page) under `<main>`.
+- Not rendered on `/` (Home) or while logged out.
 
-## 5. Book — chapter spreads
-File: `src/pages/tabs/Book.tsx` (rewrite).
-- Open-book layout: two-column page spread (paper-cream pages with subtle shadow). Sidebar = chapter list. Each "chapter" = a saved story styled as a book page.
-- Reading-mode typography: Fraunces serif, drop cap on first letter, line-height generous.
-- No AI builder this round; pulls from `stories`.
+## 4. Dashboard background = moving clouds
+- `src/pages/Dashboard.tsx` gets the same animated cloud backdrop as Home (extract `<CloudsBackdrop />` from Home into `src/components/visuals/CloudsBackdrop.tsx` and reuse).
+- The existing prompt workspace sits on top of the clouds.
 
-## 6. Reimagined — collage / remix gallery
-File: `src/pages/tabs/Reimagined.tsx` (rewrite).
-- Broken-grid / collage layout: AI-generated alternate framings of existing stories (rendered as cards with the "what if" reimagined snippet).
-- Single "Reimagine a story" button → pick a story → edge function `reimagine-story` returns 3 alternate retellings (different POV/genre/era).
-- Visually: rotated polaroid-style cards on cream bg, hand-drawn dividers.
+## 5. Per-tab illustrations (monochrome stick-figure "cloud" art)
+Generate four PNG illustrations via imagegen (matches Home's hand-drawn black/white aesthetic, transparent background):
+- `keynote-illustration.png` — stick figure on a stage giving a talk, small clouds floating above.
+- `podcast-illustration.png` — two stick figures in chairs facing each other with mics, clouds above (placed bottom-left of Podcast page).
+- `book-illustration.png` — stick-figure student at a library desk, clouds above.
+- (Reimagined gets its own — see §8.)
 
-## 7. Backend
-- **Migration**: create `keynotes`, `podcasts`, `reimagined_stories` tables. Each has `id`, `user_id`, `title`, `payload jsonb`, `created_at`, RLS scoped to `auth.uid()`, GRANTs for `authenticated` + `service_role`.
-- **Edge functions** (Lovable AI Gateway, model `google/gemini-2.5-flash`):
-  - `keynote-builder` — input: questionnaire + story IDs → structured keynote JSON.
-  - `podcast-builder` — input: questionnaire + story IDs → structured podcast outline JSON.
-  - `reimagine-story` — input: story_id + angle → 3 alternate versions.
-- All functions fetch referenced stories server-side via service-role client, include them in the prompt, return JSON.
+Each tab page gets a hero band featuring its illustration with the Flow-style heading.
 
-## 8. Shared bits
-- New `ViewToggle` component (`src/components/ui/view-toggle.tsx`) — pill toggle for thumbnail/list.
-- Reuse Flow aesthetic (cream/Fraunces/Inter) across all pages, but each page gets a distinct layout primitive (bubbles, two-pane wizard, magazine feed, book spread, collage).
+## 6. Podcast page — Show Builder templates
+- Replace single "+" with a `+` button that opens a **template picker** dialog first:
+  - Educational
+  - Encouraging
+  - Entertaining
+  - Conversational
+- Picking a template seeds the existing podcast wizard (tone/format prefilled) and then runs the existing `podcast-builder` edge function.
+- No DB schema changes (template stored in `podcasts.payload.template`).
+
+## 7. Book page — Add-a-Book templates
+- Add a `+ Add book` button → template picker dialog:
+  - Fiction
+  - Non-fiction
+  - Self-help
+  - Autobiography
+  - Instructional
+  - Educational
+- Picking a template opens a sub-window (book metadata: title, premise, chapters target) → saves a new row.
+- New table `books` (id, user_id, title, template, premise, payload jsonb, created_at) with RLS + GRANTs.
+- Book page lists saved books alongside the existing open-book spread.
+
+## 8. Reimagined tab — AI video generation
+- Replace the current 3-text-variations flow with a **"Bring a story to life as a 30–60s video"** flow.
+- UI: pick a story → choose duration (30s or 60s) → "Reimagine" button.
+- Backend: rewrite `supabase/functions/reimagine-story/index.ts`:
+  1. Call Lovable AI (`google/gemini-2.5-flash`) to turn the story into a tight video prompt + cover-image prompt.
+  2. Call Lovable AI image model `google/gemini-2.5-flash-image` ("Nano Banana") to generate a cover frame and store in Supabase Storage.
+  3. Note: Lovable AI Gateway does not currently expose a text-to-video model. The edge function returns the cover image + video prompt and marks `status='ready_for_video'`. The UI shows the cover with a "Generating video…" placeholder and a clear message that video rendering is queued.
+  - Confirm with user before building: should we (a) ship cover-image + script now and wire real video later, or (b) hold this tab until a video provider is connected (e.g., a Veo/Runway/Pika connector)? Default = (a).
+- Extend `reimagined_stories` with `cover_url text`, `video_url text`, `status text default 'pending'`, `duration_seconds int`.
+- Add Supabase Storage bucket `reimagined` (public read).
+- Reimagined page hero illustration: stick figure watching a cloud morph into a film reel.
+
+## 9. Routing/cleanup
+- `/auth` → redirect to `/`.
+- TabNav unchanged (Home pill already routes to `/`).
 
 ## Technical notes
-- All AI calls use `google/gemini-2.5-flash` via Lovable AI Gateway (no user key needed).
-- New tables follow the public-schema GRANT contract.
-- The existing Dashboard stays as the central prompt workspace; the 5 tabs become destinations with their own designs (no longer thin wrappers around PromptWorkspace).
-- Question copy / illustrations stay monochrome on tab pages to match the new Home aesthetic.
+- All AI calls go through Lovable AI Gateway; no user keys.
+- New tables (`books`, plus columns on `reimagined_stories`) get RLS + explicit GRANTs to `authenticated` and `service_role`.
+- New storage bucket created via migration.
+- Visual language stays monochrome cream/ink with Fraunces + Inter.
 
-Scope is large — ~6 new files, 5 rewrites, 1 migration, 3 edge functions. Approve to proceed and I'll build it in one pass.
+## Files (high level)
+- **Delete**: `src/pages/Auth.tsx`
+- **Rewrite**: `src/pages/Home.tsx`, `src/pages/tabs/Reimagined.tsx`, `supabase/functions/reimagine-story/index.ts`
+- **Edit**: `src/App.tsx`, `src/components/layout/AppLayout.tsx`, `src/components/auth/ProtectedRoute.tsx`, `src/pages/Dashboard.tsx`, `src/pages/tabs/Keynote.tsx`, `src/pages/tabs/Podcast.tsx`, `src/pages/tabs/Book.tsx`
+- **Create**: `src/components/layout/SiteFooter.tsx`, `src/components/visuals/CloudsBackdrop.tsx`, 4 illustration PNGs in `src/assets/`, migration for `books` + reimagined columns + storage bucket.
+
+## One question before I build
+Reimagined video generation — Lovable AI Gateway has image models (Nano Banana) but no text-to-video model right now. Pick one:
+- **A (recommended)**: Ship now with an AI-generated cover image + video script; the actual MP4 stays a "coming soon" placeholder until we connect a video provider.
+- **B**: Skip the video flow for now and leave Reimagined as the 3-text-variations it is today.
+- **C**: You connect a video provider (e.g., Runway/Veo via API key) and I'll wire it.
