@@ -1,4 +1,3 @@
-// To swap the hero image, replace src/assets/auth-portrait.jpg
 import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { z } from "zod";
@@ -10,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import authPortrait from "@/assets/auth-portrait.jpg";
 
 const schema = z.object({
   email: z.string().trim().email("Enter a valid email").max(255),
@@ -74,135 +72,120 @@ export default function Auth() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-[hsl(0_0%_4%)] text-white">
-      {/* Halo + portrait layer */}
-      <div className="pointer-events-none absolute inset-0 lg:left-1/2">
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="halo-bloom absolute h-[90vmin] w-[90vmin] rounded-full" />
-          <div className="halo-glow relative h-[80vmin] w-[80vmin] max-h-[860px] max-w-[860px] rounded-full">
-            <img
-              src={authPortrait}
-              alt=""
-              width={1024}
-              height={1024}
-              className="portrait-mask absolute inset-0 h-full w-full object-cover object-center opacity-95 mix-blend-normal"
-            />
-          </div>
-        </div>
-        {/* edge vignette */}
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_55%,hsl(0_0%_4%)_85%)]" />
+    <div className="relative min-h-screen overflow-hidden bg-background text-foreground">
+      {/* Soft pastel blobs in Daydream style */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div className="absolute -top-32 -left-32 h-[420px] w-[420px] rounded-full bg-[#f8c8d8]/50 blur-3xl" />
+        <div className="absolute top-20 -right-24 h-[380px] w-[380px] rounded-full bg-[#b8d4e8]/60 blur-3xl" />
+        <div className="absolute bottom-0 left-1/3 h-[360px] w-[360px] rounded-full bg-[#d4f0c8]/50 blur-3xl" />
+        <div className="absolute -bottom-24 right-1/4 h-[320px] w-[320px] rounded-full bg-[#e8c5dc]/50 blur-3xl" />
+      </div>
+
+      {/* Floating decorative pill (Daydream hero element) */}
+      <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 hidden sm:flex items-center gap-2 rounded-full border border-foreground/10 bg-background/80 backdrop-blur-md px-4 py-1.5 shadow-sm">
+        <span className="h-2 w-2 rounded-full bg-emerald-500" />
+        <span className="text-xs font-medium text-foreground/70">StoryYou · capture · craft · share</span>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 min-h-screen flex flex-col lg:grid lg:grid-cols-2">
-        <div className="flex-1 flex flex-col justify-between px-6 py-10 lg:px-16 lg:py-14">
-          <div>
-            <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-2xl bg-gradient-primary flex items-center justify-center text-white font-bold">
-                S
-              </div>
-              <span className="text-lg font-semibold tracking-tight">StoryYou</span>
-            </div>
+      <div className="relative z-10 min-h-screen flex items-center justify-center px-4 py-20">
+        <div className="w-full max-w-md">
+          {/* Brand */}
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <div className="h-10 w-10 rounded-2xl bg-foreground text-background grid place-items-center font-serif text-lg">S</div>
+            <span className="font-serif text-2xl tracking-tight">StoryYou</span>
           </div>
 
-          <div className="mt-10 lg:mt-0 max-w-md">
-            <h1 className="text-4xl lg:text-5xl font-semibold tracking-tight leading-[1.05]">
-              Your stories.<br />Your stage.
+          {/* Headline */}
+          <div className="text-center mb-8">
+            <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight leading-[1.05]">
+              Your stories,
+              <br />
+              <em className="italic text-foreground/70">beautifully kept.</em>
             </h1>
-            <p className="mt-4 text-white/70 text-base lg:text-lg">
-              A quiet place to capture what matters and a bright stage to share it.
-            </p>
-
-            <div className="mt-8 rounded-3xl border border-white/10 bg-white/[0.04] backdrop-blur-2xl p-6 space-y-5 shadow-2xl">
-              <div className="grid grid-cols-2 gap-2">
-                <Button
-                  variant="outline"
-                  className="rounded-2xl border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-                  disabled={busy}
-                  onClick={() => handleOAuth("google")}
-                >
-                  Google
-                </Button>
-                <Button
-                  variant="outline"
-                  className="rounded-2xl border-white/15 bg-white/5 text-white hover:bg-white/10 hover:text-white"
-                  disabled={busy}
-                  onClick={() => handleOAuth("apple")}
-                >
-                  Apple
-                </Button>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="h-px flex-1 bg-white/10" />
-                <span className="text-xs text-white/50">or</span>
-                <div className="h-px flex-1 bg-white/10" />
-              </div>
-
-              <Tabs defaultValue="signin">
-                <TabsList className="grid grid-cols-2 w-full rounded-2xl bg-white/5 border border-white/10">
-                  <TabsTrigger value="signin" className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-black">Sign in</TabsTrigger>
-                  <TabsTrigger value="signup" className="rounded-xl data-[state=active]:bg-white data-[state=active]:text-black">Sign up</TabsTrigger>
-                </TabsList>
-
-                <TabsContent value="signin" className="space-y-3 mt-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="si-email" className="text-white/80">Email</Label>
-                    <Input id="si-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-white/5 border-white/10 text-white placeholder:text-white/40" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="si-pw" className="text-white/80">Password</Label>
-                    <Input id="si-pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-white/5 border-white/10 text-white placeholder:text-white/40" />
-                  </div>
-                  <Button className="w-full rounded-2xl bg-white text-black hover:bg-white/90" disabled={busy} onClick={() => handleEmail("signin")}>
-                    Sign in
-                  </Button>
-                </TabsContent>
-
-                <TabsContent value="signup" className="space-y-3 mt-4">
-                  <div className="space-y-1.5">
-                    <Label htmlFor="su-name" className="text-white/80">Full name</Label>
-                    <Input id="su-name" value={name} onChange={(e) => setName(e.target.value)} className="bg-white/5 border-white/10 text-white placeholder:text-white/40" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="su-email" className="text-white/80">Email</Label>
-                    <Input id="su-email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="bg-white/5 border-white/10 text-white placeholder:text-white/40" />
-                  </div>
-                  <div className="space-y-1.5">
-                    <Label htmlFor="su-pw" className="text-white/80">Password</Label>
-                    <Input id="su-pw" type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="bg-white/5 border-white/10 text-white placeholder:text-white/40" />
-                  </div>
-                  <Button className="w-full rounded-2xl bg-white text-black hover:bg-white/90" disabled={busy} onClick={() => handleEmail("signup")}>
-                    Create account
-                  </Button>
-                </TabsContent>
-              </Tabs>
-            </div>
-
-            <p className="text-xs text-white/40 mt-6">
-              By continuing you agree to our Terms and Privacy Policy.
+            <p className="mt-3 text-foreground/60 text-sm">
+              A quiet place to capture what matters.
             </p>
           </div>
 
-          <div className="mt-10 hidden lg:grid grid-cols-3 gap-6 max-w-md text-sm">
-            <div>
-              <div className="text-white font-medium">Private</div>
-              <div className="text-white/50">Yours by default</div>
+          {/* Card */}
+          <div className="rounded-3xl border border-foreground/10 bg-background/80 backdrop-blur-xl p-6 space-y-5 shadow-xl">
+            <div className="grid grid-cols-2 gap-2">
+              <Button
+                variant="outline"
+                className="rounded-full border-foreground/15 bg-background hover:bg-foreground/5"
+                disabled={busy}
+                onClick={() => handleOAuth("google")}
+              >
+                Google
+              </Button>
+              <Button
+                variant="outline"
+                className="rounded-full border-foreground/15 bg-background hover:bg-foreground/5"
+                disabled={busy}
+                onClick={() => handleOAuth("apple")}
+              >
+                Apple
+              </Button>
             </div>
-            <div>
-              <div className="text-white font-medium">Lasting</div>
-              <div className="text-white/50">Stories preserved</div>
+
+            <div className="flex items-center gap-3">
+              <div className="h-px flex-1 bg-foreground/10" />
+              <span className="text-xs text-foreground/40">or</span>
+              <div className="h-px flex-1 bg-foreground/10" />
             </div>
-            <div>
-              <div className="text-white font-medium">Crafted</div>
-              <div className="text-white/50">Made for storytellers</div>
-            </div>
+
+            <Tabs defaultValue="signin">
+              <TabsList className="grid grid-cols-2 w-full rounded-full bg-foreground/5 border border-foreground/10 p-1 h-auto">
+                <TabsTrigger value="signin" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background">
+                  Sign in
+                </TabsTrigger>
+                <TabsTrigger value="signup" className="rounded-full data-[state=active]:bg-foreground data-[state=active]:text-background">
+                  Sign up
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="signin" className="space-y-3 mt-4">
+                <Field id="si-email" label="Email" type="email" value={email} onChange={setEmail} />
+                <Field id="si-pw" label="Password" type="password" value={password} onChange={setPassword} />
+                <Button className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90" disabled={busy} onClick={() => handleEmail("signin")}>
+                  Sign in
+                </Button>
+              </TabsContent>
+
+              <TabsContent value="signup" className="space-y-3 mt-4">
+                <Field id="su-name" label="Full name" type="text" value={name} onChange={setName} />
+                <Field id="su-email" label="Email" type="email" value={email} onChange={setEmail} />
+                <Field id="su-pw" label="Password" type="password" value={password} onChange={setPassword} />
+                <Button className="w-full rounded-full bg-foreground text-background hover:bg-foreground/90" disabled={busy} onClick={() => handleEmail("signup")}>
+                  Create account
+                </Button>
+              </TabsContent>
+            </Tabs>
           </div>
+
+          <p className="text-xs text-foreground/40 mt-6 text-center">
+            By continuing you agree to our Terms and Privacy Policy.
+          </p>
         </div>
-
-        {/* Right column reserved for the halo on lg+ — content lives in the absolute layer */}
-        <div className="hidden lg:block" />
       </div>
+    </div>
+  );
+}
+
+function Field({
+  id, label, type, value, onChange,
+}: { id: string; label: string; type: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="space-y-1.5">
+      <Label htmlFor={id} className="text-foreground/70 text-xs font-medium">{label}</Label>
+      <Input
+        id={id}
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="rounded-2xl bg-background border-foreground/15 focus-visible:ring-foreground/20"
+      />
     </div>
   );
 }

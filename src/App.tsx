@@ -7,11 +7,11 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Dashboard } from "@/pages/Dashboard";
-import { Vault } from "@/pages/Vault";
-import { Stage } from "@/pages/Stage";
-import { Recordings } from "@/pages/Recordings";
-import { Storytellers } from "@/pages/Storytellers";
-import { Analytics } from "@/pages/Analytics";
+import Stories from "@/pages/tabs/Stories";
+import Keynote from "@/pages/tabs/Keynote";
+import Podcast from "@/pages/tabs/Podcast";
+import Book from "@/pages/tabs/Book";
+import Reimagined from "@/pages/tabs/Reimagined";
 import { Settings } from "@/pages/Settings";
 import Auth from "@/pages/Auth";
 import NotFound from "./pages/NotFound";
@@ -36,17 +36,22 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
 
             <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
-            <Route path="/vault" element={<Protected><Vault /></Protected>} />
-            <Route path="/stage" element={<Protected><Stage /></Protected>} />
-            <Route path="/recordings" element={<Protected><Recordings /></Protected>} />
-            <Route path="/storytellers" element={<Protected><Storytellers /></Protected>} />
-            <Route path="/analytics" element={<Protected><Analytics /></Protected>} />
+            <Route path="/stories" element={<Protected><Stories /></Protected>} />
+            <Route path="/keynote" element={<Protected><Keynote /></Protected>} />
+            <Route path="/podcast" element={<Protected><Podcast /></Protected>} />
+            <Route path="/book" element={<Protected><Book /></Protected>} />
+            <Route path="/reimagined" element={<Protected><Reimagined /></Protected>} />
             <Route path="/settings" element={<Protected><Settings /></Protected>} />
 
-            {/* Legacy route redirects */}
-            <Route path="/library" element={<Navigate to="/vault" replace />} />
-            <Route path="/keynotes" element={<Navigate to="/stage" replace />} />
-            <Route path="/record" element={<Navigate to="/recordings" replace />} />
+            {/* Legacy redirects */}
+            <Route path="/vault" element={<Navigate to="/stories" replace />} />
+            <Route path="/stage" element={<Navigate to="/keynote" replace />} />
+            <Route path="/library" element={<Navigate to="/stories" replace />} />
+            <Route path="/keynotes" element={<Navigate to="/keynote" replace />} />
+            <Route path="/recordings" element={<Navigate to="/podcast" replace />} />
+            <Route path="/record" element={<Navigate to="/podcast" replace />} />
+            <Route path="/storytellers" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/analytics" element={<Navigate to="/dashboard" replace />} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
