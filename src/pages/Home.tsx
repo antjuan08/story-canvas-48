@@ -91,10 +91,19 @@ export default function Home() {
                 variant="outline"
                 className="w-full rounded-full border-foreground/20 bg-white hover:bg-foreground/5 text-sm h-10"
                 disabled={busy}
-                onClick={handleGoogle}
+                onClick={() => handleOAuth("google")}
               >
                 Continue with Google
               </Button>
+              <Button
+                variant="outline"
+                className="w-full rounded-full border-foreground/20 bg-black text-white hover:bg-black/90 hover:text-white text-sm h-10"
+                disabled={busy}
+                onClick={() => handleOAuth("apple")}
+              >
+                Continue with Apple
+              </Button>
+
 
               <div className="flex items-center gap-2">
                 <div className="h-px flex-1" style={{ backgroundColor: "hsl(240,8%,80%)" }} />
