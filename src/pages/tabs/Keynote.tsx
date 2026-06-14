@@ -27,6 +27,7 @@ export default function Keynote() {
   const [view, setView] = useState<ViewMode>("grid");
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Keynote | null>(null);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const refetch = async () => {
     if (!user) return;
@@ -94,9 +95,15 @@ export default function Keynote() {
                 <p className="text-foreground/60 mt-3 max-w-md mx-auto">
                   Answer five quick questions. AI weaves your stories into a talkable outline.
                 </p>
-                <Button onClick={() => setOpen(true)} size="lg" className="rounded-full mt-8">
-                  <Plus className="h-4 w-4 mr-2" /> New keynote
-                </Button>
+                <div className="flex items-center justify-center gap-3 mt-8">
+                  <Button onClick={() => setOpen(true)} size="lg" className="rounded-full">
+                    <Plus className="h-4 w-4 mr-2" /> New keynote
+                  </Button>
+                  <Button onClick={() => setFeedbackOpen(true)} size="lg" variant="outline" className="rounded-full">
+                    <Mic className="h-4 w-4 mr-2" /> Feedback
+                  </Button>
+                </div>
+                <p className="text-xs text-foreground/50 mt-4">Rehearse and get instant AI coaching on pacing, clarity & structure.</p>
               </div>
             ) : (
               <KeynoteView k={selected} onClose={() => setSelected(null)} />
@@ -106,6 +113,7 @@ export default function Keynote() {
       </div>
 
       <KeynoteWizard open={open} onOpenChange={setOpen} onSaved={(k) => { refetch(); setSelected(k); }} />
+      <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} />
     </div>
   );
 }

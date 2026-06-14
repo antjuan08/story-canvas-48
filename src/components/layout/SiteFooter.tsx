@@ -8,6 +8,7 @@ const COLS: { title: string; links: { label: string; to: string }[] }[] = [
     { label: "Podcast", to: "/podcast" },
     { label: "Book", to: "/book" },
     { label: "Reimagined", to: "/reimagined" },
+    { label: "Feedback", to: "/keynote" },
   ]},
   { title: "You", links: [
     { label: "Profile", to: "/profile" },
