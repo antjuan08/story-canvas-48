@@ -73,9 +73,9 @@ export default function Home() {
       </div>
 
       {/* Main grid */}
-      <div className="relative z-10 min-h-screen grid items-center px-6 lg:px-16 pt-28 lg:pt-20 pb-24">
-        {/* Auth card — centered with breathing room */}
-        <div className="w-full max-w-[440px] justify-self-center">
+      <div className="relative z-10 min-h-screen grid lg:grid-cols-2 items-center px-6 lg:px-16 pt-28 lg:pt-20 pb-24 gap-10">
+        {/* Auth card — compact */}
+        <div className="w-full max-w-[300px] justify-self-center lg:justify-self-start">
           <div className="rounded-2xl p-5 shadow-xl border" style={{ backgroundColor: CREAM, color: INK, borderColor: "hsl(240,8%,80%)" }}>
             <h1 className="font-serif text-xl font-light tracking-tight leading-tight">
               Your <em className="italic">stories</em>, kept like{" "}
