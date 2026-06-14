@@ -31,7 +31,10 @@ export function useRecordings(folderId?: string | null) {
   return { recordings, loading, refetch };
 }
 
-/** Upload audio/video blob to the recordings bucket. Returns public URL. */
+/**
+ * Upload audio/video blob to the (private) recordings bucket.
+ * Returns a long-lived signed URL the owner can play back.
+ */
 export async function uploadRecording(userId: string, blob: Blob, ext: string): Promise<string> {
   const path = `${userId}/${crypto.randomUUID()}.${ext}`;
   const { error } = await supabase.storage.from("recordings").upload(path, blob, {
@@ -39,6 +42,10 @@ export async function uploadRecording(userId: string, blob: Blob, ext: string): 
     contentType: blob.type,
   });
   if (error) throw error;
-  const { data } = supabase.storage.from("recordings").getPublicUrl(path);
-  return data.publicUrl;
+  // Signed URL valid for ~1 year — only the owning user can generate one thanks to RLS.
+  const { data, error: signErr } = await supabase.storage
+    .from("recordings")
+    .createSignedUrl(path, 60 * 60 * 24 * 365);
+  if (signErr || !data) throw signErr ?? new Error("Failed to sign recording URL");
+  return data.signedUrl;
 }
