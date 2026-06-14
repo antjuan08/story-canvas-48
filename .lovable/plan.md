@@ -1,36 +1,57 @@
 # Plan
 
-## 1. Tab highlight bug (Home + Stories both lighting up)
-In `src/components/nav/TabNav.tsx`, active state is `active === t.label || location.pathname === t.path`. When a page passes `active="Stories"` but lands on a route whose pathname is `/` or shares a prefix, Home also matches. Fix by relying on a single source of truth:
-- Remove the `active` prop entirely.
-- Compute `isActive` from `location.pathname === t.path` only (exact match).
-- Update all call sites (`Stories.tsx`, `Keynote.tsx`, `Podcast.tsx`, `Book.tsx`, `Reimagined.tsx`, `Dashboard.tsx`) to drop the `active` prop.
+## 1. Mic → record → polish → save flow (PromptWorkspace)
 
-## 2. Stories bubble text centering
-In `src/pages/tabs/Stories.tsx`, bubble button uses `flex flex-col justify-end` which pins text to the bottom of the circle. Change to `justify-center items-center text-center`, drop the absolute-positioned category chip, and stack: category (tiny caps) → title (serif) → snippet → tag chips, all centered. Keep the small dot indicator.
+Replace today's live dictation-into-textarea with a clean record/transcribe/refine flow.
 
-## 3. Login box: nudge right, make ~1.5× bigger but not wide
-In `src/pages/Home.tsx`:
-- Auth column: change `justify-self-center lg:justify-self-start` → `lg:justify-self-end lg:pr-8` so the card sits to the right of the left column (matching the screenshot).
-- Card width: `max-w-[300px]` → `max-w-[360px]` (about 1.5× area via taller padding, not wider).
-- Increase inner spacing: padding `p-5` → `p-7`, heading `text-xl` → `text-2xl`, inputs `h-8 text-xs` → `h-10 text-sm`, buttons `h-8 text-xs` → `h-10 text-sm`, label `text-[10px]` → `text-xs`.
-- Keep the right-side hero headline and tree-swing illustration where they are.
+- **Mic tap 1 — start recording**
+  - Use existing `MediaRecorder` pattern (like `DictateButton.tsx` → `audio-ai` edge function) instead of in-browser `SpeechRecognition`, so audio is captured first and transcribed later.
+  - Hide the textarea + Refine/Send row while recording.
+  - Show a recording UI inside the cloud: pulsing red dot, elapsed time `mm:ss`, and a thin indeterminate progress bar (animated `bg-background/30` strip). No transcript text shown.
+- **Mic tap 2 — stop**
+  - Stop the recorder, show "Transcribing…" with spinner inside the cloud.
+  - POST blob to `audio-ai` edge function (already exists) → get full transcript.
+- **AI polish gate** (before it floats up to the cloud shelf)
+  - Auto-call `refine-story` edge function on the transcript.
+  - Swap cloud contents to a "Polish preview" card with: refined text in a read-only area, and two buttons — `Edit` (drops refined text back into the normal textarea so user can tweak) and `Send to cloud` (runs the existing save path).
+  - User can also re-record from this screen (discard).
+- **Typed input path** unchanged — still uses textarea + Refine button + Send.
 
-## 4. Theme switcher (Light / Dark / System)
-A `useTheme` hook already exists (`src/hooks/use-theme.ts`) with `applyTheme` and persistence. Wire it up:
-- Call `initTheme()` once in `src/main.tsx`.
-- Add a compact Sun/Moon/Monitor segmented toggle to `src/components/layout/TopBar.tsx` (right side, before the avatar) using the existing hook.
-- Ensure the Dashboard's inline cream overrides only apply in light mode (wrap the inline `style` vars behind `theme !== 'dark'`, or move them under a `.light` selector) so dark mode actually goes dark on the home page.
-- Settings page (`src/pages/Settings.tsx`) already has theme cards — leave as-is, just remove the "Syncra purple glow" copy to match the neutral palette.
+## 2. AI-generated title on save
 
-## 5. Mobile / tablet optimization
-- **TopBar / nav (mobile)**: in `TopBar.tsx`, hide the inline tab row under `md:` and show a hamburger button that opens a `Sheet` (shadcn) listing the same `NAV_TABS`. Tablet (`md`+) keeps the pill nav.
-- **Home/Dashboard prompt position on phone**: in `src/pages/Dashboard.tsx`, reduce top padding on `<md` (e.g. `pt-4 md:pt-16`) and move the central prompt workspace above the cloud shelf so the text box sits near the top of the viewport on phones. Stack the tab pill below the prompt on mobile.
-- **Login page on phone** (`Home.tsx`): single column under `lg:`, card `max-w-[340px]` centered with `pt-10` so it appears near the top; hide the tree-swing SVG under `md:` (already partly done) and shrink the headline.
-- **Tabs pages (Keynote/Podcast/Book/Reimagined/Stories)**: ensure the illustration + card grid switches to single column under `md:` and the search/filter row wraps (`flex-wrap gap-2`).
-- Verify at 390×844 (iPhone), 768 (tablet), 1280+ (desktop).
+- Currently `handleSubmit` derives title from first sentence. Change so that:
+  - When saving from the polish gate, use `refine-story`'s returned `title` (already returned, currently ignored).
+  - When saving typed input that wasn't refined, call `refine-story` server-side just to get a title (cheap), or fall back to the first-sentence heuristic if that call fails.
 
-## Technical notes
-- No schema or backend changes.
-- No new dependencies; `Sheet` and theme hook already exist.
-- Files touched: `src/components/nav/TabNav.tsx`, `src/components/layout/TopBar.tsx`, `src/pages/Home.tsx`, `src/pages/Dashboard.tsx`, `src/pages/tabs/Stories.tsx` (+ small `active` prop removals in the other tab pages), `src/main.tsx`, `src/pages/Settings.tsx`.
+## 3. Cloud shelf: clickable, 3–4 newest, rotating
+
+- `CloudShelf` currently shows up to 8. Cap to `slice(0, 4)`.
+- Render each chip as a `<Link to={`/stories?story=${id}`}>` (or `useNavigate` on click). Add hover/focus styles.
+- On the Stories page, read `?story=<id>` from `useSearchParams` on mount; if present and the story exists, open `StoryEditorDialog` for it (clears the param afterwards). No change to the bubbles grid otherwise.
+- New stories prepend; `slice(0, 4)` naturally rotates older ones out. Add `animate-cloud-pop` on the new entry (already present) and a fade-out on the one being dropped (simple CSS transition on opacity/scale keyed off id).
+
+## 4. Stick-figure illustration strip on the homepage
+
+- Add a full-width band above `SiteFooter` on `src/pages/Home.tsx` containing four stick-figure SVG illustrations spread end-to-end:
+  1. Keynote speaker at a podium
+  2. Podcast host at a mic
+  3. Book library / stacked books
+  4. Family reading together
+- Build as inline React SVGs in a new `src/components/home/StickFigureStrip.tsx` so they inherit `currentColor` (works in both themes) and need no asset pipeline. Layout: `flex justify-between items-end` with subtle ground line; responsive (`gap-6`, scales down on mobile).
+
+## Technical details
+
+- **Files to edit**
+  - `src/components/dashboard/PromptWorkspace.tsx` — new recording/polish state machine, drop `useDictation`, switch to `MediaRecorder` + `audio-ai` invoke; cap shelf to 4; chips become links.
+  - `src/components/dashboard/PromptWorkspace.tsx` (`CloudShelf`) — clickable chips, fade-out transition.
+  - `src/pages/tabs/Stories.tsx` — read `?story=` param, auto-open editor.
+  - `src/pages/Home.tsx` — render `<StickFigureStrip />` above footer.
+- **Files to create**
+  - `src/components/home/StickFigureStrip.tsx` — four inline SVG stick-figure scenes.
+- **No backend changes** — `audio-ai` (transcribe) and `refine-story` edge functions already exist and return `{ title, refined }`.
+- **No DB migrations.**
+
+## Out of scope (ask if you want it)
+
+- Attachment button wiring (still a placeholder).
+- Editing/regenerating the AI title after save.
