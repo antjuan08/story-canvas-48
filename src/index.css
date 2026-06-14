@@ -134,9 +134,38 @@
 
   body {
     @apply bg-background text-foreground font-sans antialiased;
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     overflow-x: hidden;
   }
+
+  .font-display, .font-serif {
+    font-family: "Fraunces", ui-serif, Georgia, serif;
+    font-optical-sizing: auto;
+  }
+}
+
+@layer utilities {
+  /* Story floats up into the cloud shelf */
+  @keyframes story-to-cloud {
+    0%   { opacity: 1; transform: translateY(0) scale(1); filter: blur(0px); }
+    60%  { opacity: 0.9; transform: translateY(-160px) scale(0.6); filter: blur(1px); }
+    100% { opacity: 0; transform: translateY(-260px) scale(0.25); filter: blur(6px); }
+  }
+  .animate-story-to-cloud {
+    animation: story-to-cloud 1.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+  @keyframes cloud-drift {
+    0%, 100% { transform: translateX(0); }
+    50%      { transform: translateX(6px); }
+  }
+  .animate-cloud-drift { animation: cloud-drift 6s ease-in-out infinite; }
+
+  @keyframes cloud-pop {
+    0% { transform: scale(0.4); opacity: 0; }
+    60% { transform: scale(1.08); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  .animate-cloud-pop { animation: cloud-pop 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
 }
 
 @layer components {
