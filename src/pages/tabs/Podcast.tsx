@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
-import { useStories } from "@/hooks/use-stories";
+import { StoryPicker } from "@/components/builders/StoryPicker";
 import podcastIllustration from "@/assets/illustration-podcast.png";
+
 
 type Podcast = {
   id: string; show_name: string; episode_title: string; topic: string | null;
@@ -201,7 +201,6 @@ function PodcastWizard({ open, template, onOpenChange, onSaved }: {
   open: boolean; template: TemplateId | null;
   onOpenChange: (v: boolean) => void; onSaved: () => void;
 }) {
-  const { stories } = useStories();
   const tmpl = TEMPLATES.find((t) => t.id === template);
   const [step, setStep] = useState(0);
   const [showName, setShowName] = useState("");
@@ -210,7 +209,7 @@ function PodcastWizard({ open, template, onOpenChange, onSaved }: {
   const [storyIds, setStoryIds] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => { if (!open) setStep(0); }, [open]);
+  useEffect(() => { if (!open) { setStep(0); setStoryIds([]); } }, [open]);
 
   const submit = async () => {
     setBusy(true);
@@ -246,28 +245,15 @@ function PodcastWizard({ open, template, onOpenChange, onSaved }: {
         <Input value={length} onChange={(e) => setLength(e.target.value)} /></div>
     )},
     { label: "Pull stories", node: (
-      <div className="space-y-2">
-        <Label>Stories to pull from ({storyIds.length} selected)</Label>
-        <div className="max-h-64 overflow-auto rounded-xl border border-foreground/10 divide-y divide-foreground/10">
-          {stories.length === 0 && <div className="p-4 text-sm text-foreground/50">No stories yet. Skip this step.</div>}
-          {stories.map((s) => {
-            const checked = storyIds.includes(s.id);
-            return (
-              <label key={s.id} className="flex items-start gap-3 px-3 py-2 cursor-pointer hover:bg-foreground/5">
-                <Checkbox checked={checked} onCheckedChange={(v) => {
-                  setStoryIds((prev) => v ? [...prev, s.id] : prev.filter((x) => x !== s.id));
-                }} />
-                <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{s.title}</div>
-                  <div className="text-xs text-foreground/50 truncate">{s.body?.slice(0, 80) ?? "—"}</div>
-                </div>
-              </label>
-            );
-          })}
-        </div>
-      </div>
+      <StoryPicker
+        purpose="podcast"
+        context={`Show: ${showName}\nTopic: ${topic}\nFormat: ${tmpl?.format}\nTone: ${tmpl?.tone}\nLength: ${length}`}
+        selected={storyIds}
+        onChange={setStoryIds}
+      />
     )},
   ];
+
 
   const isLast = step === steps.length - 1;
   const canNext = step !== 0 || showName.trim().length > 0;
