@@ -40,22 +40,10 @@ export function ReimaginedPlayer({ src, poster, title, className }: ReimaginedPl
     };
   }, [src]);
 
-  const toggle = () => {
-    const v = ref.current; if (!v) return;
-    if (v.paused) v.play(); else v.pause();
-  };
-  const toggleMute = () => {
-    const v = ref.current; if (!v) return;
-    v.muted = !v.muted; setMuted(v.muted);
-  };
-  const seek = (t: number) => {
-    const v = ref.current; if (!v) return;
-    v.currentTime = t; setCurrent(t);
-  };
-  const fullscreen = () => {
-    const v = ref.current; if (!v) return;
-    if (v.requestFullscreen) v.requestFullscreen();
-  };
+  const toggle = () => { const v = ref.current; if (!v) return; if (v.paused) v.play(); else v.pause(); };
+  const toggleMute = () => { const v = ref.current; if (!v) return; v.muted = !v.muted; setMuted(v.muted); };
+  const seek = (t: number) => { const v = ref.current; if (!v) return; v.currentTime = t; setCurrent(t); };
+  const fullscreen = () => { const v = ref.current; v?.requestFullscreen?.(); };
   const fmt = (s: number) => {
     if (!isFinite(s)) return "0:00";
     const m = Math.floor(s / 60), ss = Math.floor(s % 60);
@@ -64,14 +52,7 @@ export function ReimaginedPlayer({ src, poster, title, className }: ReimaginedPl
 
   return (
     <div className={cn("group relative rounded-2xl overflow-hidden bg-black/90 aspect-video", className)}>
-      <video
-        ref={ref}
-        src={src}
-        poster={poster ?? undefined}
-        playsInline
-        onClick={toggle}
-        className="w-full h-full object-contain cursor-pointer"
-      />
+      <video ref={ref} src={src} poster={poster ?? undefined} playsInline onClick={toggle} className="w-full h-full object-contain cursor-pointer" />
 
       {loading && !error && (
         <div className="absolute inset-0 grid place-items-center text-white/70 pointer-events-none">
@@ -79,18 +60,11 @@ export function ReimaginedPlayer({ src, poster, title, className }: ReimaginedPl
         </div>
       )}
       {error && (
-        <div className="absolute inset-0 grid place-items-center text-white/70 text-sm">
-          Couldn't load this video.
-        </div>
+        <div className="absolute inset-0 grid place-items-center text-white/70 text-sm">Couldn't load this video.</div>
       )}
 
       {!playing && !loading && !error && (
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label="Play"
-          className="absolute inset-0 grid place-items-center bg-black/20 hover:bg-black/30 transition-colors"
-        >
+        <button type="button" onClick={toggle} aria-label="Play" className="absolute inset-0 grid place-items-center bg-black/20 hover:bg-black/30 transition-colors">
           <span className="h-16 w-16 rounded-full bg-white/90 text-black grid place-items-center shadow-xl">
             <Play className="h-7 w-7 ml-0.5" />
           </span>
@@ -103,16 +77,7 @@ export function ReimaginedPlayer({ src, poster, title, className }: ReimaginedPl
             {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
           </button>
           <span className="text-xs tabular-nums">{fmt(current)}</span>
-          <input
-            type="range"
-            min={0}
-            max={duration || 0}
-            step={0.1}
-            value={current}
-            onChange={(e) => seek(Number(e.target.value))}
-            className="flex-1 accent-white h-1"
-            aria-label="Seek"
-          />
+          <input type="range" min={0} max={duration || 0} step={0.1} value={current} onChange={(e) => seek(Number(e.target.value))} className="flex-1 accent-white h-1" aria-label="Seek" />
           <span className="text-xs tabular-nums">{fmt(duration)}</span>
           <button onClick={toggleMute} aria-label="Mute" className="h-8 w-8 rounded-full hover:bg-white/10 grid place-items-center">
             {muted ? <VolumeX className="h-4 w-4" /> : <Volume2 className="h-4 w-4" />}

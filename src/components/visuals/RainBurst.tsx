@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 /** A tiny drop-shower that fires every time the document theme class toggles. */
 export function RainBurst({ className }: { className?: string }) {
   const [active, setActive] = useState(false);
+  const [tick, setTick] = useState(0);
   const [isDark, setIsDark] = useState(
     typeof document !== "undefined" && document.documentElement.classList.contains("dark")
   );
@@ -12,6 +13,7 @@ export function RainBurst({ className }: { className?: string }) {
     const obs = new MutationObserver(() => {
       const dark = document.documentElement.classList.contains("dark");
       setIsDark(dark);
+      setTick((t) => t + 1);
       setActive(true);
       window.setTimeout(() => setActive(false), 1600);
     });
@@ -19,7 +21,6 @@ export function RainBurst({ className }: { className?: string }) {
     return () => obs.disconnect();
   }, []);
 
-  // Always render so layout is stable; just toggle visibility via `active`.
   const dropColor = isDark ? "rgba(255,255,255,0.85)" : "rgba(15,15,20,0.7)";
   const drops = [0, 1, 2, 3, 4, 5, 6, 7];
 
@@ -41,7 +42,7 @@ export function RainBurst({ className }: { className?: string }) {
       `}</style>
       {drops.map((i) => (
         <span
-          key={i}
+          key={`${tick}-${i}`}
           style={{
             left: `${(i / (drops.length - 1)) * 100}%`,
             background: dropColor,
