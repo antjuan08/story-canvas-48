@@ -9,7 +9,8 @@ const SLIDES = [
   { title: "Reimagine", src: keynoteIllustration, alt: "Reimagine on stage" },
 ];
 
-const SLIDE_MS = 6000; // 6s per slide (within the 5-7s range)
+const SLIDE_MS = 6000;
+const FADE_MS = 500;
 
 interface Props {
   onDone: () => void;
@@ -17,17 +18,40 @@ interface Props {
 
 export function WelcomeSplash({ onDone }: Props) {
   const [index, setIndex] = useState(0);
+  const [phase, setPhase] = useState<"in" | "out" | "done">("in");
 
   useEffect(() => {
-    if (index >= SLIDES.length) {
-      const t = setTimeout(onDone, 400);
+    if (phase === "done") return;
+
+    if (phase === "out") {
+      const t = setTimeout(() => {
+        if (index + 1 >= SLIDES.length) {
+          setPhase("done");
+          setTimeout(onDone, FADE_MS);
+        } else {
+          setIndex((i) => i + 1);
+          setPhase("in");
+        }
+      }, FADE_MS);
       return () => clearTimeout(t);
     }
-    const t = setTimeout(() => setIndex((i) => i + 1), SLIDE_MS);
+
+    const t = setTimeout(() => setPhase("out"), SLIDE_MS);
     return () => clearTimeout(t);
-  }, [index, onDone]);
+  }, [phase, index, onDone]);
 
   const current = SLIDES[Math.min(index, SLIDES.length - 1)];
+
+  const animationClass =
+    phase === "in"
+      ? "animate-fade-in"
+      : phase === "out"
+        ? "animate-fade-out"
+        : "animate-fade-out";
+
+  if (phase === "done") {
+    return null;
+  }
 
   return (
     <div
@@ -42,7 +66,7 @@ export function WelcomeSplash({ onDone }: Props) {
         Skip
       </button>
 
-      <div key={index} className="flex flex-col items-center animate-fade-in">
+      <div className={`flex flex-col items-center ${animationClass}`}>
         <h1 className="font-serif text-6xl sm:text-7xl md:text-8xl font-light tracking-tight mb-12">
           <em className="italic">{current.title}</em>
         </h1>
