@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 export const NAV_TABS = [
-  { label: "Home", path: "/" },
+  { label: "Home", path: "/dashboard" },
   { label: "Stories", path: "/stories" },
   { label: "Keynote", path: "/keynote" },
   { label: "Podcast", path: "/podcast" },
