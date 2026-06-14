@@ -27,6 +27,7 @@ export default function Keynote() {
   const [view, setView] = useState<ViewMode>("grid");
   const [open, setOpen] = useState(false);
   const [selected, setSelected] = useState<Keynote | null>(null);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   const refetch = async () => {
     if (!user) return;
