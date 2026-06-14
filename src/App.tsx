@@ -7,6 +7,7 @@ import { AppLayout } from "@/components/layout/AppLayout";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/auth/ProtectedRoute";
 import { Dashboard } from "@/pages/Dashboard";
+import Home from "@/pages/Home";
 import Stories from "@/pages/tabs/Stories";
 import Keynote from "@/pages/tabs/Keynote";
 import Podcast from "@/pages/tabs/Podcast";
@@ -32,7 +33,7 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Navigate to="/dashboard" replace />} />
+            <Route path="/" element={<Home />} />
             <Route path="/auth" element={<Auth />} />
 
             <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
