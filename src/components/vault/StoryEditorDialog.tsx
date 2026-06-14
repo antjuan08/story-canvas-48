@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Upload, X, Image as ImageIcon, Music, Video } from "lucide-react";
+import { Loader2, Upload, X, Image as ImageIcon, Music, Video, FolderPlus } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
