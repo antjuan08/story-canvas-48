@@ -38,8 +38,6 @@ interface CloudItem { id: string; title: string }
 export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
   const { user } = useAuth();
   const { stories, refetch } = useStories();
-  const navigate = useNavigate();
-  const location = useLocation();
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
   const [floating, setFloating] = useState<string | null>(null);
