@@ -144,6 +144,48 @@ export type Database = {
           },
         ]
       }
+      keynotes: {
+        Row: {
+          audience: string | null
+          core_message: string | null
+          created_at: string
+          id: string
+          length: string | null
+          payload: Json
+          story_ids: string[] | null
+          title: string
+          tone: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audience?: string | null
+          core_message?: string | null
+          created_at?: string
+          id?: string
+          length?: string | null
+          payload?: Json
+          story_ids?: string[] | null
+          title: string
+          tone?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audience?: string | null
+          core_message?: string | null
+          created_at?: string
+          id?: string
+          length?: string | null
+          payload?: Json
+          story_ids?: string[] | null
+          title?: string
+          tone?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       license_requests: {
         Row: {
           created_at: string
@@ -181,6 +223,48 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      podcasts: {
+        Row: {
+          created_at: string
+          episode_title: string
+          format: string | null
+          id: string
+          length: string | null
+          payload: Json
+          show_name: string
+          story_ids: string[] | null
+          topic: string | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          episode_title: string
+          format?: string | null
+          id?: string
+          length?: string | null
+          payload?: Json
+          show_name: string
+          story_ids?: string[] | null
+          topic?: string | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          episode_title?: string
+          format?: string | null
+          id?: string
+          length?: string | null
+          payload?: Json
+          show_name?: string
+          story_ids?: string[] | null
+          topic?: string | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       presentation_stories: {
         Row: {
@@ -361,6 +445,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      reimagined_stories: {
+        Row: {
+          angle: string | null
+          created_at: string
+          id: string
+          payload: Json
+          source_story_id: string | null
+          title: string
+          user_id: string
+        }
+        Insert: {
+          angle?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          source_story_id?: string | null
+          title: string
+          user_id: string
+        }
+        Update: {
+          angle?: string | null
+          created_at?: string
+          id?: string
+          payload?: Json
+          source_story_id?: string | null
+          title?: string
+          user_id?: string
+        }
+        Relationships: []
       }
       stories: {
         Row: {
