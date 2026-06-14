@@ -52,7 +52,7 @@ export function SiteFooter() {
         ))}
       </div>
       <div className="border-t border-foreground/10 px-6 py-5 text-xs text-foreground/50 flex justify-between max-w-7xl mx-auto">
-        <span>2026 © StoryYou Labs, Inc.</span>
+        <span>2026 © Storyou LLC</span>
         <span className="font-serif">Kept like clouds.</span>
       </div>
     </footer>

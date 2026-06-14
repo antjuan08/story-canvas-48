@@ -147,7 +147,7 @@ export default function Home() {
 
       <TreeSwingScene />
 
-      <div className="absolute bottom-3 left-6 text-xs z-20" style={{ color: INK }}>2026 © StoryYou Labs, Inc.</div>
+      <div className="absolute bottom-3 left-6 text-xs z-20" style={{ color: INK }}>2026 © Storyou LLC</div>
     </div>
   );
 }
