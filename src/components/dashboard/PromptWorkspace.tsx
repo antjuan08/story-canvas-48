@@ -224,17 +224,20 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
     }, 1500);
   };
 
-  const handleRefine = async () => {
+  const runPolish = async (mode: "polish" | "rewrite") => {
     if (!text.trim() || refining || saving) return;
     setRefining(true);
     try {
+      const prefix = mode === "rewrite"
+        ? "Rewrite and restructure this story for stronger flow and impact while preserving the meaning and voice. Reorder, tighten, and rephrase as needed.\n\n"
+        : "";
       const { data, error } = await supabase.functions.invoke("refine-story", {
-        body: { text: text.trim() },
+        body: { text: (prefix + text).trim() },
       });
-      if (error || data?.error) throw new Error(error?.message ?? data?.error ?? "Refine failed");
+      if (error || data?.error) throw new Error(error?.message ?? data?.error ?? "Failed");
       if (data?.refined) {
         setText(data.refined);
-        toast.success("Refined by AI — tweak then send");
+        toast.success(mode === "rewrite" ? "Rewritten by AI" : "Polished by AI");
       }
     } catch (e) {
       toast.error((e as Error).message);
@@ -322,10 +325,9 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
                       </IconBtn>
                       <button
                         type="button"
-                        onClick={handleRefine}
+                        onClick={() => runPolish("polish")}
                         disabled={!text.trim() || refining || saving}
-                        aria-label="Refine with AI"
-                        title="Refine with AI"
+                        title="Polish — fix grammar, clarity, flow"
                         className={cn(
                           "h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition-colors",
                           text.trim() && !refining && !saving
@@ -334,7 +336,22 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
                         )}
                       >
                         {refining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-                        Refine
+                        Polish
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => runPolish("rewrite")}
+                        disabled={!text.trim() || refining || saving}
+                        title="Rewrite — restructure for stronger impact"
+                        className={cn(
+                          "h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition-colors",
+                          text.trim() && !refining && !saving
+                            ? "text-background hover:bg-background/10"
+                            : "text-background/50",
+                        )}
+                      >
+                        {refining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <RotateCcw className="h-3.5 w-3.5" />}
+                        Rewrite
                       </button>
                     </div>
                     <button
