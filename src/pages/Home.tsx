@@ -158,19 +158,20 @@ export default function Home() {
 function Field({ id, label, type, value, onChange }: { id: string; label: string; type: string; value: string; onChange: (v: string) => void }) {
   return (
     <div className="space-y-1">
-      <Label htmlFor={id} className="text-[10px] font-medium" style={{ color: "hsl(240,8%,30%)" }}>{label}</Label>
+      <Label htmlFor={id} className="text-xs font-medium" style={{ color: "hsl(240,8%,30%)" }}>{label}</Label>
       <Input id={id} type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="rounded-xl bg-white border-foreground/15 focus-visible:ring-foreground/20 h-8 text-xs" />
+        className="rounded-xl bg-white border-foreground/15 focus-visible:ring-foreground/20 h-10 text-sm" />
     </div>
   );
 }
 
 function SubmitBtn({ children, busy, onClick }: { children: React.ReactNode; busy: boolean; onClick: () => void }) {
   return (
-    <Button size="sm" className="w-full rounded-full bg-[hsl(240,12%,6%)] text-[hsl(48,56%,95%)] hover:bg-[hsl(240,12%,18%)] mt-1 h-8 text-xs"
+    <Button className="w-full rounded-full bg-[hsl(240,12%,6%)] text-[hsl(48,56%,95%)] hover:bg-[hsl(240,12%,18%)] mt-1 h-10 text-sm"
       disabled={busy} onClick={onClick}>{children}</Button>
   );
 }
+
 
 function TreeSwingScene() {
   return (
