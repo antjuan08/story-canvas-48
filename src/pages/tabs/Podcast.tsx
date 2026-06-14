@@ -99,8 +99,8 @@ export default function Podcast() {
         ) : (
           <ul className="divide-y divide-foreground/10 rounded-2xl border border-foreground/10 bg-background/60 overflow-hidden">
             {items.map((p) => (
-              <li key={p.id}>
-                <button onClick={() => setSelected(p)} className="w-full px-5 py-4 text-left hover:bg-foreground/5 flex items-center gap-4">
+              <li key={p.id} className="flex items-center">
+                <button onClick={() => setSelected(p)} className="flex-1 px-5 py-4 text-left hover:bg-foreground/5 flex items-center gap-4">
                   <Mic className="h-4 w-4 text-foreground/50 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="font-serif text-base truncate">{p.episode_title}</div>
@@ -108,6 +108,7 @@ export default function Podcast() {
                   </div>
                   <span className="text-xs text-foreground/50">{new Date(p.created_at).toLocaleDateString()}</span>
                 </button>
+                <div className="pr-3"><ItemOverflowMenu kind="podcast" item={p} table="podcasts" onDeleted={refetch} /></div>
               </li>
             ))}
           </ul>
