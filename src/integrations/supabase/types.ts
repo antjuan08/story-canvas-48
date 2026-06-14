@@ -142,6 +142,36 @@ export type Database = {
           },
         ]
       }
+      credit_purchases: {
+        Row: {
+          amount_cents: number
+          created_at: string
+          credits: number
+          id: string
+          pack: string
+          stripe_session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          amount_cents: number
+          created_at?: string
+          credits: number
+          id?: string
+          pack: string
+          stripe_session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          amount_cents?: number
+          created_at?: string
+          credits?: number
+          id?: string
+          pack?: string
+          stripe_session_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       folders: {
         Row: {
           context: string
@@ -376,42 +406,105 @@ export type Database = {
           },
         ]
       }
+      profile_assets: {
+        Row: {
+          created_at: string
+          id: string
+          kind: Database["public"]["Enums"]["asset_kind"]
+          label: string | null
+          url: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          kind: Database["public"]["Enums"]["asset_kind"]
+          label?: string | null
+          url: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          kind?: Database["public"]["Enums"]["asset_kind"]
+          label?: string | null
+          url?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           bio: string | null
+          brand_voice: string | null
           created_at: string
+          current_period_end: string | null
           email: string | null
           full_name: string | null
           id: string
           interests: string[] | null
+          location: string | null
+          reimagine_credits: number
           social_links: Json | null
+          socials: Json
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          subscription_interval: string | null
+          subscription_status: string
+          subscription_tier: string
           title: string | null
+          trial_ends_at: string | null
           updated_at: string
+          website: string | null
         }
         Insert: {
           avatar_url?: string | null
           bio?: string | null
+          brand_voice?: string | null
           created_at?: string
+          current_period_end?: string | null
           email?: string | null
           full_name?: string | null
           id: string
           interests?: string[] | null
+          location?: string | null
+          reimagine_credits?: number
           social_links?: Json | null
+          socials?: Json
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_interval?: string | null
+          subscription_status?: string
+          subscription_tier?: string
           title?: string | null
+          trial_ends_at?: string | null
           updated_at?: string
+          website?: string | null
         }
         Update: {
           avatar_url?: string | null
           bio?: string | null
+          brand_voice?: string | null
           created_at?: string
+          current_period_end?: string | null
           email?: string | null
           full_name?: string | null
           id?: string
           interests?: string[] | null
+          location?: string | null
+          reimagine_credits?: number
           social_links?: Json | null
+          socials?: Json
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          subscription_interval?: string | null
+          subscription_status?: string
+          subscription_tier?: string
           title?: string | null
+          trial_ends_at?: string | null
           updated_at?: string
+          website?: string | null
         }
         Relationships: []
       }
@@ -624,6 +717,60 @@ export type Database = {
           },
         ]
       }
+      subscription_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          payload: Json
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          payload?: Json
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          payload?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      usage_counters: {
+        Row: {
+          books_count: number
+          keynotes_count: number
+          period_start: string
+          podcasts_count: number
+          reimagines_count: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          books_count?: number
+          keynotes_count?: number
+          period_start: string
+          podcasts_count?: number
+          reimagines_count?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          books_count?: number
+          keynotes_count?: number
+          period_start?: string
+          podcasts_count?: number
+          reimagines_count?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           created_at: string
@@ -650,6 +797,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      check_tier_limit: { Args: { _kind: string }; Returns: boolean }
       get_public_profiles: {
         Args: { user_ids: string[] }
         Returns: {
@@ -666,9 +814,11 @@ export type Database = {
         }
         Returns: boolean
       }
+      increment_usage: { Args: { _kind: string }; Returns: undefined }
     }
     Enums: {
       app_role: "admin" | "support" | "user"
+      asset_kind: "image" | "video" | "audio"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -797,6 +947,7 @@ export const Constants = {
   public: {
     Enums: {
       app_role: ["admin", "support", "user"],
+      asset_kind: ["image", "video", "audio"],
     },
   },
 } as const

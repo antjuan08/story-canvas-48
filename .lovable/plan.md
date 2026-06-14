@@ -1,57 +1,127 @@
-# Plan
+## Goal
+Turn StoryU into a subscription product with a 7-day free trial, three tiers, in-app paywall, a profile/billing/community hub, sermons as a first-class template, brand voice, and PDF export.
 
-## 1. Mic → record → polish → save flow (PromptWorkspace)
+---
 
-Replace today's live dictation-into-textarea with a clean record/transcribe/refine flow.
+## 1. Pricing & Tiers
 
-- **Mic tap 1 — start recording**
-  - Use existing `MediaRecorder` pattern (like `DictateButton.tsx` → `audio-ai` edge function) instead of in-browser `SpeechRecognition`, so audio is captured first and transcribed later.
-  - Hide the textarea + Refine/Send row while recording.
-  - Show a recording UI inside the cloud: pulsing red dot, elapsed time `mm:ss`, and a thin indeterminate progress bar (animated `bg-background/30` strip). No transcript text shown.
-- **Mic tap 2 — stop**
-  - Stop the recorder, show "Transcribing…" with spinner inside the cloud.
-  - POST blob to `audio-ai` edge function (already exists) → get full transcript.
-- **AI polish gate** (before it floats up to the cloud shelf)
-  - Auto-call `refine-story` edge function on the transcript.
-  - Swap cloud contents to a "Polish preview" card with: refined text in a read-only area, and two buttons — `Edit` (drops refined text back into the normal textarea so user can tweak) and `Send to cloud` (runs the existing save path).
-  - User can also re-record from this screen (discard).
-- **Typed input path** unchanged — still uses textarea + Refine button + Send.
+All tiers: **7-day free trial**, auto-started on signup at Tier 1 (Storyteller). Community read + post on every tier. Card required to start trial.
 
-## 2. AI-generated title on save
+| | Storyteller — $5/mo · $50/yr | Storyteller Pro — $10/mo · $100/yr | Creator — $20/mo · $200/yr |
+|---|---|---|---|
+| Stories | Unlimited | Unlimited | Unlimited |
+| Keynotes & Talks (incl. Sermons) | 3 / month | 10 / month | Unlimited |
+| Podcasts | 3 / month | Unlimited | Unlimited |
+| Books | 1 / month | Unlimited | Unlimited |
+| Community (read + post) | ✓ | ✓ | ✓ |
+| Brand voice + uploads (image/video/audio) | ✓ | ✓ | ✓ |
+| PDF export | ✓ | ✓ | ✓ |
+| Reimagined (Veo/Nano Banana) | — | — | ✓ (pay-per-render credits) |
 
-- Currently `handleSubmit` derives title from first sentence. Change so that:
-  - When saving from the polish gate, use `refine-story`'s returned `title` (already returned, currently ignored).
-  - When saving typed input that wasn't refined, call `refine-story` server-side just to get a title (cheap), or fall back to the first-sentence heuristic if that call fails.
+Reimagined uses **purchasable credit packs** on top of the Creator subscription (e.g. 20 / 50 / 200 renders). Each render decrements `reimagine_credits`; UI shows balance and a "Top up" CTA when low.
 
-## 3. Cloud shelf: clickable, 3–4 newest, rotating
+---
 
-- `CloudShelf` currently shows up to 8. Cap to `slice(0, 4)`.
-- Render each chip as a `<Link to={`/stories?story=${id}`}>` (or `useNavigate` on click). Add hover/focus styles.
-- On the Stories page, read `?story=<id>` from `useSearchParams` on mount; if present and the story exists, open `StoryEditorDialog` for it (clears the param afterwards). No change to the bubbles grid otherwise.
-- New stories prepend; `slice(0, 4)` naturally rotates older ones out. Add `animate-cloud-pop` on the new entry (already present) and a fade-out on the one being dropped (simple CSS transition on opacity/scale keyed off id).
+## 2. Trial & paywall flow
 
-## 4. Stick-figure illustration strip on the homepage
+1. New signup → `handle_new_user` trigger seeds `profiles.subscription_tier = 'trial'`, `trial_ends_at = now() + 7 days`, `trial_tier = 'storyteller'`.
+2. After first login → redirect to **`/welcome`** paywall (homepage-style hero, pill nav, cream/Fraunces aesthetic) showing the three tier cards + monthly/yearly toggle. Primary CTA = "Start 7-day free trial". Users can also "Continue trial" to skip into the app.
+3. A small **trial countdown banner** sits in the TopBar ("4 days left · Choose plan").
+4. Limit enforcement (`useTierLimits` hook) checks monthly counts before create actions in Keynote/Podcast/Book wizards. When hit → modal: "You've used your 3 keynotes this month — upgrade to keep going." with upgrade CTA.
+5. On trial expiry without an active subscription → all create actions blocked, user is redirected to `/welcome` on next route change. Read access to existing content is preserved.
 
-- Add a full-width band above `SiteFooter` on `src/pages/Home.tsx` containing four stick-figure SVG illustrations spread end-to-end:
-  1. Keynote speaker at a podium
-  2. Podcast host at a mic
-  3. Book library / stacked books
-  4. Family reading together
-- Build as inline React SVGs in a new `src/components/home/StickFigureStrip.tsx` so they inherit `currentColor` (works in both themes) and need no asset pipeline. Layout: `flex justify-between items-end` with subtle ground line; responsive (`gap-6`, scales down on mobile).
+---
 
-## Technical details
+## 3. Profile hub (`/profile`)
 
-- **Files to edit**
-  - `src/components/dashboard/PromptWorkspace.tsx` — new recording/polish state machine, drop `useDictation`, switch to `MediaRecorder` + `audio-ai` invoke; cap shelf to 4; chips become links.
-  - `src/components/dashboard/PromptWorkspace.tsx` (`CloudShelf`) — clickable chips, fade-out transition.
-  - `src/pages/tabs/Stories.tsx` — read `?story=` param, auto-open editor.
-  - `src/pages/Home.tsx` — render `<StickFigureStrip />` above footer.
-- **Files to create**
-  - `src/components/home/StickFigureStrip.tsx` — four inline SVG stick-figure scenes.
-- **No backend changes** — `audio-ai` (transcribe) and `refine-story` edge functions already exist and return `{ title, refined }`.
-- **No DB migrations.**
+A new page reachable from the sidebar/topbar avatar with tabs:
 
-## Out of scope (ask if you want it)
+- **Profile** — avatar upload, full name, bio (textarea), title, location, website, social links (X, Instagram, YouTube, TikTok, LinkedIn, Facebook).
+- **Brand voice** — short text box ("Who you are, how you sound") + uploads (image/video/audio for brand assets). Stored on `profiles.brand_voice` and `profile_assets` table. Used as system-prompt context by all AI builders (story refine, keynote, podcast, book, sermon).
+- **Billing** — current plan, renewal date, trial countdown, "Manage subscription" → Stripe customer portal, Reimagined credit balance + "Buy credits".
+- **Community** — shortcut to the user's posts + drafts (lives here as requested, in addition to the footer link).
+- **Account** — email, password reset, sign out, delete account.
 
-- Attachment button wiring (still a placeholder).
-- Editing/regenerating the AI title after save.
+---
+
+## 4. Community
+
+- New footer link **Community** + sidebar entry + profile-hub tab.
+- Existing `community_posts` table already supports sharing — surface it as `/community` feed with post composer (re-uses `SharePostDialog`). All paid + trialing users can read and post.
+
+---
+
+## 5. Sermons template
+
+Add `sermon` as a first-class template alongside Keynote/Podcast:
+- Sermon wizard prompts: scripture reference, congregation context, sermon arc (hook → text → exposition → application → call), length.
+- Reuses `keynote-builder` edge function with a `template: 'sermon'` switch and a sermon-tuned system prompt.
+- Appears in Keynote tab and Podcast tab template pickers (pastors/teachers can build either format from a sermon outline).
+- Counts toward the Keynote monthly limit.
+
+---
+
+## 6. PDF export
+
+- "Export PDF" action on every story, keynote, podcast script, book chapter, and sermon outline.
+- Client-side render via `@react-pdf/renderer` (no server cost). Branded with the user's name/avatar from their profile.
+
+---
+
+## Technical section
+
+### New routes
+- `/welcome` — paywall (post-signup; also reachable from "Upgrade" CTAs).
+- `/profile` — tabbed profile hub.
+- `/community` — feed.
+- `/billing/success` and `/billing/cancel` — Stripe return URLs.
+
+### Database migration (single migration, with GRANTs + RLS)
+```text
+profiles  ADD COLUMN bio text, title text, location text, website text,
+                     socials jsonb DEFAULT '{}'::jsonb,
+                     brand_voice text,
+                     subscription_tier text DEFAULT 'trial',
+                     subscription_status text DEFAULT 'trialing',
+                     subscription_interval text,
+                     trial_ends_at timestamptz,
+                     current_period_end timestamptz,
+                     stripe_customer_id text,
+                     stripe_subscription_id text,
+                     reimagine_credits integer DEFAULT 0
+
+subscription_events (id, user_id, event_type, payload jsonb, created_at)
+usage_counters     (user_id, period_start, keynotes_count, podcasts_count, books_count, reimagines_count, PK(user_id, period_start))
+profile_assets     (id, user_id, kind enum['image','video','audio'], url, label, created_at)
+credit_purchases   (id, user_id, pack text, credits int, amount_cents int, stripe_session_id, created_at)
+```
+- All public-schema tables get `GRANT SELECT/INSERT/UPDATE/DELETE TO authenticated`, `GRANT ALL TO service_role`, RLS enabled, owner-scoped policies, plus admin/support read via `has_role()` (already in place).
+- `handle_new_user` trigger updated to seed trial fields.
+- DB function `public.check_tier_limit(_kind text)` returns boolean; called from wizard `onSubmit`.
+
+### Stripe (Lovable seamless payments)
+- Enable via `payments--enable_stripe_payments`.
+- Six prices via `batch_create_product`: storyteller_monthly/yearly, pro_monthly/yearly, creator_monthly/yearly, all with 7-day trial. Three one-off Reimagined credit packs.
+- Edge functions: `create-checkout-session`, `create-portal-session`, `create-credits-checkout`, `stripe-webhook` (updates `profiles` subscription fields, increments `reimagine_credits` on credit-pack purchase). Webhook is `verify_jwt = false`; others validate JWT in code.
+- Default tax handling: `managed_payments` (full compliance) for digital subscriptions in supported seller countries; fallback to `automatic_tax` otherwise — confirmed at enable time.
+
+### Frontend
+- `useSubscription()` hook → reads `profiles` fields + `usage_counters`. Exposes `tier`, `isTrialing`, `daysLeft`, `canCreate(kind)`, `consume(kind)`.
+- `<TierGate kind="keynote">` wrapper component renders upgrade modal when blocked.
+- `<TrialBanner />` in `TopBar`.
+- `PaywallPage` reuses Home's pill nav, Fraunces headings, cream surface, cloud illustrations.
+- `ProfileHub` uses existing tabs primitive; brand voice/assets injected into all AI edge functions via a new `getUserContext(user_id)` helper.
+- Sermon wizard added under `src/components/builders/SermonWizard.tsx`, registered in Keynote and Podcast tab template pickers.
+- PDF export: `src/lib/pdf.tsx` with `@react-pdf/renderer` templates per content type; "Export PDF" button on each detail view.
+
+### Memory updates
+- New memory `mem://features/subscriptions` documenting tiers, limits, trial rules.
+- New memory `mem://features/brand-voice` documenting how brand voice + assets feed every AI builder.
+- Index updated.
+
+---
+
+## Out of scope (flagging now)
+- Team/org billing, gift subscriptions, coupon codes, referral program.
+- Localized pricing — single USD pricing at launch.
+- Mobile app store billing.
