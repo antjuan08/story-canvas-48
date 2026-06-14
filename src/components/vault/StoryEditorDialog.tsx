@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Loader2, Upload, X, Image as ImageIcon, Music, Video } from "lucide-react";
+import { Loader2, Upload, X, Image as ImageIcon, Music, Video, FolderPlus } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { supabase } from "@/integrations/supabase/client";
@@ -47,6 +47,10 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
   const [category, setCategory] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [folderId, setFolderId] = useState<string>("");
+  const [localFolders, setLocalFolders] = useState<Folder[]>(folders);
+  const [creatingFolder, setCreatingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [savingFolder, setSavingFolder] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -57,6 +61,9 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
   const imgRef = useRef<HTMLInputElement>(null);
   const audRef = useRef<HTMLInputElement>(null);
   const vidRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { setLocalFolders(folders); }, [folders]);
+
 
   useEffect(() => {
     if (!open) return;
@@ -85,6 +92,26 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
       setUploadingKind(null);
     }
   };
+
+  const createFolder = async () => {
+    if (!user) return;
+    const name = newFolderName.trim();
+    if (!name) return toast.error("Folder name required");
+    setSavingFolder(true);
+    const { data, error } = await supabase
+      .from("folders")
+      .insert({ user_id: user.id, name, context: "vault" })
+      .select()
+      .single();
+    setSavingFolder(false);
+    if (error || !data) return toast.error(error?.message ?? "Could not create folder");
+    setLocalFolders((prev) => [...prev, data as Folder].sort((a, b) => a.name.localeCompare(b.name)));
+    setFolderId(data.id);
+    setNewFolderName("");
+    setCreatingFolder(false);
+    toast.success(`Folder "${name}" created`);
+  };
+
 
   const save = async () => {
     if (!user) return;
@@ -172,17 +199,42 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label>Folder</Label>
+              <div className="flex items-center justify-between">
+                <Label>Folder</Label>
+                <button
+                  type="button"
+                  onClick={() => setCreatingFolder((v) => !v)}
+                  className="text-xs text-primary hover:underline flex items-center gap-1"
+                >
+                  <FolderPlus className="h-3 w-3" /> New
+                </button>
+              </div>
               <Select value={folderId || "none"} onValueChange={(v) => setFolderId(v === "none" ? "" : v)}>
                 <SelectTrigger><SelectValue placeholder="No folder" /></SelectTrigger>
                 <SelectContent>
                   <SelectItem value="none">No folder</SelectItem>
-                  {folders.map((f) => (
+                  {localFolders.map((f) => (
                     <SelectItem key={f.id} value={f.id}>{f.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
+              {creatingFolder && (
+                <div className="flex items-center gap-2 pt-1">
+                  <Input
+                    autoFocus
+                    value={newFolderName}
+                    onChange={(e) => setNewFolderName(e.target.value)}
+                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); createFolder(); } }}
+                    placeholder="Folder name"
+                    className="h-8 text-sm"
+                  />
+                  <Button size="sm" disabled={savingFolder} onClick={createFolder}>
+                    {savingFolder ? <Loader2 className="h-3 w-3 animate-spin" /> : "Add"}
+                  </Button>
+                </div>
+              )}
             </div>
+
           </div>
 
           <div className="space-y-1.5">

@@ -52,13 +52,14 @@ export default function Home() {
     } finally { setBusy(false); }
   };
 
-  const handleGoogle = async () => {
+  const handleOAuth = async (provider: "google" | "apple") => {
     setBusy(true);
-    const result = await lovable.auth.signInWithOAuth("google", {
+    const result = await lovable.auth.signInWithOAuth(provider, {
       redirect_uri: `${window.location.origin}/dashboard`,
     });
     if (result.error) { toast.error(result.error.message ?? "Sign-in failed"); setBusy(false); }
   };
+
 
   return (
     <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: CREAM, color: INK }}>
@@ -90,10 +91,19 @@ export default function Home() {
                 variant="outline"
                 className="w-full rounded-full border-foreground/20 bg-white hover:bg-foreground/5 text-sm h-10"
                 disabled={busy}
-                onClick={handleGoogle}
+                onClick={() => handleOAuth("google")}
               >
                 Continue with Google
               </Button>
+              <Button
+                variant="outline"
+                className="w-full rounded-full border-foreground/20 bg-black text-white hover:bg-black/90 hover:text-white text-sm h-10"
+                disabled={busy}
+                onClick={() => handleOAuth("apple")}
+              >
+                Continue with Apple
+              </Button>
+
 
               <div className="flex items-center gap-2">
                 <div className="h-px flex-1" style={{ backgroundColor: "hsl(240,8%,80%)" }} />
