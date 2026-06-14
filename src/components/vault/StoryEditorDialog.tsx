@@ -47,6 +47,10 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
   const [category, setCategory] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [folderId, setFolderId] = useState<string>("");
+  const [localFolders, setLocalFolders] = useState<Folder[]>(folders);
+  const [creatingFolder, setCreatingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [savingFolder, setSavingFolder] = useState(false);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [videoUrl, setVideoUrl] = useState<string | null>(null);
@@ -57,6 +61,9 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
   const imgRef = useRef<HTMLInputElement>(null);
   const audRef = useRef<HTMLInputElement>(null);
   const vidRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => { setLocalFolders(folders); }, [folders]);
+
 
   useEffect(() => {
     if (!open) return;
