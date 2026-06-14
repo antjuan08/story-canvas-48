@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Loader2, Mic, Plus, Sparkles, GraduationCap, Heart, PartyPopper, MessagesSquare } from "lucide-react";
+import { Loader2, Mic, Sparkles, GraduationCap, Heart, PartyPopper, MessagesSquare } from "lucide-react";
+import { CloudAddButton } from "@/components/visuals/CloudAddButton";
 import { toast } from "sonner";
 import { TabNav } from "@/components/nav/TabNav";
 import { Button } from "@/components/ui/button";
