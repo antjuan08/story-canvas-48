@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { DictateButton } from "@/components/vault/DictateButton";
+import { STORY_CATEGORIES } from "@/lib/categories";
 
 const schema = z.object({
   title: z.string().trim().min(1, "Title is required").max(160),
