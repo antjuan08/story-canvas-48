@@ -279,7 +279,7 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
               />
             </svg>
 
-            <div className="relative px-12 sm:px-20 md:px-28 lg:px-32 pt-24 sm:pt-28 pb-20 sm:pb-24">
+            <div className="relative px-12 sm:px-20 md:px-28 lg:px-32 pt-32 sm:pt-40 pb-14 sm:pb-18">
               {mode === "recording" ? (
                 <RecordingView elapsed={`${mm}:${ss}`} onStop={stopRecording} />
               ) : mode === "transcribing" || mode === "polishing" ? (
