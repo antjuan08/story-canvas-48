@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useStories } from "@/hooks/use-stories";
+import keynoteIllustration from "@/assets/illustration-keynote.png";
 
 type Keynote = {
   id: string; title: string; audience: string | null; tone: string | null; length: string | null;
@@ -36,7 +37,17 @@ export default function Keynote() {
     <div className="min-h-[calc(100vh-7rem)]">
       <TabNav active="Keynote" />
 
-      <div className="max-w-6xl mx-auto px-6 pt-10 pb-20 grid lg:grid-cols-[1fr_2fr] gap-10">
+      <div className="max-w-6xl mx-auto px-6 pt-8">
+        <div className="flex items-center gap-6 mb-2">
+          <img src={keynoteIllustration} alt="Stick figure giving a keynote talk" width={140} height={140} className="w-32 h-32 object-contain shrink-0" loading="lazy" />
+          <div>
+            <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">On the stage.</h1>
+            <p className="text-sm text-foreground/60 mt-1">Build a talk. Weave your stories in.</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-6 pt-8 pb-20 grid lg:grid-cols-[1fr_2fr] gap-10">
         {/* LEFT — list */}
         <aside>
           <div className="flex items-center justify-between mb-5">

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, Mic, Plus, Sparkles } from "lucide-react";
+import { Loader2, Mic, Plus, Sparkles, GraduationCap, Heart, PartyPopper, MessagesSquare } from "lucide-react";
 import { toast } from "sonner";
 import { TabNav } from "@/components/nav/TabNav";
 import { Button } from "@/components/ui/button";
@@ -7,23 +7,34 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useStories } from "@/hooks/use-stories";
+import podcastIllustration from "@/assets/illustration-podcast.png";
 
 type Podcast = {
   id: string; show_name: string; episode_title: string; topic: string | null;
   format: string | null; length: string | null; payload: any; created_at: string;
 };
 
+const TEMPLATES = [
+  { id: "educational",   label: "Educational",   icon: GraduationCap,  format: "documentary",     tone: "clear, informed, curious",  desc: "Teach a concept clearly with examples." },
+  { id: "encouraging",   label: "Encouraging",   icon: Heart,          format: "solo narrative",  tone: "warm, uplifting, hopeful",  desc: "Lift the listener with a heart-led story." },
+  { id: "entertaining",  label: "Entertaining",  icon: PartyPopper,    format: "conversational",  tone: "playful, energetic, witty", desc: "Keep it lively, surprising, fun." },
+  { id: "conversational",label: "Conversational",icon: MessagesSquare, format: "interview",       tone: "natural, candid, curious",  desc: "Two voices, real talk, deep questions." },
+] as const;
+
+type TemplateId = typeof TEMPLATES[number]["id"];
+
 export default function Podcast() {
   const { user } = useAuth();
   const [items, setItems] = useState<Podcast[]>([]);
   const [view, setView] = useState<ViewMode>("grid");
-  const [open, setOpen] = useState(false);
+  const [pickerOpen, setPickerOpen] = useState(false);
+  const [wizardOpen, setWizardOpen] = useState(false);
+  const [template, setTemplate] = useState<TemplateId | null>(null);
   const [selected, setSelected] = useState<Podcast | null>(null);
 
   const refetch = async () => {
@@ -33,24 +44,33 @@ export default function Podcast() {
   };
   useEffect(() => { refetch(); }, [user]);
 
+  const pickTemplate = (id: TemplateId) => {
+    setTemplate(id);
+    setPickerOpen(false);
+    setWizardOpen(true);
+  };
+
   return (
     <div className="min-h-[calc(100vh-7rem)] relative">
       <TabNav active="Podcast" />
 
-      <div className="max-w-6xl mx-auto px-6 pt-10 pb-32">
-        <div className="flex items-end justify-between mb-8">
-          <div>
-            <h1 className="font-serif text-5xl font-light tracking-tight">On the mic.</h1>
-            <p className="text-sm text-foreground/60 mt-1">{items.length} episodes drafted</p>
+      <div className="max-w-6xl mx-auto px-6 pt-8 pb-32">
+        <div className="flex items-end justify-between mb-8 gap-6">
+          <div className="flex items-center gap-6">
+            <img src={podcastIllustration} alt="Two stick figures podcasting" width={140} height={140} className="w-32 h-32 object-contain shrink-0" loading="lazy" />
+            <div>
+              <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">On the mic.</h1>
+              <p className="text-sm text-foreground/60 mt-1">{items.length} episode{items.length === 1 ? "" : "s"} drafted</p>
+            </div>
           </div>
           <ViewToggle value={view} onChange={setView} />
         </div>
 
         {items.length === 0 ? (
-          <div className="text-center py-24 text-foreground/50">
+          <div className="text-center py-16 text-foreground/50">
             <Mic className="h-8 w-8 mx-auto mb-3 opacity-40" />
             <div className="font-serif text-2xl mb-1">No episodes yet</div>
-            <p className="text-sm">Tap the + button to draft your first show.</p>
+            <p className="text-sm">Tap the + button to pick a show template.</p>
           </div>
         ) : view === "grid" ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -63,7 +83,7 @@ export default function Podcast() {
                   <div className="font-serif text-xl leading-tight line-clamp-2">{p.episode_title}</div>
                   <p className="text-xs text-foreground/60 mt-2 line-clamp-2">{p.payload?.logline ?? p.topic ?? "—"}</p>
                   <div className="text-[10px] text-foreground/50 mt-3 uppercase tracking-widest">
-                    {p.format} · {p.length}
+                    {p.payload?.template ?? p.format} · {p.length}
                   </div>
                 </div>
               </button>
@@ -77,7 +97,7 @@ export default function Podcast() {
                   <Mic className="h-4 w-4 text-foreground/50 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="font-serif text-base truncate">{p.episode_title}</div>
-                    <div className="text-xs text-foreground/50 truncate">{p.show_name} · {p.format}</div>
+                    <div className="text-xs text-foreground/50 truncate">{p.show_name} · {p.payload?.template ?? p.format}</div>
                   </div>
                   <span className="text-xs text-foreground/50">{new Date(p.created_at).toLocaleDateString()}</span>
                 </button>
@@ -87,14 +107,35 @@ export default function Podcast() {
         )}
       </div>
 
-      {/* FAB */}
       <button
-        onClick={() => setOpen(true)}
+        onClick={() => setPickerOpen(true)}
         aria-label="New podcast"
         className="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-foreground text-background flex items-center justify-center shadow-2xl hover:scale-105 transition z-30"
       >
         <Plus className="h-6 w-6" />
       </button>
+
+      <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
+        <DialogContent className="sm:max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl">Pick a show template</DialogTitle>
+            <DialogDescription>Choose the vibe — we'll seed the wizard with the right format and tone.</DialogDescription>
+          </DialogHeader>
+          <div className="grid sm:grid-cols-2 gap-3 py-2">
+            {TEMPLATES.map((t) => {
+              const Icon = t.icon;
+              return (
+                <button key={t.id} onClick={() => pickTemplate(t.id)}
+                  className="text-left p-5 rounded-2xl border border-foreground/10 hover:bg-foreground/5 hover:border-foreground/30 transition">
+                  <Icon className="h-5 w-5 mb-2 text-foreground/70" />
+                  <div className="font-serif text-lg">{t.label}</div>
+                  <p className="text-xs text-foreground/60 mt-1">{t.desc}</p>
+                </button>
+              );
+            })}
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={!!selected} onOpenChange={(v) => !v && setSelected(null)}>
         <DialogContent className="sm:max-w-2xl max-h-[80vh] overflow-y-auto">
@@ -102,7 +143,12 @@ export default function Podcast() {
         </DialogContent>
       </Dialog>
 
-      <PodcastWizard open={open} onOpenChange={setOpen} onSaved={() => refetch()} />
+      <PodcastWizard
+        open={wizardOpen}
+        template={template}
+        onOpenChange={(v) => { setWizardOpen(v); if (!v) setTemplate(null); }}
+        onSaved={() => refetch()}
+      />
     </div>
   );
 }
@@ -147,24 +193,19 @@ function PodcastView({ p }: { p: Podcast }) {
           <p className="text-sm leading-relaxed">{x.outro_script}</p>
         </section>
       )}
-      {Array.isArray(x.show_notes) && x.show_notes.length > 0 && (
-        <section>
-          <div className="text-xs uppercase tracking-widest text-foreground/50 mb-1">Show notes</div>
-          <ul className="list-disc list-inside text-sm space-y-1 text-foreground/70">
-            {x.show_notes.map((n: string, i: number) => <li key={i}>{n}</li>)}
-          </ul>
-        </section>
-      )}
     </div>
   );
 }
 
-function PodcastWizard({ open, onOpenChange, onSaved }: { open: boolean; onOpenChange: (v: boolean) => void; onSaved: () => void }) {
+function PodcastWizard({ open, template, onOpenChange, onSaved }: {
+  open: boolean; template: TemplateId | null;
+  onOpenChange: (v: boolean) => void; onSaved: () => void;
+}) {
   const { stories } = useStories();
+  const tmpl = TEMPLATES.find((t) => t.id === template);
   const [step, setStep] = useState(0);
   const [showName, setShowName] = useState("");
   const [topic, setTopic] = useState("");
-  const [format, setFormat] = useState("solo narrative");
   const [length, setLength] = useState("20 minutes");
   const [storyIds, setStoryIds] = useState<string[]>([]);
   const [busy, setBusy] = useState(false);
@@ -174,7 +215,15 @@ function PodcastWizard({ open, onOpenChange, onSaved }: { open: boolean; onOpenC
   const submit = async () => {
     setBusy(true);
     const { data, error } = await supabase.functions.invoke("podcast-builder", {
-      body: { show_name: showName, topic, format, length, story_ids: storyIds },
+      body: {
+        show_name: showName,
+        topic,
+        format: tmpl?.format ?? "solo narrative",
+        tone: tmpl?.tone,
+        template: tmpl?.id,
+        length,
+        story_ids: storyIds,
+      },
     });
     setBusy(false);
     if (error || data?.error) { toast.error(data?.error ?? error?.message ?? "Failed"); return; }
@@ -191,19 +240,6 @@ function PodcastWizard({ open, onOpenChange, onSaved }: { open: boolean; onOpenC
     { label: "Topic", node: (
       <div className="space-y-2"><Label>What's this episode about?</Label>
         <Textarea value={topic} onChange={(e) => setTopic(e.target.value)} rows={3} /></div>
-    )},
-    { label: "Format", node: (
-      <div className="space-y-2"><Label>Format</Label>
-        <Select value={format} onValueChange={setFormat}>
-          <SelectTrigger><SelectValue /></SelectTrigger>
-          <SelectContent>
-            <SelectItem value="solo narrative">Solo narrative</SelectItem>
-            <SelectItem value="interview">Interview</SelectItem>
-            <SelectItem value="documentary">Documentary</SelectItem>
-            <SelectItem value="conversational">Conversational</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
     )},
     { label: "Length", node: (
       <div className="space-y-2"><Label>Target length</Label>
@@ -240,6 +276,7 @@ function PodcastWizard({ open, onOpenChange, onSaved }: { open: boolean; onOpenC
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-lg">
         <DialogHeader>
+          <div className="text-xs uppercase tracking-widest text-foreground/50">{tmpl?.label ?? "Podcast"} template</div>
           <DialogTitle className="font-serif text-2xl">{steps[step].label}</DialogTitle>
           <div className="text-xs text-foreground/50">Step {step + 1} of {steps.length}</div>
         </DialogHeader>
