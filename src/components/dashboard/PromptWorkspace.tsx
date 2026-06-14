@@ -4,6 +4,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { useStories } from "@/hooks/use-stories";
+import { useDictation } from "@/hooks/use-dictation";
 import { cn } from "@/lib/utils";
 import { TabNav } from "@/components/nav/TabNav";
 
