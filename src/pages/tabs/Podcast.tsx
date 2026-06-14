@@ -107,13 +107,9 @@ export default function Podcast() {
         )}
       </div>
 
-      <button
-        onClick={() => setPickerOpen(true)}
-        aria-label="New podcast"
-        className="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-foreground text-background flex items-center justify-center shadow-2xl hover:scale-105 transition z-30"
-      >
-        <Plus className="h-6 w-6" />
-      </button>
+      <div className="relative z-10 flex justify-center mt-16 mb-20">
+        <CloudAddButton onClick={() => setPickerOpen(true)} label="New podcast" />
+      </div>
 
       <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
         <DialogContent className="sm:max-w-xl">
