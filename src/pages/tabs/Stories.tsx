@@ -1,4 +1,5 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Search, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { TabNav } from "@/components/nav/TabNav";
@@ -33,6 +34,22 @@ export default function Stories() {
   const [editing, setEditing] = useState<Story | null>(null);
   const [open, setOpen] = useState(false);
   const [organizing, setOrganizing] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  // Deep-link: ?story=<id> opens that story in the editor dialog.
+  useEffect(() => {
+    const id = searchParams.get("story");
+    if (!id || stories.length === 0) return;
+    const match = stories.find((s) => s.id === id);
+    if (match) {
+      setEditing(match);
+      setOpen(true);
+      const next = new URLSearchParams(searchParams);
+      next.delete("story");
+      setSearchParams(next, { replace: true });
+    }
+  }, [searchParams, stories, setSearchParams]);
+
 
   const allTags = useMemo(() => {
     const set = new Set<string>();

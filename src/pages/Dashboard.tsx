@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { PromptWorkspace } from "@/components/dashboard/PromptWorkspace";
 import { CloudsBackdrop } from "@/components/visuals/CloudsBackdrop";
+import { StickFigureStrip } from "@/components/home/StickFigureStrip";
 
 export function Dashboard() {
   // Read current theme at mount + on changes so the cream overrides only apply in light/system-light mode.
@@ -36,6 +37,7 @@ export function Dashboard() {
       <CloudsBackdrop className="opacity-60" variant={isDark ? "dark" : "light"} />
       <div className="relative z-10">
         <PromptWorkspace activeTab="Stories" />
+        <StickFigureStrip />
       </div>
     </div>
   );
