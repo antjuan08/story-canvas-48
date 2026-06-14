@@ -166,7 +166,13 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
               <div className="flex items-center justify-between mt-4">
                 <div className="flex items-center gap-1">
                   <IconBtn label="Attach"><Paperclip className="h-4 w-4" /></IconBtn>
-                  <IconBtn label="Dictate"><Mic className="h-4 w-4" /></IconBtn>
+                  <IconBtn
+                    label={dictation.listening ? "Stop dictation" : "Dictate"}
+                    onClick={dictation.toggle}
+                    active={dictation.listening}
+                  >
+                    <Mic className={cn("h-4 w-4", dictation.listening && "animate-pulse")} />
+                  </IconBtn>
                   <button
                     type="button"
                     onClick={handleRefine}
