@@ -7,6 +7,7 @@ export const NAV_TABS = [
   { label: "Keynote", path: "/keynote" },
   { label: "Podcast", path: "/podcast" },
   { label: "Book", path: "/book" },
+  { label: "Feedback", path: "/feedback" },
   { label: "Reimagined", path: "/reimagined" },
 ] as const;
 

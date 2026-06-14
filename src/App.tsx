@@ -13,6 +13,7 @@ import Keynote from "@/pages/tabs/Keynote";
 import Podcast from "@/pages/tabs/Podcast";
 import Book from "@/pages/tabs/Book";
 import Reimagined from "@/pages/tabs/Reimagined";
+import Feedback from "@/pages/tabs/Feedback";
 import { Settings } from "@/pages/Settings";
 import Welcome from "@/pages/Welcome";
 import Profile from "@/pages/Profile";
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="/podcast" element={<Protected><Podcast /></Protected>} />
             <Route path="/book" element={<Protected><Book /></Protected>} />
             <Route path="/reimagined" element={<Protected><Reimagined /></Protected>} />
+            <Route path="/feedback" element={<Protected><Feedback /></Protected>} />
             <Route path="/community" element={<Protected><Community /></Protected>} />
             <Route path="/profile" element={<Protected><Profile /></Protected>} />
             <Route path="/welcome" element={<Protected><Welcome /></Protected>} />
