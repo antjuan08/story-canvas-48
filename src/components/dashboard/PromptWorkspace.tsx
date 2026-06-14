@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowUp, Cloud, Loader2, Mic, Paperclip } from "lucide-react";
+import { ArrowUp, Cloud, Loader2, Mic, Paperclip, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
@@ -40,6 +40,7 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
   const { stories, refetch } = useStories();
   const [text, setText] = useState("");
   const [saving, setSaving] = useState(false);
+  const [refining, setRefining] = useState(false);
   const [floating, setFloating] = useState<string | null>(null);
   const [recentClouds, setRecentClouds] = useState<CloudItem[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -88,6 +89,25 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
     }, 1500);
   };
 
+  const handleRefine = async () => {
+    if (!text.trim() || refining || saving) return;
+    setRefining(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("refine-story", {
+        body: { text: text.trim() },
+      });
+      if (error || data?.error) throw new Error(error?.message ?? data?.error ?? "Refine failed");
+      if (data?.refined) {
+        setText(data.refined);
+        toast.success("Refined by AI — tweak then send");
+      }
+    } catch (e) {
+      toast.error((e as Error).message);
+    } finally {
+      setRefining(false);
+    }
+  };
+
   return (
     <div className="min-h-[calc(100vh-7rem)] flex flex-col">
       <TabNav />
@@ -109,40 +129,75 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
             </div>
           )}
 
-          <div className="rounded-3xl border border-foreground/10 bg-background/60 backdrop-blur-sm shadow-sm focus-within:border-foreground/30 focus-within:shadow-md transition-all">
-            <textarea
-              ref={textareaRef}
-              value={text}
-              onChange={(e) => setText(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                  e.preventDefault();
-                  handleSubmit();
-                }
-              }}
-              rows={1}
-              placeholder={PLACEHOLDER[activeTab]}
-              disabled={saving}
-              className="w-full resize-none bg-transparent px-5 pt-4 pb-2 text-base text-foreground placeholder:text-foreground/40 outline-none disabled:opacity-60"
-            />
-            <div className="flex items-center justify-between px-3 pb-3 pt-1">
-              <div className="flex items-center gap-1">
-                <IconBtn label="Attach"><Paperclip className="h-4 w-4" /></IconBtn>
-                <IconBtn label="Dictate"><Mic className="h-4 w-4" /></IconBtn>
+          <div className="relative w-full group">
+            {/* Cloud-shaped backdrop */}
+            <svg
+              viewBox="0 0 200 110"
+              preserveAspectRatio="none"
+              className="absolute inset-0 w-full h-full drop-shadow-md transition-all group-focus-within:drop-shadow-xl"
+              aria-hidden
+            >
+              <path
+                d="M40,80 C18,80 10,55 30,48 C28,28 58,18 72,32 C82,16 116,18 124,38 C148,30 172,46 168,66 C188,70 188,90 168,92 L48,92 C30,92 26,84 40,80 Z"
+                fill="hsl(var(--background) / 0.92)"
+                stroke="hsl(var(--foreground) / 0.18)"
+                strokeWidth="0.5"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+
+            {/* Cloud content (inset so it fits inside the cloud body) */}
+            <div className="relative px-12 sm:px-20 pt-12 pb-10">
+              <textarea
+                ref={textareaRef}
+                value={text}
+                onChange={(e) => setText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                    e.preventDefault();
+                    handleSubmit();
+                  }
+                }}
+                rows={2}
+                placeholder={PLACEHOLDER[activeTab]}
+                disabled={saving}
+                className="w-full resize-none bg-transparent text-base text-foreground placeholder:text-foreground/40 outline-none disabled:opacity-60 text-center"
+              />
+              <div className="flex items-center justify-between mt-3">
+                <div className="flex items-center gap-1">
+                  <IconBtn label="Attach"><Paperclip className="h-4 w-4" /></IconBtn>
+                  <IconBtn label="Dictate"><Mic className="h-4 w-4" /></IconBtn>
+                  <button
+                    type="button"
+                    onClick={handleRefine}
+                    disabled={!text.trim() || refining || saving}
+                    aria-label="Refine with AI"
+                    title="Refine with AI"
+                    className={cn(
+                      "h-9 px-3 inline-flex items-center gap-1.5 rounded-full text-xs transition-colors",
+                      text.trim() && !refining && !saving
+                        ? "text-foreground/70 hover:text-foreground hover:bg-foreground/5"
+                        : "text-foreground/30",
+                    )}
+                  >
+                    {refining ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
+                    Refine
+                  </button>
+                </div>
+                <button
+                  onClick={handleSubmit}
+                  disabled={!text.trim() || saving || refining}
+                  aria-label="Send"
+                  className={cn(
+                    "h-9 w-9 rounded-full flex items-center justify-center transition-all",
+                    text.trim() && !saving && !refining
+                      ? "bg-foreground text-background hover:scale-105"
+                      : "bg-foreground/10 text-foreground/40",
+                  )}
+                >
+                  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
+                </button>
               </div>
-              <button
-                onClick={handleSubmit}
-                disabled={!text.trim() || saving}
-                aria-label="Send"
-                className={cn(
-                  "h-9 w-9 rounded-full flex items-center justify-center transition-all",
-                  text.trim() && !saving
-                    ? "bg-foreground text-background hover:scale-105"
-                    : "bg-foreground/10 text-foreground/40",
-                )}
-              >
-                {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
-              </button>
             </div>
           </div>
 
