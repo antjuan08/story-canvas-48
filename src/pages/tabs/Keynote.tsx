@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { StoryPicker } from "@/components/builders/StoryPicker";
+import { ItemOverflowMenu } from "@/components/shared/ItemOverflowMenu";
 import keynoteIllustration from "@/assets/illustration-keynote.png";
 
 
