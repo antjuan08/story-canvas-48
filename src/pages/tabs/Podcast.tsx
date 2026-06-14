@@ -12,6 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { StoryPicker } from "@/components/builders/StoryPicker";
+import { ItemOverflowMenu } from "@/components/shared/ItemOverflowMenu";
 import podcastIllustration from "@/assets/illustration-podcast.png";
 
 
@@ -76,25 +77,30 @@ export default function Podcast() {
         ) : view === "grid" ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {items.map((p, i) => (
-              <button key={p.id} onClick={() => setSelected(p)} className="group text-left rounded-3xl bg-background/80 border border-foreground/10 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-0.5">
-                <div className={`h-32 ${COVERS[i % COVERS.length]} flex items-end p-4`}>
-                  <div className="text-background/90 text-xs uppercase tracking-widest">{p.show_name}</div>
+              <div key={p.id} className="relative group">
+                <div className="absolute top-3 right-3 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <ItemOverflowMenu kind="podcast" item={p} table="podcasts" onDeleted={refetch} />
                 </div>
-                <div className="p-5">
-                  <div className="font-serif text-xl leading-tight line-clamp-2">{p.episode_title}</div>
-                  <p className="text-xs text-foreground/60 mt-2 line-clamp-2">{p.payload?.logline ?? p.topic ?? "—"}</p>
-                  <div className="text-[10px] text-foreground/50 mt-3 uppercase tracking-widest">
-                    {p.payload?.template ?? p.format} · {p.length}
+                <button onClick={() => setSelected(p)} className="w-full text-left rounded-3xl bg-background/80 border border-foreground/10 overflow-hidden hover:shadow-lg transition-all hover:-translate-y-0.5">
+                  <div className={`h-32 ${COVERS[i % COVERS.length]} flex items-end p-4`}>
+                    <div className="text-background/90 text-xs uppercase tracking-widest">{p.show_name}</div>
                   </div>
-                </div>
-              </button>
+                  <div className="p-5">
+                    <div className="font-serif text-xl leading-tight line-clamp-2">{p.episode_title}</div>
+                    <p className="text-xs text-foreground/60 mt-2 line-clamp-2">{p.payload?.logline ?? p.topic ?? "—"}</p>
+                    <div className="text-[10px] text-foreground/50 mt-3 uppercase tracking-widest">
+                      {p.payload?.template ?? p.format} · {p.length}
+                    </div>
+                  </div>
+                </button>
+              </div>
             ))}
           </div>
         ) : (
           <ul className="divide-y divide-foreground/10 rounded-2xl border border-foreground/10 bg-background/60 overflow-hidden">
             {items.map((p) => (
-              <li key={p.id}>
-                <button onClick={() => setSelected(p)} className="w-full px-5 py-4 text-left hover:bg-foreground/5 flex items-center gap-4">
+              <li key={p.id} className="flex items-center">
+                <button onClick={() => setSelected(p)} className="flex-1 px-5 py-4 text-left hover:bg-foreground/5 flex items-center gap-4">
                   <Mic className="h-4 w-4 text-foreground/50 shrink-0" />
                   <div className="flex-1 min-w-0">
                     <div className="font-serif text-base truncate">{p.episode_title}</div>
@@ -102,6 +108,7 @@ export default function Podcast() {
                   </div>
                   <span className="text-xs text-foreground/50">{new Date(p.created_at).toLocaleDateString()}</span>
                 </button>
+                <div className="pr-3"><ItemOverflowMenu kind="podcast" item={p} table="podcasts" onDeleted={refetch} /></div>
               </li>
             ))}
           </ul>

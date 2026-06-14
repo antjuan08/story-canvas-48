@@ -11,6 +11,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { StoryPicker } from "@/components/builders/StoryPicker";
+import { ItemOverflowMenu } from "@/components/shared/ItemOverflowMenu";
 import { cn } from "@/lib/utils";
 import bookIllustration from "@/assets/illustration-book.png";
 
@@ -68,7 +69,10 @@ export default function Book() {
             <div className="text-xs uppercase tracking-widest text-foreground/50 mb-3">My books</div>
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {books.map((b) => (
-                <div key={b.id} className="p-5 rounded-2xl border border-foreground/10 bg-background/70">
+                <div key={b.id} className="relative group p-5 rounded-2xl border border-foreground/10 bg-background/70">
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ItemOverflowMenu kind="book" item={b} table="books" onDeleted={refetch} />
+                  </div>
                   <BookOpen className="h-4 w-4 text-foreground/40 mb-2" />
                   <div className="font-serif text-xl leading-tight">{b.title}</div>
                   <div className="text-[10px] uppercase tracking-widest text-foreground/50 mt-1">{b.template}</div>

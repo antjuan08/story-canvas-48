@@ -11,6 +11,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { StoryPicker } from "@/components/builders/StoryPicker";
+import { ItemOverflowMenu } from "@/components/shared/ItemOverflowMenu";
 import keynoteIllustration from "@/assets/illustration-keynote.png";
 
 
@@ -55,22 +56,28 @@ export default function Keynote() {
           ) : view === "grid" ? (
             <div className="grid grid-cols-2 gap-3">
               {keynotes.map((k) => (
-                <button key={k.id} onClick={() => setSelected(k)}
-                  className="text-left rounded-2xl border border-foreground/10 bg-background/70 p-4 hover:shadow-md transition aspect-square flex flex-col">
-                  <Sparkles className="h-4 w-4 text-foreground/40 mb-2" />
-                  <div className="font-serif text-base leading-tight line-clamp-3">{k.title}</div>
-                  <div className="text-[10px] text-foreground/50 mt-auto">{k.length ?? ""}</div>
-                </button>
+                <div key={k.id} className="relative group">
+                  <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ItemOverflowMenu kind="keynote" item={k} table="keynotes" onDeleted={refetch} />
+                  </div>
+                  <button onClick={() => setSelected(k)}
+                    className="w-full text-left rounded-2xl border border-foreground/10 bg-background/70 p-4 hover:shadow-md transition aspect-square flex flex-col">
+                    <Sparkles className="h-4 w-4 text-foreground/40 mb-2" />
+                    <div className="font-serif text-base leading-tight line-clamp-3">{k.title}</div>
+                    <div className="text-[10px] text-foreground/50 mt-auto">{k.length ?? ""}</div>
+                  </button>
+                </div>
               ))}
             </div>
           ) : (
             <ul className="divide-y divide-foreground/10 rounded-xl border border-foreground/10 overflow-hidden">
               {keynotes.map((k) => (
-                <li key={k.id}>
-                  <button onClick={() => setSelected(k)} className="w-full text-left px-4 py-3 hover:bg-foreground/5">
+                <li key={k.id} className="relative flex items-center">
+                  <button onClick={() => setSelected(k)} className="flex-1 text-left px-4 py-3 hover:bg-foreground/5">
                     <div className="font-serif text-sm">{k.title}</div>
                     <div className="text-xs text-foreground/50">{k.audience ?? "—"}</div>
                   </button>
+                  <div className="pr-3"><ItemOverflowMenu kind="keynote" item={k} table="keynotes" onDeleted={refetch} /></div>
                 </li>
               ))}
             </ul>
