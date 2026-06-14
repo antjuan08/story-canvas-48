@@ -220,12 +220,27 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
   );
 }
 
-function IconBtn({ children, label }: { children: React.ReactNode; label: string }) {
+function IconBtn({
+  children,
+  label,
+  onClick,
+  active,
+}: {
+  children: React.ReactNode;
+  label: string;
+  onClick?: () => void;
+  active?: boolean;
+}) {
   return (
     <button
       type="button"
       aria-label={label}
-      className="h-9 w-9 rounded-full flex items-center justify-center text-background hover:bg-background/10 transition-colors"
+      aria-pressed={active}
+      onClick={onClick}
+      className={cn(
+        "h-9 w-9 rounded-full flex items-center justify-center text-background transition-colors",
+        active ? "bg-background/20" : "hover:bg-background/10",
+      )}
     >
       {children}
     </button>
