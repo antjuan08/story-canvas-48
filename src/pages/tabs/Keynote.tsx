@@ -72,11 +72,12 @@ export default function Keynote() {
           ) : (
             <ul className="divide-y divide-foreground/10 rounded-xl border border-foreground/10 overflow-hidden">
               {keynotes.map((k) => (
-                <li key={k.id}>
-                  <button onClick={() => setSelected(k)} className="w-full text-left px-4 py-3 hover:bg-foreground/5">
+                <li key={k.id} className="relative flex items-center">
+                  <button onClick={() => setSelected(k)} className="flex-1 text-left px-4 py-3 hover:bg-foreground/5">
                     <div className="font-serif text-sm">{k.title}</div>
                     <div className="text-xs text-foreground/50">{k.audience ?? "—"}</div>
                   </button>
+                  <div className="pr-3"><ItemOverflowMenu kind="keynote" item={k} table="keynotes" onDeleted={refetch} /></div>
                 </li>
               ))}
             </ul>
