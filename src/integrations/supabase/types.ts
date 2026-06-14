@@ -14,6 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
+      books: {
+        Row: {
+          created_at: string
+          id: string
+          payload: Json
+          premise: string | null
+          template: string
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          payload?: Json
+          premise?: string | null
+          template: string
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          payload?: Json
+          premise?: string | null
+          template?: string
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       collection_stories: {
         Row: {
           collection_id: string
@@ -449,30 +482,45 @@ export type Database = {
       reimagined_stories: {
         Row: {
           angle: string | null
+          cover_url: string | null
           created_at: string
+          duration_seconds: number | null
           id: string
           payload: Json
           source_story_id: string | null
+          status: string
           title: string
           user_id: string
+          video_prompt: string | null
+          video_url: string | null
         }
         Insert: {
           angle?: string | null
+          cover_url?: string | null
           created_at?: string
+          duration_seconds?: number | null
           id?: string
           payload?: Json
           source_story_id?: string | null
+          status?: string
           title: string
           user_id: string
+          video_prompt?: string | null
+          video_url?: string | null
         }
         Update: {
           angle?: string | null
+          cover_url?: string | null
           created_at?: string
+          duration_seconds?: number | null
           id?: string
           payload?: Json
           source_story_id?: string | null
+          status?: string
           title?: string
           user_id?: string
+          video_prompt?: string | null
+          video_url?: string | null
         }
         Relationships: []
       }
