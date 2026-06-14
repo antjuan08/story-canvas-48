@@ -1,39 +1,36 @@
-## Changes
+# Plan
 
-### Home / Landing (`/`)
-- Shrink the auth card to ~50% size: reduce max-width from `max-w-md` to `max-w-xs`, tighten padding (`p-5`), smaller heading (`text-2xl`), compact inputs/buttons.
-- **Invert the clouds globally on Home**: background becomes off-white (cream `hsl(48, 56%, 95%)`), clouds rendered in black with white/cream stroke. Tree-swing scene re-tinted for the light background.
-- Hero text and brand mark recolored for light background (ink text).
+## 1. Tab highlight bug (Home + Stories both lighting up)
+In `src/components/nav/TabNav.tsx`, active state is `active === t.label || location.pathname === t.path`. When a page passes `active="Stories"` but lands on a route whose pathname is `/` or shares a prefix, Home also matches. Fix by relying on a single source of truth:
+- Remove the `active` prop entirely.
+- Compute `isActive` from `location.pathname === t.path` only (exact match).
+- Update all call sites (`Stories.tsx`, `Keynote.tsx`, `Podcast.tsx`, `Book.tsx`, `Reimagined.tsx`, `Dashboard.tsx`) to drop the `active` prop.
 
-### Dashboard (post-login home, `/dashboard`)
-- Keep current dark background everywhere EXCEPT Home — confirmed by request ("keep background black, except homepage").
-- No structural change beyond ensuring Dashboard remains the post-login landing (already is).
+## 2. Stories bubble text centering
+In `src/pages/tabs/Stories.tsx`, bubble button uses `flex flex-col justify-end` which pins text to the bottom of the circle. Change to `justify-center items-center text-center`, drop the absolute-positioned category chip, and stack: category (tiny caps) → title (serif) → snippet → tag chips, all centered. Keep the small dot indicator.
 
-### Stories tab (`/dashboard/stories`)
-- Text color: force `text-foreground` → explicit black/ink so titles and snippets read against pastel bubbles.
-- **Dynamic bubble sizing**: compute size from count — more stories ⇒ smaller bubbles. Size = `clamp(96px, 520/√count, 224px)` applied via inline style; replaces fixed `BUBBLE_SIZES`.
-- **Bubble hover animation**: gentle bobbing float loop on each bubble; on hover scale ~1.08, lift, soft shadow, and faster bob — like floating soap bubbles. Pure CSS keyframes + per-bubble animation-delay.
-- **White cloud illustration** added behind the Stories grid (reuse `CloudsBackdrop` with a white-cloud variant prop, or inline a white-fill version).
-- **Categories**: predefined set — Family, Friendship, Business, Hard Times, Love, Travel, Childhood, Other. Category filter chips at top of Stories. Auto-categorize new/updated stories via a lightweight edge function (`categorize-story`) using `google/gemini-2.5-flash-lite` that returns one category + tags; result stored in existing `stories.category` and `stories.tags` columns. Backfill button to categorize unlabeled stories.
-- **Tags & keywords**: surface tag chips on each bubble/list row; tag filter alongside category filter; tags editable in the StoryEditorDialog (already has `tags` column).
+## 3. Login box: nudge right, make ~1.5× bigger but not wide
+In `src/pages/Home.tsx`:
+- Auth column: change `justify-self-center lg:justify-self-start` → `lg:justify-self-end lg:pr-8` so the card sits to the right of the left column (matching the screenshot).
+- Card width: `max-w-[300px]` → `max-w-[360px]` (about 1.5× area via taller padding, not wider).
+- Increase inner spacing: padding `p-5` → `p-7`, heading `text-xl` → `text-2xl`, inputs `h-8 text-xs` → `h-10 text-sm`, buttons `h-8 text-xs` → `h-10 text-sm`, label `text-[10px]` → `text-xs`.
+- Keep the right-side hero headline and tree-swing illustration where they are.
 
-### Tab pages — bigger illustrations
-- **Keynote**: move `illustration-keynote.png` to the LEFT of the builder card, render at ~`w-[420px]` (was small/decorative).
-- **Podcast**: enlarge `illustration-podcast.png` to ~`w-[420px]`, placed left of the feed/wizard.
-- **Book**: enlarge `illustration-book.png` similarly, left of the open-book panel.
-- Use two-column layout `lg:grid-cols-[420px_1fr]`; illustrations stack above on mobile.
-- Reimagined stays as-is (not mentioned).
+## 4. Theme switcher (Light / Dark / System)
+A `useTheme` hook already exists (`src/hooks/use-theme.ts`) with `applyTheme` and persistence. Wire it up:
+- Call `initTheme()` once in `src/main.tsx`.
+- Add a compact Sun/Moon/Monitor segmented toggle to `src/components/layout/TopBar.tsx` (right side, before the avatar) using the existing hook.
+- Ensure the Dashboard's inline cream overrides only apply in light mode (wrap the inline `style` vars behind `theme !== 'dark'`, or move them under a `.light` selector) so dark mode actually goes dark on the home page.
+- Settings page (`src/pages/Settings.tsx`) already has theme cards — leave as-is, just remove the "Syncra purple glow" copy to match the neutral palette.
 
-### Files to touch
-- `src/pages/Home.tsx` — shrink card, invert color scheme.
-- `src/components/visuals/CloudsBackdrop.tsx` — add `variant: "light" | "dark"` (black clouds on cream vs white clouds on dark).
-- `src/pages/tabs/Stories.tsx` — dynamic sizing, hover bubble animation, black text, category/tag filters, white-cloud backdrop.
-- `src/pages/tabs/Keynote.tsx`, `Podcast.tsx`, `Book.tsx` — bigger left-side illustrations.
-- New edge function `supabase/functions/categorize-story/index.ts` + call site after story save.
-- No schema migration needed (`stories.category` and `stories.tags` already exist).
+## 5. Mobile / tablet optimization
+- **TopBar / nav (mobile)**: in `TopBar.tsx`, hide the inline tab row under `md:` and show a hamburger button that opens a `Sheet` (shadcn) listing the same `NAV_TABS`. Tablet (`md`+) keeps the pill nav.
+- **Home/Dashboard prompt position on phone**: in `src/pages/Dashboard.tsx`, reduce top padding on `<md` (e.g. `pt-4 md:pt-16`) and move the central prompt workspace above the cloud shelf so the text box sits near the top of the viewport on phones. Stack the tab pill below the prompt on mobile.
+- **Login page on phone** (`Home.tsx`): single column under `lg:`, card `max-w-[340px]` centered with `pt-10` so it appears near the top; hide the tree-swing SVG under `md:` (already partly done) and shrink the headline.
+- **Tabs pages (Keynote/Podcast/Book/Reimagined/Stories)**: ensure the illustration + card grid switches to single column under `md:` and the search/filter row wraps (`flex-wrap gap-2`).
+- Verify at 390×844 (iPhone), 768 (tablet), 1280+ (desktop).
 
-### Out of scope (per user)
-- No copy change to "StoryYou Labs, Inc." footer text.
-- No changes to Reimagined tab.
-
-Confirm and I'll build it.
+## Technical notes
+- No schema or backend changes.
+- No new dependencies; `Sheet` and theme hook already exist.
+- Files touched: `src/components/nav/TabNav.tsx`, `src/components/layout/TopBar.tsx`, `src/pages/Home.tsx`, `src/pages/Dashboard.tsx`, `src/pages/tabs/Stories.tsx` (+ small `active` prop removals in the other tab pages), `src/main.tsx`, `src/pages/Settings.tsx`.

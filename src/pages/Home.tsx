@@ -73,20 +73,22 @@ export default function Home() {
       </div>
 
       {/* Main grid */}
-      <div className="relative z-10 min-h-screen grid lg:grid-cols-2 items-center px-6 lg:px-16 pt-28 lg:pt-20 pb-24 gap-10">
-        {/* Auth card — compact */}
-        <div className="w-full max-w-[300px] justify-self-center lg:justify-self-start">
-          <div className="rounded-2xl p-5 shadow-xl border" style={{ backgroundColor: CREAM, color: INK, borderColor: "hsl(240,8%,80%)" }}>
-            <h1 className="font-serif text-xl font-light tracking-tight leading-tight">
+      <div className="relative z-10 min-h-screen grid lg:grid-cols-[1fr_auto_1fr] items-center px-6 lg:px-16 pt-24 lg:pt-20 pb-24 gap-10">
+        {/* Left spacer / hero on desktop */}
+        <div className="hidden lg:block" />
+
+        {/* Auth card — centered on mobile, nudged right of center on desktop */}
+        <div className="w-full max-w-[360px] justify-self-center">
+          <div className="rounded-2xl p-7 shadow-xl border" style={{ backgroundColor: CREAM, color: INK, borderColor: "hsl(240,8%,80%)" }}>
+            <h1 className="font-serif text-2xl font-light tracking-tight leading-tight">
               Your <em className="italic">stories</em>, kept like{" "}
               <span className="inline-block px-1.5 rounded" style={{ backgroundColor: "hsl(0,0%,88%)" }}>clouds</span>.
             </h1>
 
-            <div className="mt-4 space-y-3">
+            <div className="mt-5 space-y-3.5">
               <Button
                 variant="outline"
-                size="sm"
-                className="w-full rounded-full border-foreground/20 bg-white hover:bg-foreground/5 text-xs h-8"
+                className="w-full rounded-full border-foreground/20 bg-white hover:bg-foreground/5 text-sm h-10"
                 disabled={busy}
                 onClick={handleGoogle}
               >
@@ -95,7 +97,7 @@ export default function Home() {
 
               <div className="flex items-center gap-2">
                 <div className="h-px flex-1" style={{ backgroundColor: "hsl(240,8%,80%)" }} />
-                <span className="text-[10px]" style={{ color: "hsl(240,5%,45%)" }}>or</span>
+                <span className="text-[11px]" style={{ color: "hsl(240,5%,45%)" }}>or</span>
                 <div className="h-px flex-1" style={{ backgroundColor: "hsl(240,8%,80%)" }} />
               </div>
 
@@ -103,35 +105,36 @@ export default function Home() {
                 <TabsList className="grid grid-cols-2 w-full rounded-full p-0.5 h-auto border"
                   style={{ backgroundColor: "white", borderColor: "hsl(240,8%,85%)" }}>
                   <TabsTrigger value="signup"
-                    className="rounded-full text-xs py-1 data-[state=active]:bg-[hsl(240,12%,6%)] data-[state=active]:text-[hsl(48,56%,95%)]">
+                    className="rounded-full text-xs py-1.5 data-[state=active]:bg-[hsl(240,12%,6%)] data-[state=active]:text-[hsl(48,56%,95%)]">
                     Get started
                   </TabsTrigger>
                   <TabsTrigger value="signin"
-                    className="rounded-full text-xs py-1 data-[state=active]:bg-[hsl(240,12%,6%)] data-[state=active]:text-[hsl(48,56%,95%)]">
+                    className="rounded-full text-xs py-1.5 data-[state=active]:bg-[hsl(240,12%,6%)] data-[state=active]:text-[hsl(48,56%,95%)]">
                     Log in
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="signup" className="space-y-2 mt-3">
+                <TabsContent value="signup" className="space-y-2.5 mt-3.5">
                   <Field id="su-name" label="Full name" type="text" value={name} onChange={setName} />
                   <Field id="su-email" label="Email" type="email" value={email} onChange={setEmail} />
                   <Field id="su-pw" label="Password" type="password" value={password} onChange={setPassword} />
                   <SubmitBtn busy={busy} onClick={() => handleEmail("signup")}>Create account</SubmitBtn>
                 </TabsContent>
 
-                <TabsContent value="signin" className="space-y-2 mt-3">
+                <TabsContent value="signin" className="space-y-2.5 mt-3.5">
                   <Field id="si-email" label="Email" type="email" value={email} onChange={setEmail} />
                   <Field id="si-pw" label="Password" type="password" value={password} onChange={setPassword} />
                   <SubmitBtn busy={busy} onClick={() => handleEmail("signin")}>Sign in</SubmitBtn>
                 </TabsContent>
               </Tabs>
 
-              <p className="text-[10px] text-center pt-0.5" style={{ color: "hsl(240,5%,45%)" }}>
+              <p className="text-[11px] text-center pt-1" style={{ color: "hsl(240,5%,45%)" }}>
                 By continuing you agree to our Terms & Privacy.
               </p>
             </div>
           </div>
         </div>
+
 
         {/* Right column — hero line + tree swing */}
         <div className="hidden lg:flex flex-col items-end justify-center pr-4 relative">
@@ -155,19 +158,20 @@ export default function Home() {
 function Field({ id, label, type, value, onChange }: { id: string; label: string; type: string; value: string; onChange: (v: string) => void }) {
   return (
     <div className="space-y-1">
-      <Label htmlFor={id} className="text-[10px] font-medium" style={{ color: "hsl(240,8%,30%)" }}>{label}</Label>
+      <Label htmlFor={id} className="text-xs font-medium" style={{ color: "hsl(240,8%,30%)" }}>{label}</Label>
       <Input id={id} type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="rounded-xl bg-white border-foreground/15 focus-visible:ring-foreground/20 h-8 text-xs" />
+        className="rounded-xl bg-white border-foreground/15 focus-visible:ring-foreground/20 h-10 text-sm" />
     </div>
   );
 }
 
 function SubmitBtn({ children, busy, onClick }: { children: React.ReactNode; busy: boolean; onClick: () => void }) {
   return (
-    <Button size="sm" className="w-full rounded-full bg-[hsl(240,12%,6%)] text-[hsl(48,56%,95%)] hover:bg-[hsl(240,12%,18%)] mt-1 h-8 text-xs"
+    <Button className="w-full rounded-full bg-[hsl(240,12%,6%)] text-[hsl(48,56%,95%)] hover:bg-[hsl(240,12%,18%)] mt-1 h-10 text-sm"
       disabled={busy} onClick={onClick}>{children}</Button>
   );
 }
+
 
 function TreeSwingScene() {
   return (

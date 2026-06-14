@@ -90,14 +90,15 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
 
   return (
     <div className="min-h-[calc(100vh-7rem)] flex flex-col">
-      <TabNav active={activeTab} />
+      <TabNav />
 
       <CloudShelf clouds={recentClouds} />
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-10">
-        <h1 className="font-serif text-4xl sm:text-5xl md:text-6xl font-light tracking-tight text-center max-w-3xl text-foreground">
+      <div className="flex-1 flex flex-col items-center justify-start md:justify-center px-4 pt-4 md:pt-10 pb-10">
+        <h1 className="font-serif text-3xl sm:text-5xl md:text-6xl font-light tracking-tight text-center max-w-3xl text-foreground">
           {HEADING[activeTab]}
         </h1>
+
 
         <div className="relative w-full max-w-2xl mt-10">
           {floating && (
