@@ -22,8 +22,9 @@ export function CloudsBackdrop({ className = "", variant = "dark" }: { className
 }
 
 function Cloud({ v, className, style }: { v: Variant; className?: string; style?: React.CSSProperties }) {
-  const fill = v === "light" ? "hsl(240, 12%, 6%)" : v === "white" ? "#ffffff" : "hsl(48, 56%, 95%)";
-  const stroke = v === "light" ? "hsl(48, 56%, 95%)" : v === "white" ? "hsl(240, 8%, 70%)" : "hsl(240, 12%, 6%)";
+  // light = charcoal clouds on cream/off-white bg; dark/white = white clouds on dark bg
+  const fill = v === "light" ? "hsl(240, 6%, 28%)" : "#ffffff";
+  const stroke = v === "light" ? "hsl(240, 6%, 18%)" : "hsl(240, 8%, 70%)";
   return (
     <svg viewBox="0 0 200 110" className={className} style={style} aria-hidden>
       <path
