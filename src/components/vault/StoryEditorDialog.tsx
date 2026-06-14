@@ -93,6 +93,26 @@ export function StoryEditorDialog({ open, onOpenChange, story, folders, onSaved 
     }
   };
 
+  const createFolder = async () => {
+    if (!user) return;
+    const name = newFolderName.trim();
+    if (!name) return toast.error("Folder name required");
+    setSavingFolder(true);
+    const { data, error } = await supabase
+      .from("folders")
+      .insert({ user_id: user.id, name, context: "vault" })
+      .select()
+      .single();
+    setSavingFolder(false);
+    if (error || !data) return toast.error(error?.message ?? "Could not create folder");
+    setLocalFolders((prev) => [...prev, data as Folder].sort((a, b) => a.name.localeCompare(b.name)));
+    setFolderId(data.id);
+    setNewFolderName("");
+    setCreatingFolder(false);
+    toast.success(`Folder "${name}" created`);
+  };
+
+
   const save = async () => {
     if (!user) return;
     const parsed = schema.safeParse({ title, body, category });
