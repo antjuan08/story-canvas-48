@@ -61,15 +61,9 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: INK, color: CREAM }}>
-      {/* Animated B&W clouds across the whole hero */}
-      <CloudsBackdrop className="z-0" />
-
-      {/* Top cream wavy curve */}
-      <svg className="absolute top-0 left-0 w-full z-[1]" viewBox="0 0 1440 160" preserveAspectRatio="none"
-        style={{ height: "14vh", minHeight: 100 }} aria-hidden>
-        <path d="M0,0 L1440,0 L1440,80 C1200,150 960,20 720,70 C480,120 240,40 0,100 Z" fill={CREAM} />
-      </svg>
+    <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: CREAM, color: INK }}>
+      {/* Animated black clouds across the whole hero */}
+      <CloudsBackdrop className="z-0" variant="light" />
 
       {/* Brand mark */}
       <div className="absolute top-5 left-6 z-20 flex items-center gap-2">
@@ -79,63 +73,61 @@ export default function Home() {
       </div>
 
       {/* Main grid */}
-      <div className="relative z-10 min-h-screen grid lg:grid-cols-2 items-center px-6 lg:px-16 pt-32 lg:pt-24 pb-24 gap-10">
-        {/* Auth card */}
-        <div className="w-full max-w-md justify-self-center lg:justify-self-start">
-          <div className="rounded-[2rem] p-8 sm:p-10 shadow-2xl" style={{ backgroundColor: CREAM, color: INK }}>
-            <h1 className="font-serif text-3xl sm:text-4xl font-light tracking-tight leading-[1.1]">
+      <div className="relative z-10 min-h-screen grid lg:grid-cols-2 items-center px-6 lg:px-16 pt-28 lg:pt-20 pb-24 gap-10">
+        {/* Auth card — compact */}
+        <div className="w-full max-w-[300px] justify-self-center lg:justify-self-start">
+          <div className="rounded-2xl p-5 shadow-xl border" style={{ backgroundColor: CREAM, color: INK, borderColor: "hsl(240,8%,80%)" }}>
+            <h1 className="font-serif text-xl font-light tracking-tight leading-tight">
               Your <em className="italic">stories</em>, kept like{" "}
-              <span className="inline-block px-2 rounded-md" style={{ backgroundColor: "hsl(0,0%,90%)" }}>clouds</span>.
+              <span className="inline-block px-1.5 rounded" style={{ backgroundColor: "hsl(0,0%,88%)" }}>clouds</span>.
             </h1>
-            <p className="mt-3 text-sm" style={{ color: "hsl(240,8%,35%)" }}>
-              Sign up to start capturing, shaping, and revisiting the moments worth remembering.
-            </p>
 
-            <div className="mt-7 space-y-4">
+            <div className="mt-4 space-y-3">
               <Button
                 variant="outline"
-                className="w-full rounded-full border-foreground/20 bg-white hover:bg-foreground/5"
+                size="sm"
+                className="w-full rounded-full border-foreground/20 bg-white hover:bg-foreground/5 text-xs h-8"
                 disabled={busy}
                 onClick={handleGoogle}
               >
                 Continue with Google
               </Button>
 
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <div className="h-px flex-1" style={{ backgroundColor: "hsl(240,8%,80%)" }} />
-                <span className="text-xs" style={{ color: "hsl(240,5%,45%)" }}>or</span>
+                <span className="text-[10px]" style={{ color: "hsl(240,5%,45%)" }}>or</span>
                 <div className="h-px flex-1" style={{ backgroundColor: "hsl(240,8%,80%)" }} />
               </div>
 
               <Tabs defaultValue="signup">
-                <TabsList className="grid grid-cols-2 w-full rounded-full p-1 h-auto border"
+                <TabsList className="grid grid-cols-2 w-full rounded-full p-0.5 h-auto border"
                   style={{ backgroundColor: "white", borderColor: "hsl(240,8%,85%)" }}>
                   <TabsTrigger value="signup"
-                    className="rounded-full text-sm data-[state=active]:bg-[hsl(240,12%,6%)] data-[state=active]:text-[hsl(48,56%,95%)]">
+                    className="rounded-full text-xs py-1 data-[state=active]:bg-[hsl(240,12%,6%)] data-[state=active]:text-[hsl(48,56%,95%)]">
                     Get started
                   </TabsTrigger>
                   <TabsTrigger value="signin"
-                    className="rounded-full text-sm data-[state=active]:bg-[hsl(240,12%,6%)] data-[state=active]:text-[hsl(48,56%,95%)]">
+                    className="rounded-full text-xs py-1 data-[state=active]:bg-[hsl(240,12%,6%)] data-[state=active]:text-[hsl(48,56%,95%)]">
                     Log in
                   </TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="signup" className="space-y-3 mt-4">
+                <TabsContent value="signup" className="space-y-2 mt-3">
                   <Field id="su-name" label="Full name" type="text" value={name} onChange={setName} />
                   <Field id="su-email" label="Email" type="email" value={email} onChange={setEmail} />
                   <Field id="su-pw" label="Password" type="password" value={password} onChange={setPassword} />
                   <SubmitBtn busy={busy} onClick={() => handleEmail("signup")}>Create account</SubmitBtn>
                 </TabsContent>
 
-                <TabsContent value="signin" className="space-y-3 mt-4">
+                <TabsContent value="signin" className="space-y-2 mt-3">
                   <Field id="si-email" label="Email" type="email" value={email} onChange={setEmail} />
                   <Field id="si-pw" label="Password" type="password" value={password} onChange={setPassword} />
                   <SubmitBtn busy={busy} onClick={() => handleEmail("signin")}>Sign in</SubmitBtn>
                 </TabsContent>
               </Tabs>
 
-              <p className="text-[11px] text-center pt-1" style={{ color: "hsl(240,5%,45%)" }}>
-                By continuing you agree to our Terms & Privacy Policy.
+              <p className="text-[10px] text-center pt-0.5" style={{ color: "hsl(240,5%,45%)" }}>
+                By continuing you agree to our Terms & Privacy.
               </p>
             </div>
           </div>
@@ -143,7 +135,7 @@ export default function Home() {
 
         {/* Right column — hero line + tree swing */}
         <div className="hidden lg:flex flex-col items-end justify-center pr-4 relative">
-          <h2 className="font-serif text-5xl xl:text-6xl font-light leading-[1.05] max-w-md text-right" style={{ color: CREAM }}>
+          <h2 className="font-serif text-5xl xl:text-6xl font-light leading-[1.05] max-w-md text-right" style={{ color: INK }}>
             A quiet sky
             <br />
             for the <em className="italic">stories</em>
@@ -155,12 +147,6 @@ export default function Home() {
 
       <TreeSwingScene />
 
-      {/* Bottom cream wavy curve */}
-      <svg className="absolute bottom-0 left-0 w-full z-[1]" viewBox="0 0 1440 120" preserveAspectRatio="none"
-        style={{ height: "9vh", minHeight: 60 }} aria-hidden>
-        <path d="M0,120 L1440,120 L1440,40 C1180,100 940,10 700,55 C460,95 220,30 0,85 Z" fill={CREAM} />
-      </svg>
-
       <div className="absolute bottom-3 left-6 text-xs z-20" style={{ color: INK }}>2026 © StoryYou Labs, Inc.</div>
     </div>
   );
@@ -168,17 +154,17 @@ export default function Home() {
 
 function Field({ id, label, type, value, onChange }: { id: string; label: string; type: string; value: string; onChange: (v: string) => void }) {
   return (
-    <div className="space-y-1.5">
-      <Label htmlFor={id} className="text-xs font-medium" style={{ color: "hsl(240,8%,30%)" }}>{label}</Label>
+    <div className="space-y-1">
+      <Label htmlFor={id} className="text-[10px] font-medium" style={{ color: "hsl(240,8%,30%)" }}>{label}</Label>
       <Input id={id} type={type} value={value} onChange={(e) => onChange(e.target.value)}
-        className="rounded-2xl bg-white border-foreground/15 focus-visible:ring-foreground/20" />
+        className="rounded-xl bg-white border-foreground/15 focus-visible:ring-foreground/20 h-8 text-xs" />
     </div>
   );
 }
 
 function SubmitBtn({ children, busy, onClick }: { children: React.ReactNode; busy: boolean; onClick: () => void }) {
   return (
-    <Button className="w-full rounded-full bg-[hsl(240,12%,6%)] text-[hsl(48,56%,95%)] hover:bg-[hsl(240,12%,18%)] mt-1"
+    <Button size="sm" className="w-full rounded-full bg-[hsl(240,12%,6%)] text-[hsl(48,56%,95%)] hover:bg-[hsl(240,12%,18%)] mt-1 h-8 text-xs"
       disabled={busy} onClick={onClick}>{children}</Button>
   );
 }
@@ -187,27 +173,25 @@ function TreeSwingScene() {
   return (
     <svg className="hidden md:block absolute bottom-12 right-0 w-[36vw] max-w-[480px] pointer-events-none z-[2]"
       viewBox="0 0 560 420" aria-hidden>
-      <path d="M30,300 C20,220 110,160 200,180 C260,120 400,130 460,200 C540,210 570,290 510,340 C440,400 90,400 40,340 Z"
-        fill="hsl(48, 56%, 95%)" />
       <path d="M300,140 C295,200 290,260 295,330 L325,330 C330,260 325,200 320,140 Z"
-        fill="white" stroke="#111" strokeWidth="2.5" />
-      <path d="M305,180 q5,30 0,60" stroke="#111" strokeWidth="1.5" fill="none" />
-      <path d="M315,170 q-4,40 0,80" stroke="#111" strokeWidth="1.5" fill="none" />
+        fill={INK} stroke={INK} strokeWidth="2.5" />
+      <path d="M305,180 q5,30 0,60" stroke={CREAM} strokeWidth="1.5" fill="none" />
+      <path d="M315,170 q-4,40 0,80" stroke={CREAM} strokeWidth="1.5" fill="none" />
       <g>
-        <ellipse cx="310" cy="100" rx="120" ry="78" fill="white" stroke="#111" strokeWidth="2.5" />
-        <ellipse cx="240" cy="115" rx="60" ry="48" fill="white" stroke="#111" strokeWidth="2.5" />
-        <ellipse cx="390" cy="110" rx="70" ry="52" fill="white" stroke="#111" strokeWidth="2.5" />
-        <ellipse cx="310" cy="60" rx="70" ry="42" fill="white" stroke="#111" strokeWidth="2.5" />
+        <ellipse cx="310" cy="100" rx="120" ry="78" fill={INK} stroke={INK} strokeWidth="2.5" />
+        <ellipse cx="240" cy="115" rx="60" ry="48" fill={INK} stroke={INK} strokeWidth="2.5" />
+        <ellipse cx="390" cy="110" rx="70" ry="52" fill={INK} stroke={INK} strokeWidth="2.5" />
+        <ellipse cx="310" cy="60" rx="70" ry="42" fill={INK} stroke={INK} strokeWidth="2.5" />
       </g>
-      <path d="M360,150 q40,5 70,30" stroke="#111" strokeWidth="3" fill="none" />
-      <line x1="410" y1="178" x2="395" y2="280" stroke="#111" strokeWidth="2" />
-      <line x1="445" y1="186" x2="455" y2="285" stroke="#111" strokeWidth="2" />
+      <path d="M360,150 q40,5 70,30" stroke={INK} strokeWidth="3" fill="none" />
+      <line x1="410" y1="178" x2="395" y2="280" stroke={INK} strokeWidth="2" />
+      <line x1="445" y1="186" x2="455" y2="285" stroke={INK} strokeWidth="2" />
       <g>
-        <ellipse cx="425" cy="305" rx="48" ry="22" fill="#111" />
-        <ellipse cx="425" cy="303" rx="48" ry="22" fill="white" stroke="#111" strokeWidth="2.5" />
-        <ellipse cx="425" cy="303" rx="28" ry="12" fill="hsl(48, 56%, 95%)" stroke="#111" strokeWidth="2" />
+        <ellipse cx="425" cy="305" rx="48" ry="22" fill={INK} />
+        <ellipse cx="425" cy="303" rx="48" ry="22" fill={INK} stroke={INK} strokeWidth="2.5" />
+        <ellipse cx="425" cy="303" rx="28" ry="12" fill={CREAM} stroke={INK} strokeWidth="2" />
       </g>
-      <path d="M120,360 Q280,340 500,360" stroke="#111" strokeWidth="1.5" fill="none" />
+      <path d="M120,360 Q280,340 500,360" stroke={INK} strokeWidth="1.5" fill="none" opacity="0.4" />
     </svg>
   );
 }

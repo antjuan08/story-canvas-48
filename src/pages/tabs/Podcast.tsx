@@ -55,15 +55,15 @@ export default function Podcast() {
       <TabNav active="Podcast" />
 
       <div className="max-w-6xl mx-auto px-6 pt-8 pb-32">
-        <div className="flex items-end justify-between mb-8 gap-6">
-          <div className="flex items-center gap-6">
-            <img src={podcastIllustration} alt="Two stick figures podcasting" width={140} height={140} className="w-32 h-32 object-contain shrink-0" loading="lazy" />
+        <div className="grid md:grid-cols-[360px_1fr] items-center gap-8 mb-8">
+          <img src={podcastIllustration} alt="Two stick figures podcasting" className="w-full max-w-[360px] object-contain" loading="lazy" />
+          <div className="flex items-end justify-between gap-6">
             <div>
               <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">On the mic.</h1>
               <p className="text-sm text-foreground/60 mt-1">{items.length} episode{items.length === 1 ? "" : "s"} drafted</p>
             </div>
+            <ViewToggle value={view} onChange={setView} />
           </div>
-          <ViewToggle value={view} onChange={setView} />
         </div>
 
         {items.length === 0 ? (
