@@ -6,9 +6,10 @@
 
 @layer base {
   :root {
-    /* Light theme */
-    --background: 0 0% 99%;
+    /* Light theme — Flow cream */
+    --background: 48 56% 95%;
     --foreground: 240 10% 8%;
+
 
     --glass: 0 0% 100% / 0.7;
     --glass-border: 270 30% 88% / 0.6;
