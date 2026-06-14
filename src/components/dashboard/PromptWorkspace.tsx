@@ -195,7 +195,7 @@ function IconBtn({ children, label }: { children: React.ReactNode; label: string
     <button
       type="button"
       aria-label={label}
-      className="h-9 w-9 rounded-full flex items-center justify-center text-background hover:bg-background/10 transition-colors"
+      className="h-9 w-9 rounded-full flex items-center justify-center text-foreground hover:bg-foreground/10 transition-colors"
     >
       {children}
     </button>
