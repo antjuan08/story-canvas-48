@@ -5,3 +5,12 @@ verify_jwt = false
 
 [functions.stage-architect]
 verify_jwt = true
+
+[functions.create-checkout]
+verify_jwt = false
+
+[functions.create-portal-session]
+verify_jwt = false
+
+[functions.payments-webhook]
+verify_jwt = false
