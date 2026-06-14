@@ -45,6 +45,11 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
   const [floating, setFloating] = useState<string | null>(null);
   const [recentClouds, setRecentClouds] = useState<CloudItem[]>([]);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const dictation = useDictation({
+    onTranscript: (chunk) => {
+      setText((prev) => (prev ? prev.replace(/\s+$/, "") + " " : "") + chunk.trim());
+    },
+  });
 
   useEffect(() => {
     const filter = activeTab.toLowerCase();
