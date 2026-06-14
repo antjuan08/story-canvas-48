@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Search, Sparkles, Loader2 } from "lucide-react";
+import { Search, Sparkles, Loader2, MoreHorizontal, CheckSquare, Trash2, FolderPlus, X } from "lucide-react";
 import { toast } from "sonner";
 import { TabNav } from "@/components/nav/TabNav";
 import { ViewToggle, type ViewMode } from "@/components/ui/view-toggle";
@@ -8,10 +8,37 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { CloudsBackdrop } from "@/components/visuals/CloudsBackdrop";
 import { CloudAddButton } from "@/components/visuals/CloudAddButton";
-import { useStories, type Story } from "@/hooks/use-stories";
+import { useStories, useFolders, type Story } from "@/hooks/use-stories";
 import { StoryEditorDialog } from "@/components/vault/StoryEditorDialog";
 import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
 import { cn } from "@/lib/utils";
+import { STORY_CATEGORIES } from "@/lib/categories";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
 
 const BUBBLE_FILLS = [
   "bg-[hsl(48,70%,86%)]",
@@ -22,11 +49,13 @@ const BUBBLE_FILLS = [
   "bg-[hsl(340,55%,88%)]",
 ];
 
-const CATEGORIES = ["All", "Family", "Friendship", "Business", "Hard Times", "Love", "Travel", "Childhood", "Faith", "Other"] as const;
+const CATEGORIES = ["All", ...STORY_CATEGORIES] as const;
 type Category = typeof CATEGORIES[number];
 
 export default function Stories() {
+  const { user } = useAuth();
   const { stories, refetch } = useStories();
+  const { folders, refetch: refetchFolders } = useFolders("vault");
   const [view, setView] = useState<ViewMode>("grid");
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<Category>("All");
@@ -35,6 +64,15 @@ export default function Stories() {
   const [open, setOpen] = useState(false);
   const [organizing, setOrganizing] = useState(false);
   const [searchParams, setSearchParams] = useSearchParams();
+
+  // Selection mode & folder dialog
+  const [selectMode, setSelectMode] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+  const [confirmDelete, setConfirmDelete] = useState(false);
+  const [folderDialogOpen, setFolderDialogOpen] = useState(false);
+  const [newFolderName, setNewFolderName] = useState("");
+  const [creatingFolder, setCreatingFolder] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Deep-link: ?story=<id> opens that story in the editor dialog.
   useEffect(() => {
@@ -49,7 +87,6 @@ export default function Stories() {
       setSearchParams(next, { replace: true });
     }
   }, [searchParams, stories, setSearchParams]);
-
 
   const allTags = useMemo(() => {
     const set = new Set<string>();
@@ -67,9 +104,24 @@ export default function Stories() {
     });
   }, [stories, query, category, activeTag]);
 
-  const openStory = (s: Story) => { setEditing(s); setOpen(true); };
+  const exitSelect = () => { setSelectMode(false); setSelectedIds(new Set()); };
 
-  // Bubble size shrinks as count grows: clamp(96px, 520/√n, 224px)
+  const toggleSelect = (id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
+
+  const handleCardClick = (s: Story) => {
+    if (selectMode) toggleSelect(s.id);
+    else { setEditing(s); setOpen(true); }
+  };
+
+  const selectAllVisible = () => setSelectedIds(new Set(filtered.map((s) => s.id)));
+
+  // Bubble size shrinks as count grows
   const bubblePx = useMemo(() => {
     const n = Math.max(1, filtered.length);
     return Math.round(Math.max(96, Math.min(224, 520 / Math.sqrt(n))));
@@ -94,11 +146,41 @@ export default function Stories() {
     } finally { setOrganizing(false); }
   };
 
+  const createFolder = async () => {
+    if (!user) return;
+    const name = newFolderName.trim();
+    if (!name) { toast.error("Give your folder a name"); return; }
+    setCreatingFolder(true);
+    const { error } = await supabase.from("folders").insert({
+      user_id: user.id, name, context: "vault",
+    });
+    setCreatingFolder(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Folder "${name}" created`);
+    setNewFolderName("");
+    setFolderDialogOpen(false);
+    refetchFolders();
+  };
+
+  const deleteSelected = async () => {
+    if (selectedIds.size === 0) return;
+    setDeleting(true);
+    const { error } = await supabase
+      .from("stories")
+      .delete()
+      .in("id", Array.from(selectedIds));
+    setDeleting(false);
+    setConfirmDelete(false);
+    if (error) { toast.error(error.message); return; }
+    toast.success(`Deleted ${selectedIds.size} story${selectedIds.size === 1 ? "" : "ies"}`);
+    exitSelect();
+    refetch();
+  };
+
   return (
     <div className="min-h-[calc(100vh-7rem)] relative">
       <TabNav active="Stories" />
 
-      {/* White clouds drift across the Stories backdrop */}
       <CloudsBackdrop className="z-0 opacity-40" variant="light" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
@@ -118,7 +200,10 @@ export default function Stories() {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
           <div>
             <h1 className="font-serif text-5xl font-light tracking-tight">Your stories</h1>
-            <p className="text-sm text-foreground/60 mt-1">{stories.length} captured · floating like bubbles</p>
+            <p className="text-sm text-foreground/60 mt-1">
+              {stories.length} captured · floating like bubbles
+              {folders.length > 0 && <> · {folders.length} folder{folders.length === 1 ? "" : "s"}</>}
+            </p>
           </div>
           <div className="flex items-center gap-3">
             <Button variant="outline" size="sm" className="rounded-full" onClick={autoOrganize} disabled={organizing}>
@@ -135,8 +220,66 @@ export default function Stories() {
               />
             </div>
             <ViewToggle value={view} onChange={setView} />
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  className="rounded-full h-9 w-9"
+                  aria-label="More actions"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-52">
+                <DropdownMenuItem onSelect={() => { setSelectMode(true); setSelectedIds(new Set()); }}>
+                  <CheckSquare className="h-4 w-4 mr-2" /> Select stories
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  disabled={selectedIds.size === 0}
+                  onSelect={(e) => { e.preventDefault(); setConfirmDelete(true); }}
+                  className="text-destructive focus:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete selected {selectedIds.size > 0 && `(${selectedIds.size})`}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onSelect={() => setFolderDialogOpen(true)}>
+                  <FolderPlus className="h-4 w-4 mr-2" /> New folder
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
+
+        {/* Selection bar */}
+        {selectMode && (
+          <div className="flex items-center justify-between gap-3 mb-4 px-4 py-2 rounded-full bg-foreground text-background text-sm">
+            <span>{selectedIds.size} selected</span>
+            <div className="flex items-center gap-2">
+              <button
+                onClick={selectAllVisible}
+                className="text-xs px-3 py-1 rounded-full bg-background/15 hover:bg-background/25 transition"
+              >
+                Select all visible
+              </button>
+              <button
+                onClick={() => setConfirmDelete(true)}
+                disabled={selectedIds.size === 0}
+                className="text-xs px-3 py-1 rounded-full bg-destructive text-destructive-foreground disabled:opacity-40 inline-flex items-center gap-1"
+              >
+                <Trash2 className="h-3 w-3" /> Delete
+              </button>
+              <button
+                onClick={exitSelect}
+                className="text-xs px-3 py-1 rounded-full bg-background/15 hover:bg-background/25 transition inline-flex items-center gap-1"
+              >
+                <X className="h-3 w-3" /> Done
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Category filter chips */}
         <div className="flex flex-wrap gap-2 mb-4">
@@ -188,57 +331,83 @@ export default function Stories() {
           <EmptyState />
         ) : view === "grid" ? (
           <div className="flex flex-wrap gap-6 items-center justify-center pb-20">
-            {filtered.map((s, i) => (
-              <button
-                key={s.id}
-                onClick={() => openStory(s)}
-                className={cn(
-                  "bubble group relative rounded-full p-6 text-center flex flex-col items-center justify-center border border-foreground/15 shadow-md transition-shadow overflow-hidden",
-                  BUBBLE_FILLS[i % BUBBLE_FILLS.length],
-                )}
-                style={{
-                  width: bubblePx,
-                  height: bubblePx,
-                  animationDelay: `${(i % 7) * 0.4}s`,
-                }}
-              >
-                {s.category && (
-                  <div className="text-[9px] uppercase tracking-widest text-black/60 mb-1">{s.category}</div>
-                )}
-                <h3 className="font-serif text-base leading-tight line-clamp-2 text-black px-2">{s.title}</h3>
-                <p className="text-[11px] text-black/70 mt-1.5 line-clamp-2 px-2">{s.body?.slice(0, 80) ?? "—"}</p>
-                {(s.tags ?? []).length > 0 && (
-                  <div className="flex flex-wrap gap-1 mt-2 justify-center">
-                    {(s.tags ?? []).slice(0, 2).map((t) => (
-                      <span key={t} className="text-[9px] px-1.5 py-0.5 rounded-full bg-black/10 text-black/70">#{t}</span>
-                    ))}
-                  </div>
-                )}
-              </button>
-            ))}
+            {filtered.map((s, i) => {
+              const isSelected = selectedIds.has(s.id);
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => handleCardClick(s)}
+                  className={cn(
+                    "bubble group relative rounded-full p-6 text-center flex flex-col items-center justify-center border shadow-md transition-shadow overflow-hidden",
+                    BUBBLE_FILLS[i % BUBBLE_FILLS.length],
+                    isSelected ? "ring-4 ring-foreground border-foreground" : "border-foreground/15",
+                  )}
+                  style={{
+                    width: bubblePx,
+                    height: bubblePx,
+                    animationDelay: `${(i % 7) * 0.4}s`,
+                  }}
+                >
+                  {selectMode && (
+                    <span className={cn(
+                      "absolute top-2 right-2 h-5 w-5 rounded-full border-2 flex items-center justify-center text-[10px]",
+                      isSelected ? "bg-foreground border-foreground text-background" : "border-foreground/40 bg-background/60",
+                    )}>
+                      {isSelected ? "✓" : ""}
+                    </span>
+                  )}
+                  {s.category && (
+                    <div className="text-[9px] uppercase tracking-widest text-black/60 mb-1">{s.category}</div>
+                  )}
+                  <h3 className="font-serif text-base leading-tight line-clamp-2 text-black px-2">{s.title}</h3>
+                  <p className="text-[11px] text-black/70 mt-1.5 line-clamp-2 px-2">{s.body?.slice(0, 80) ?? "—"}</p>
+                  {(s.tags ?? []).length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2 justify-center">
+                      {(s.tags ?? []).slice(0, 2).map((t) => (
+                        <span key={t} className="text-[9px] px-1.5 py-0.5 rounded-full bg-black/10 text-black/70">#{t}</span>
+                      ))}
+                    </div>
+                  )}
+                </button>
+              );
+            })}
           </div>
-
         ) : (
           <div className="divide-y divide-foreground/10 rounded-2xl border border-foreground/10 bg-background/60 overflow-hidden">
-            {filtered.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => openStory(s)}
-                className="w-full text-left px-5 py-4 hover:bg-foreground/5 transition flex items-center gap-4"
-              >
-                <div className="h-2 w-2 rounded-full bg-foreground/40 shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <div className="font-serif text-base truncate">{s.title}</div>
-                  <div className="text-xs text-foreground/60 truncate">
-                    {s.category && <span className="mr-2 uppercase tracking-widest text-[10px] text-foreground/50">{s.category}</span>}
-                    {s.body?.slice(0, 120) ?? "—"}
+            {filtered.map((s) => {
+              const isSelected = selectedIds.has(s.id);
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => handleCardClick(s)}
+                  className={cn(
+                    "w-full text-left px-5 py-4 hover:bg-foreground/5 transition flex items-center gap-4",
+                    isSelected && "bg-foreground/10",
+                  )}
+                >
+                  {selectMode ? (
+                    <span className={cn(
+                      "h-4 w-4 rounded border-2 flex items-center justify-center text-[10px] shrink-0",
+                      isSelected ? "bg-foreground border-foreground text-background" : "border-foreground/40",
+                    )}>
+                      {isSelected ? "✓" : ""}
+                    </span>
+                  ) : (
+                    <div className="h-2 w-2 rounded-full bg-foreground/40 shrink-0" />
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="font-serif text-base truncate">{s.title}</div>
+                    <div className="text-xs text-foreground/60 truncate">
+                      {s.category && <span className="mr-2 uppercase tracking-widest text-[10px] text-foreground/50">{s.category}</span>}
+                      {s.body?.slice(0, 120) ?? "—"}
+                    </div>
                   </div>
-                </div>
-                <div className="text-xs text-foreground/50 shrink-0">
-                  {new Date(s.updated_at).toLocaleDateString()}
-                </div>
-              </button>
-            ))}
+                  <div className="text-xs text-foreground/50 shrink-0">
+                    {new Date(s.updated_at).toLocaleDateString()}
+                  </div>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>
@@ -247,9 +416,57 @@ export default function Stories() {
         open={open}
         onOpenChange={setOpen}
         story={editing}
-        folders={[]}
+        folders={folders}
         onSaved={() => { setOpen(false); refetch(); }}
       />
+
+      {/* New folder dialog */}
+      <Dialog open={folderDialogOpen} onOpenChange={setFolderDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>New folder</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-2">
+            <Label htmlFor="folder-name">Folder name</Label>
+            <Input
+              id="folder-name"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              placeholder="Sermons, Keynotes, Memoir…"
+              onKeyDown={(e) => { if (e.key === "Enter") createFolder(); }}
+              autoFocus
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="ghost" onClick={() => setFolderDialogOpen(false)}>Cancel</Button>
+            <Button onClick={createFolder} disabled={creatingFolder}>
+              {creatingFolder && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Create
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete confirm */}
+      <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete {selectedIds.size} story{selectedIds.size === 1 ? "" : "ies"}?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This permanently removes the selected stories from your cloud. This action cannot be undone.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={deleteSelected}
+              disabled={deleting}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+            >
+              {deleting && <Loader2 className="h-4 w-4 mr-1 animate-spin" />} Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
