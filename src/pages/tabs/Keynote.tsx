@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Loader2, Plus, Sparkles } from "lucide-react";
+import { Loader2, Plus, Sparkles, Mic } from "lucide-react";
 import { toast } from "sonner";
 import { TabNav } from "@/components/nav/TabNav";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/use-auth";
 import { StoryPicker } from "@/components/builders/StoryPicker";
 import { ItemOverflowMenu } from "@/components/shared/ItemOverflowMenu";
+import { FeedbackDialog } from "@/components/keynote/FeedbackDialog";
 import keynoteIllustration from "@/assets/illustration-keynote.png";
 
 
@@ -112,15 +113,21 @@ export default function Keynote() {
 
 function KeynoteView({ k, onClose }: { k: Keynote; onClose: () => void }) {
   const p = k.payload ?? {};
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
   return (
     <article className="space-y-6">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-between gap-3">
         <div>
           <div className="text-xs uppercase tracking-widest text-foreground/50">Keynote</div>
           <h2 className="font-serif text-3xl mt-1">{p.title ?? k.title}</h2>
           <div className="text-xs text-foreground/50 mt-1">{[k.audience, k.tone, k.length].filter(Boolean).join(" · ")}</div>
         </div>
-        <Button variant="ghost" size="sm" onClick={onClose}>Close</Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" className="rounded-full" onClick={() => setFeedbackOpen(true)}>
+            <Mic className="h-3.5 w-3.5 mr-1.5" /> Feedback
+          </Button>
+          <Button variant="ghost" size="sm" onClick={onClose}>Close</Button>
+        </div>
       </div>
       {p.opening && <p className="font-serif text-lg italic leading-relaxed">{p.opening}</p>}
       <div className="space-y-4">
@@ -147,6 +154,7 @@ function KeynoteView({ k, onClose }: { k: Keynote; onClose: () => void }) {
           ))}
         </div>
       )}
+      <FeedbackDialog open={feedbackOpen} onOpenChange={setFeedbackOpen} topic={p.title ?? k.title} />
     </article>
   );
 }

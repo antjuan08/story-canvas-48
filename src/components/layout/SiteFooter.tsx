@@ -17,6 +17,7 @@ const COLS: { title: string; links: { label: string; to: string }[] }[] = [
   { title: "Community", links: [
     { label: "Community feed", to: "/community" },
     { label: "Share a story", to: "/community" },
+    { label: "Testimonials", to: "/testimonials" },
   ]},
   { title: "Plans", links: [
     { label: "Pricing", to: "/welcome" },
