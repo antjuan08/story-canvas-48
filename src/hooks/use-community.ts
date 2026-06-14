@@ -52,11 +52,12 @@ export function useCommunityFeed() {
       storyIds.length
         ? supabase.from("stories").select("*").in("id", storyIds)
         : Promise.resolve({ data: [] as any[] }),
-      supabase.from("profiles").select("id, full_name, avatar_url, title").in("id", userIds),
+      // Use safe RPC so we never expose other users' emails.
+      supabase.rpc("get_public_profiles", { user_ids: userIds }),
     ]);
 
     const storiesMap = new Map((storiesRes.data ?? []).map((s: any) => [s.id, s]));
-    const profilesMap = new Map((profilesRes.data ?? []).map((p: any) => [p.id, p]));
+    const profilesMap = new Map(((profilesRes.data as any[]) ?? []).map((p: any) => [p.id, p]));
 
     setPosts(
       postsData.map((p) => ({
