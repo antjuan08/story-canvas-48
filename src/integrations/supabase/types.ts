@@ -580,9 +580,14 @@ export type Database = {
           duration_seconds: number | null
           id: string
           payload: Json
+          ref_audio_url: string | null
+          ref_image_url: string | null
+          ref_video_url: string | null
           source_story_id: string | null
           status: string
           title: string
+          use_image_as_first_frame: boolean
+          use_uploaded_audio: boolean
           user_id: string
           video_prompt: string | null
           video_url: string | null
@@ -594,9 +599,14 @@ export type Database = {
           duration_seconds?: number | null
           id?: string
           payload?: Json
+          ref_audio_url?: string | null
+          ref_image_url?: string | null
+          ref_video_url?: string | null
           source_story_id?: string | null
           status?: string
           title: string
+          use_image_as_first_frame?: boolean
+          use_uploaded_audio?: boolean
           user_id: string
           video_prompt?: string | null
           video_url?: string | null
@@ -608,9 +618,14 @@ export type Database = {
           duration_seconds?: number | null
           id?: string
           payload?: Json
+          ref_audio_url?: string | null
+          ref_image_url?: string | null
+          ref_video_url?: string | null
           source_story_id?: string | null
           status?: string
           title?: string
+          use_image_as_first_frame?: boolean
+          use_uploaded_audio?: boolean
           user_id?: string
           video_prompt?: string | null
           video_url?: string | null
