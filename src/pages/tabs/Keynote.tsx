@@ -56,12 +56,17 @@ export default function Keynote() {
           ) : view === "grid" ? (
             <div className="grid grid-cols-2 gap-3">
               {keynotes.map((k) => (
-                <button key={k.id} onClick={() => setSelected(k)}
-                  className="text-left rounded-2xl border border-foreground/10 bg-background/70 p-4 hover:shadow-md transition aspect-square flex flex-col">
-                  <Sparkles className="h-4 w-4 text-foreground/40 mb-2" />
-                  <div className="font-serif text-base leading-tight line-clamp-3">{k.title}</div>
-                  <div className="text-[10px] text-foreground/50 mt-auto">{k.length ?? ""}</div>
-                </button>
+                <div key={k.id} className="relative group">
+                  <div className="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ItemOverflowMenu kind="keynote" item={k} table="keynotes" onDeleted={refetch} />
+                  </div>
+                  <button onClick={() => setSelected(k)}
+                    className="w-full text-left rounded-2xl border border-foreground/10 bg-background/70 p-4 hover:shadow-md transition aspect-square flex flex-col">
+                    <Sparkles className="h-4 w-4 text-foreground/40 mb-2" />
+                    <div className="font-serif text-base leading-tight line-clamp-3">{k.title}</div>
+                    <div className="text-[10px] text-foreground/50 mt-auto">{k.length ?? ""}</div>
+                  </button>
+                </div>
               ))}
             </div>
           ) : (
