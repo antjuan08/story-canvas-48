@@ -9,7 +9,7 @@ const SLIDES = [
   { title: "Reimagine", src: keynoteIllustration, alt: "Reimagine on stage" },
 ];
 
-const SLIDE_MS = 6000;
+const SLIDE_MS = 2000;
 const FADE_MS = 500;
 
 interface Props {
