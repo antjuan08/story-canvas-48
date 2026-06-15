@@ -359,44 +359,7 @@ export default function Stories() {
           </div>
         )}
 
-        {/* Category filter chips */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {CATEGORIES.map((c) => (
-            <button
-              key={c}
-              onClick={() => setCategory(c)}
-              className={cn(
-                "px-3 py-1 rounded-full text-xs border transition",
-                category === c
-                  ? "bg-foreground text-background border-foreground"
-                  : "bg-background/60 border-foreground/15 text-foreground/70 hover:border-foreground/40"
-              )}
-            >
-              {c}
-            </button>
-          ))}
-        </div>
-
-        {/* Tag filter chips */}
-        {allTags.length > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-8">
-            <span className="text-[10px] uppercase tracking-widest text-foreground/40 self-center mr-1">Tags</span>
-            {allTags.map((t) => (
-              <button
-                key={t}
-                onClick={() => setActiveTag(activeTag === t ? null : t)}
-                className={cn(
-                  "px-2.5 py-0.5 rounded-full text-[11px] border transition",
-                  activeTag === t
-                    ? "bg-foreground text-background border-foreground"
-                    : "border-foreground/15 text-foreground/60 hover:border-foreground/40"
-                )}
-              >
-                #{t}
-              </button>
-            ))}
-          </div>
-        )}
+        {/* Filters now live in popovers in the toolbar above */}
 
         <div className="flex justify-center my-10">
           <CloudAddButton
