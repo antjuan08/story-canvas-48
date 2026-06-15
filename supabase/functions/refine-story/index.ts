@@ -1,5 +1,6 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod";
+import { requireUser } from "../_shared/auth.ts";
 
 const BodySchema = z.object({
   text: z.string().min(1).max(20000),
@@ -7,6 +8,9 @@ const BodySchema = z.object({
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
+
+  const auth = await requireUser(req);
+  if (auth instanceof Response) return auth;
 
   try {
     const key = Deno.env.get("LOVABLE_API_KEY");

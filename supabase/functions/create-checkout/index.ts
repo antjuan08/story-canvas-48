@@ -1,4 +1,5 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
+import { createClient } from "npm:@supabase/supabase-js@2";
 import { type StripeEnv, createStripeClient } from "../_shared/stripe.ts";
 
 async function resolveOrCreateCustomer(
@@ -94,12 +95,31 @@ Deno.serve(async (req) => {
     });
   }
   try {
+    // Require authenticated user; derive userId/email from JWT, not from body.
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const supabaseAuth = createClient(
+      Deno.env.get("SUPABASE_URL")!,
+      Deno.env.get("SUPABASE_ANON_KEY")!,
+    );
+    const { data: userData, error: userErr } = await supabaseAuth.auth.getUser(
+      authHeader.slice("Bearer ".length),
+    );
+    if (userErr || !userData?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     const body = await req.json();
     const clientSecret = await createCheckoutSession({
       priceId: body.priceId,
       quantity: body.quantity,
-      customerEmail: body.customerEmail,
-      userId: body.userId,
+      customerEmail: userData.user.email ?? undefined,
+      userId: userData.user.id,
       returnUrl: body.returnUrl,
       environment: body.environment,
       trialDays: body.trialDays,

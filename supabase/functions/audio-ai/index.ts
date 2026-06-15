@@ -1,5 +1,6 @@
 // Edge function: transcribe audio + rewrite transcript as a story.
 // Uses Lovable AI Gateway (OpenAI-compatible).
+import { requireUser } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -33,11 +34,17 @@ async function callAI(body: unknown) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const auth = await requireUser(req);
+  if (auth instanceof Response) return auth;
+
   try {
     const { action, audioBase64, mimeType, transcript } = await req.json();
 
     if (action === "transcribe") {
       if (!audioBase64) throw new Error("audioBase64 is required");
+      if (typeof audioBase64 !== "string" || audioBase64.length > 30_000_000) {
+        throw new Error("audioBase64 too large");
+      }
       const dataUrl = `data:${mimeType || "audio/webm"};base64,${audioBase64}`;
       const data = await callAI({
         model: "google/gemini-2.5-flash",

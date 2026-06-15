@@ -1,4 +1,5 @@
 // Edge function: transcribe a speech recording and return AI coaching feedback + extracted stories.
+import { requireUser } from "../_shared/auth.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
@@ -42,9 +43,15 @@ const CONTEXT_LABEL: Record<string, string> = {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const auth = await requireUser(req);
+  if (auth instanceof Response) return auth;
+
   try {
     const { audioBase64, mimeType, topic, persona, context } = await req.json();
     if (!audioBase64) throw new Error("audioBase64 is required");
+    if (typeof audioBase64 !== "string" || audioBase64.length > 30_000_000) {
+      throw new Error("audioBase64 too large");
+    }
 
     const dataUrl = `data:${mimeType || "audio/webm"};base64,${audioBase64}`;
     const format = (mimeType || "").includes("mp4") ? "mp4" : "webm";
