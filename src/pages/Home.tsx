@@ -64,6 +64,22 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: CREAM, color: INK }}>
+      <SEO
+        title="StoryYou — Capture, refine, and share your stories"
+        description="StoryYou turns spoken moments into keynotes, podcasts, books, and cinematic reimaginings — with an AI speaking coach built in."
+        path="/"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "WebSite",
+          name: "StoryYou",
+          url: "https://storyou.ai",
+          potentialAction: {
+            "@type": "SearchAction",
+            target: "https://storyou.ai/?q={search_term_string}",
+            "query-input": "required name=search_term_string",
+          },
+        }}
+      />
       {/* Animated black clouds across the whole hero */}
       <CloudsBackdrop className="z-0" variant="light" />
 
