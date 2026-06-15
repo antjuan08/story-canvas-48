@@ -38,6 +38,7 @@ export default function Keynote() {
 
   return (
     <div className="min-h-[calc(100vh-7rem)]">
+      <SEO title="Keynote builder · StoryYou" description="Turn your stories into stage-ready keynotes. Get AI feedback from a coach calibrated to CEOs, public speakers, storytellers, and communicators." path="/keynote" />
       <TabNav active="Keynote" />
 
       <div className="max-w-6xl mx-auto px-6 pt-8 pb-20 grid lg:grid-cols-[1fr_2fr] gap-10 items-start">

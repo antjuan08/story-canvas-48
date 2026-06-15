@@ -54,6 +54,7 @@ export default function Podcast() {
 
   return (
     <div className="min-h-[calc(100vh-7rem)] relative">
+      <SEO title="Podcast studio · StoryYou" description="Draft podcast episodes from your stories — intros, segments, outros, and show notes ready to record." path="/podcast" />
       <TabNav active="Podcast" />
 
       <div className="max-w-6xl mx-auto px-6 pt-8 pb-32">

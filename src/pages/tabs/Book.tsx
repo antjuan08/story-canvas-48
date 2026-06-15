@@ -48,6 +48,7 @@ export default function Book() {
 
   return (
     <div className="min-h-[calc(100vh-7rem)]">
+      <SEO title="Book library · StoryYou" description="Shape your collected stories into long-form chapters and start your book." path="/book" />
       <TabNav active="Book" />
 
       <div className="max-w-7xl mx-auto px-6 pt-8">

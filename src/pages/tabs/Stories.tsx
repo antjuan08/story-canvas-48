@@ -179,6 +179,7 @@ export default function Stories() {
 
   return (
     <div className="min-h-[calc(100vh-7rem)] relative">
+      <SEO title="Your stories · StoryYou" description="Every story you've captured, floating like bubbles. Organize, search, and refine your story vault." path="/stories" />
       <TabNav active="Stories" />
 
       <CloudsBackdrop className="z-0 opacity-40" variant="light" />
