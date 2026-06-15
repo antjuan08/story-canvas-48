@@ -21,7 +21,7 @@ export function RainBurst({ className }: { className?: string }) {
     return () => obs.disconnect();
   }, []);
 
-  const dropColor = isDark ? "rgba(255,255,255,0.85)" : "rgba(15,15,20,0.7)";
+  const dropColor = isDark ? "hsl(43, 51%, 58%)" : "hsl(43, 51%, 42%)";
   const drops = [0, 1, 2, 3, 4, 5, 6, 7];
 
   return (
