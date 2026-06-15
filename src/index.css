@@ -49,8 +49,8 @@
     --surface-secondary: 48 30% 96%;
     --surface-tertiary: 40 16% 92%;
 
-    --destructive: 0 60% 45%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 4 58% 41%;        /* sermon red */
+    --destructive-foreground: 40 33% 93%;
 
     --border: 40 10% 80%;
     --border-soft: 40 10% 80% / 0.6;
