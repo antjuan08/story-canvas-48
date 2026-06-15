@@ -41,7 +41,7 @@ export default function Book() {
   const [templateId, setTemplateId] = useState<string | null>(null);
   const [tab, setTab] = useState<"reader" | "library">("reader");
   const [activeBookId, setActiveBookId] = useState<string | null>(null);
-  const current = stories[idx];
+  
 
   const activeBook = useMemo(
     () => books.find((b) => b.id === activeBookId) ?? null,
