@@ -210,7 +210,80 @@ export default function Stories() {
               {folders.length > 0 && <> · {folders.length} folder{folders.length === 1 ? "" : "s"}</>}
             </p>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Categories popover */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" size="sm" className="rounded-full gap-1.5">
+                  <FolderTagIcon className="h-3.5 w-3.5" />
+                  Categories
+                  {category !== "All" && (
+                    <span className="ml-1 px-1.5 py-0.5 rounded-full bg-foreground text-background text-[10px]">{category}</span>
+                  )}
+                  <ChevronDown className="h-3 w-3 opacity-60" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent align="end" className="w-72">
+                <div className="text-[10px] uppercase tracking-widest text-foreground/50 mb-2">Filter by category</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {CATEGORIES.map((c) => (
+                    <button
+                      key={c}
+                      onClick={() => setCategory(c)}
+                      className={cn(
+                        "px-2.5 py-1 rounded-full text-xs border transition",
+                        category === c
+                          ? "bg-foreground text-background border-foreground"
+                          : "bg-background/60 border-foreground/15 text-foreground/70 hover:border-foreground/40",
+                      )}
+                    >
+                      {c}
+                    </button>
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+
+            {/* Tags popover */}
+            {allTags.length > 0 && (
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" size="sm" className="rounded-full gap-1.5">
+                    <TagIcon className="h-3.5 w-3.5" />
+                    Tags
+                    {activeTag && (
+                      <span className="ml-1 px-1.5 py-0.5 rounded-full bg-foreground text-background text-[10px]">#{activeTag}</span>
+                    )}
+                    <ChevronDown className="h-3 w-3 opacity-60" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent align="end" className="w-80 max-h-80 overflow-auto">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-[10px] uppercase tracking-widest text-foreground/50">Filter by tag</div>
+                    {activeTag && (
+                      <button onClick={() => setActiveTag(null)} className="text-[10px] text-foreground/60 hover:text-foreground underline underline-offset-2">Clear</button>
+                    )}
+                  </div>
+                  <div className="flex flex-wrap gap-1.5">
+                    {allTags.map((t) => (
+                      <button
+                        key={t}
+                        onClick={() => setActiveTag(activeTag === t ? null : t)}
+                        className={cn(
+                          "px-2.5 py-0.5 rounded-full text-[11px] border transition",
+                          activeTag === t
+                            ? "bg-foreground text-background border-foreground"
+                            : "border-foreground/15 text-foreground/60 hover:border-foreground/40",
+                        )}
+                      >
+                        #{t}
+                      </button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
+            )}
+
             <Button variant="outline" size="sm" className="rounded-full" onClick={autoOrganize} disabled={organizing}>
               {organizing ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 mr-1.5" />}
               Auto-organize
