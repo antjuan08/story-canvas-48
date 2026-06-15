@@ -300,7 +300,7 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
                     rows={2}
                     placeholder={PLACEHOLDER[activeTab]}
                     disabled={saving}
-                    className="w-full resize-none bg-transparent text-base text-background placeholder:text-background/50 outline-none disabled:opacity-60 text-center overflow-hidden"
+                    className="w-full resize-none bg-transparent text-base text-background placeholder:text-background/50 outline-none disabled:opacity-60 text-left overflow-hidden"
                   />
                   <div className="flex items-center justify-between mt-4">
                     <div className="flex items-center gap-1">
