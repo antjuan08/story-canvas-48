@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CloudsBackdrop } from "@/components/visuals/CloudsBackdrop";
+import { SEO } from "@/components/seo/SEO";
 
 const CREAM = "hsl(48, 56%, 95%)";
 const INK = "hsl(240, 12%, 6%)";

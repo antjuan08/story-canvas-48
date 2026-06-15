@@ -1,3 +1,4 @@
+import { SEO } from "@/components/seo/SEO";
 import { useEffect, useState } from "react";
 import { Loader2, Mic, Sparkles, GraduationCap, Heart, PartyPopper, MessagesSquare } from "lucide-react";
 import { CloudAddButton } from "@/components/visuals/CloudAddButton";

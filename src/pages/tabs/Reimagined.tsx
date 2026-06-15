@@ -1,3 +1,4 @@
+import { SEO } from "@/components/seo/SEO";
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Sparkles, Wand2, Film, Upload, X, Image as ImageIcon, Music, Video } from "lucide-react";
 import { toast } from "sonner";

@@ -1,3 +1,4 @@
+import { SEO } from "@/components/seo/SEO";
 import { useEffect, useState } from "react";
 import { Plus, Loader2, BookOpen } from "lucide-react";
 import { toast } from "sonner";

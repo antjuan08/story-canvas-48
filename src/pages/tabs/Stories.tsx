@@ -1,3 +1,4 @@
+import { SEO } from "@/components/seo/SEO";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { Search, Sparkles, Loader2, MoreHorizontal, CheckSquare, Trash2, FolderPlus, X } from "lucide-react";

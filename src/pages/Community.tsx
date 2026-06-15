@@ -1,3 +1,4 @@
+import { SEO } from "@/components/seo/SEO";
 import { useEffect, useState } from "react";
 import { TabNav } from "@/components/nav/TabNav";
 import { supabase } from "@/integrations/supabase/client";
