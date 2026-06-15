@@ -1,6 +1,6 @@
 import { SEO } from "@/components/seo/SEO";
-import { useEffect, useState } from "react";
-import { Plus, Loader2, BookOpen } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Plus, Loader2, BookOpen, Library as LibraryIcon, BookMarked } from "lucide-react";
 import { toast } from "sonner";
 import { TabNav } from "@/components/nav/TabNav";
 import { useStories } from "@/hooks/use-stories";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { StoryPicker } from "@/components/builders/StoryPicker";
 import { ItemOverflowMenu } from "@/components/shared/ItemOverflowMenu";
 import { cn } from "@/lib/utils";
