@@ -370,6 +370,15 @@ export default function Stories() {
 
         {filtered.length === 0 ? (
           <EmptyState />
+        ) : view === "graph" ? (
+          <div className="pb-20">
+            <StoryGraph
+              stories={filtered}
+              onSelect={handleCardClick}
+              selectMode={selectMode}
+              selectedIds={selectedIds}
+            />
+          </div>
         ) : view === "grid" ? (
           <div className="flex flex-wrap gap-6 items-center justify-center pb-20">
             <h2 className="sr-only">Your story bubbles</h2>
