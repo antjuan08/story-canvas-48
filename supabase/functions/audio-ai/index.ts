@@ -34,6 +34,9 @@ async function callAI(body: unknown) {
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
+  const auth = await requireUser(req);
+  if (auth instanceof Response) return auth;
+
   try {
     const { action, audioBase64, mimeType, transcript } = await req.json();
 
