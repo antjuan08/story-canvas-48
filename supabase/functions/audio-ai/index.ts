@@ -1,5 +1,6 @@
 // Edge function: transcribe audio + rewrite transcript as a story.
 // Uses Lovable AI Gateway (OpenAI-compatible).
+import { requireUser } from "../_shared/auth.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
