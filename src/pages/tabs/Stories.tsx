@@ -40,6 +40,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { ChevronDown, Tag as TagIcon, Folder as FolderTagIcon } from "lucide-react";
+import { StoryGraph } from "@/components/vault/StoryGraph";
 
 const BUBBLE_FILLS = [
   "bg-[hsl(48,70%,86%)]",
