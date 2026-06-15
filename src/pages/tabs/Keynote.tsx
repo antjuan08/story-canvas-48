@@ -133,7 +133,7 @@ function KeynoteView({ k, onClose }: { k: Keynote; onClose: () => void }) {
           <div className="text-xs text-foreground/50 mt-1">{[k.audience, k.tone, k.length].filter(Boolean).join(" · ")}</div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" className="rounded-full" onClick={() => setFeedbackOpen(true)}>
+          <Button size="sm" className="rounded-full bg-[hsl(var(--brand-sermon-red))] hover:bg-[hsl(var(--brand-sermon-red))]/90 text-white border-0" onClick={() => setFeedbackOpen(true)}>
             <Mic className="h-3.5 w-3.5 mr-1.5" /> Feedback
           </Button>
           <Button variant="ghost" size="sm" onClick={onClose}>Close</Button>
