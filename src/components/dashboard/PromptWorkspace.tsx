@@ -263,23 +263,8 @@ export function PromptWorkspace({ activeTab }: { activeTab: TabLabel }) {
             </div>
           )}
 
-          <div className="relative w-full group">
-            <svg
-              viewBox="0 0 200 110"
-              preserveAspectRatio="none"
-              className="absolute inset-0 w-full h-full drop-shadow-xl transition-all group-focus-within:drop-shadow-2xl"
-              aria-hidden
-            >
-              <path
-                d="M40,80 C18,80 10,55 30,48 C28,28 58,18 72,32 C82,16 116,18 124,38 C148,30 172,46 168,66 C188,70 188,90 168,92 L48,92 C30,92 26,84 40,80 Z"
-                fill="hsl(var(--foreground))"
-                stroke="hsl(var(--foreground))"
-                strokeWidth="0.5"
-                vectorEffect="non-scaling-stroke"
-              />
-            </svg>
-
-            <div className="relative px-12 sm:px-20 md:px-28 lg:px-32 pt-32 sm:pt-40 pb-14 sm:pb-18">
+          <div className="relative w-full group rounded-3xl bg-foreground shadow-xl transition-all group-focus-within:shadow-2xl">
+            <div className="relative px-6 sm:px-8 md:px-10 pt-6 pb-5">
               {mode === "recording" ? (
                 <RecordingView elapsed={`${mm}:${ss}`} onStop={stopRecording} />
               ) : mode === "transcribing" || mode === "polishing" ? (
