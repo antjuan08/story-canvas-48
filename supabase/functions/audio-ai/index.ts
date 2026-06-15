@@ -42,6 +42,9 @@ Deno.serve(async (req) => {
 
     if (action === "transcribe") {
       if (!audioBase64) throw new Error("audioBase64 is required");
+      if (typeof audioBase64 !== "string" || audioBase64.length > 30_000_000) {
+        throw new Error("audioBase64 too large");
+      }
       const dataUrl = `data:${mimeType || "audio/webm"};base64,${audioBase64}`;
       const data = await callAI({
         model: "google/gemini-2.5-flash",
