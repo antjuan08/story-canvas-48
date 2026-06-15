@@ -71,10 +71,18 @@ export default function Podcast() {
         </div>
 
         {items.length === 0 ? (
-          <div className="text-center py-16 text-foreground/50">
-            <Mic className="h-8 w-8 mx-auto mb-3 opacity-40" />
-            <div className="font-serif text-2xl mb-1">No episodes yet</div>
-            <p className="text-sm">Tap the + button to pick a show template.</p>
+          <div className="flex flex-col items-center justify-center py-20 text-foreground/60">
+            <button
+              onClick={() => setPickerOpen(true)}
+              aria-label="New podcast"
+              className="group relative h-24 w-24 rounded-full bg-gradient-to-br from-[hsl(var(--brand-sermon-red))] to-[hsl(var(--brand-brass))] text-background shadow-lg hover:shadow-xl hover:scale-105 transition-all flex items-center justify-center mb-6"
+            >
+              <span className="text-5xl font-light leading-none -mt-1">+</span>
+              <span className="absolute inset-0 rounded-full ring-2 ring-[hsl(var(--brand-brass))]/30 animate-pulse" />
+            </button>
+            <Mic className="h-6 w-6 mb-2 opacity-40" />
+            <div className="font-serif text-2xl mb-1 text-foreground">No episodes yet</div>
+            <p className="text-sm">Tap the + button above to pick a show template.</p>
           </div>
         ) : view === "grid" ? (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -117,9 +125,11 @@ export default function Podcast() {
         )}
       </div>
 
-      <div className="relative z-10 flex justify-center mt-16 mb-20">
-        <CloudAddButton onClick={() => setPickerOpen(true)} label="New podcast" />
-      </div>
+      {items.length > 0 && (
+        <div className="relative z-10 flex justify-center mt-16 mb-20">
+          <CloudAddButton onClick={() => setPickerOpen(true)} label="New podcast" />
+        </div>
+      )}
 
       <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
         <DialogContent className="sm:max-w-xl">
