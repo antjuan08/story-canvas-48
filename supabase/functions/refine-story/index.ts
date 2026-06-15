@@ -1,5 +1,6 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod";
+import { requireUser } from "../_shared/auth.ts";
 
 const BodySchema = z.object({
   text: z.string().min(1).max(20000),
