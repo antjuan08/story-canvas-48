@@ -1,16 +1,25 @@
 project_id = "lufhfjptukmgsudemujb"
 
 [functions.audio-ai]
-verify_jwt = false
+verify_jwt = true
 
 [functions.stage-architect]
 verify_jwt = true
 
 [functions.create-checkout]
-verify_jwt = false
+verify_jwt = true
 
 [functions.create-portal-session]
 verify_jwt = false
 
 [functions.payments-webhook]
 verify_jwt = false
+
+[functions.refine-story]
+verify_jwt = true
+
+[functions.categorize-story]
+verify_jwt = true
+
+[functions.speech-feedback]
+verify_jwt = true
