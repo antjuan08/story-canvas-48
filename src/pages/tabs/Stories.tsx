@@ -331,6 +331,7 @@ export default function Stories() {
           <EmptyState />
         ) : view === "grid" ? (
           <div className="flex flex-wrap gap-6 items-center justify-center pb-20">
+            <h2 className="sr-only">Your story bubbles</h2>
             {filtered.map((s, i) => {
               const isSelected = selectedIds.has(s.id);
               return (
@@ -359,7 +360,7 @@ export default function Stories() {
                   {s.category && (
                     <div className="text-[9px] uppercase tracking-widest text-black/60 mb-1">{s.category}</div>
                   )}
-                  <h3 className="font-serif text-base leading-tight line-clamp-2 text-black px-2">{s.title}</h3>
+                  <h2 className="font-serif text-base leading-tight line-clamp-2 text-black px-2">{s.title}</h2>
                   <p className="text-[11px] text-black/70 mt-1.5 line-clamp-2 px-2">{s.body?.slice(0, 80) ?? "—"}</p>
                   {(s.tags ?? []).length > 0 && (
                     <div className="flex flex-wrap gap-1 mt-2 justify-center">

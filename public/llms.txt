@@ -1,0 +1,21 @@
+# StoryYou
+
+> A digital storytelling platform that helps speakers, creators, and leaders capture, refine, and reimagine their stories — kept like clouds.
+
+StoryYou turns spoken moments into polished stories, keynotes, podcasts, books, and cinematic reimaginings. It includes an AI speaking coach that rates talks and extracts stories from live keynotes, podcasts, sermons, and casual conversations.
+
+## Pages
+
+- [Home](https://storyou.ai/): Sign in / get started. Overview of the StoryYou platform.
+- [Testimonials](https://storyou.ai/testimonials): What storytellers say about StoryYou.
+- [Pricing](https://storyou.ai/welcome): Plans, free trial, and what each tier includes.
+
+## Product
+
+- [Dashboard](https://storyou.ai/dashboard): Central prompt workspace and saved stories cloud shelf.
+- [Stories](https://storyou.ai/stories): Vault of captured stories, organized into floating bubbles.
+- [Keynote](https://storyou.ai/keynote): Build stage-ready keynotes from your stories, with an AI speaking coach.
+- [Podcast](https://storyou.ai/podcast): Turn stories into podcast-ready audio.
+- [Book](https://storyou.ai/book): Shape your stories into long-form chapters.
+- [Reimagined](https://storyou.ai/reimagined): Cinematic generative remixes of your stories.
+- [Community](https://storyou.ai/community): Read and share stories with other storytellers.

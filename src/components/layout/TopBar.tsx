@@ -64,7 +64,7 @@ export function TopBar() {
           <div className="flex items-center gap-2 shrink-0">
             <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
               <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" className="md:hidden rounded-full -ml-1">
+                <Button variant="ghost" size="icon" aria-label="Menu" className="md:hidden rounded-full -ml-1">
                   <Menu className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
@@ -141,7 +141,7 @@ export function TopBar() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full">
+                <Button variant="ghost" size="icon" aria-label="Account menu" className="rounded-full">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-foreground text-background text-xs">{initials}</AvatarFallback>
                   </Avatar>
