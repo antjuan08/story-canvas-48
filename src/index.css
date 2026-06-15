@@ -6,8 +6,16 @@
 
 @layer base {
   :root {
-    /* Light theme — cream paper */
-    --background: 48 56% 95%;
+    /* Brand palette — Anchor Black, Bone White, Brass, Aged Gold, Sermon Red, Smoke Grey */
+    --brand-anchor: 0 0% 4%;          /* #0B0B0B */
+    --brand-bone: 40 33% 93%;         /* #F4EFE6 */
+    --brand-brass: 43 51% 48%;        /* #B8893B */
+    --brand-aged-gold: 44 65% 30%;    /* #7A5C1E */
+    --brand-sermon-red: 4 58% 41%;    /* #A23B2D */
+    --brand-smoke: 36 4% 40%;         /* #6B6661 */
+
+    /* Light theme — Bone paper, Anchor ink, Brass/Sermon accents */
+    --background: 40 33% 93%;
     --foreground: 240 10% 8%;
 
     --glass: 0 0% 100% / 0.7;
