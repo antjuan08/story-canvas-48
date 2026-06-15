@@ -1,6 +1,6 @@
 import { SEO } from "@/components/seo/SEO";
-import { useEffect, useState } from "react";
-import { Plus, Loader2, BookOpen } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Plus, Loader2, BookOpen, Library as LibraryIcon, BookMarked } from "lucide-react";
 import { toast } from "sonner";
 import { TabNav } from "@/components/nav/TabNav";
 import { useStories } from "@/hooks/use-stories";
@@ -11,6 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { StoryPicker } from "@/components/builders/StoryPicker";
 import { ItemOverflowMenu } from "@/components/shared/ItemOverflowMenu";
 import { cn } from "@/lib/utils";
@@ -38,7 +39,22 @@ export default function Book() {
   const [idx, setIdx] = useState(0);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [templateId, setTemplateId] = useState<string | null>(null);
-  const current = stories[idx];
+  const [tab, setTab] = useState<"reader" | "library">("reader");
+  const [activeBookId, setActiveBookId] = useState<string | null>(null);
+  
+
+  const activeBook = useMemo(
+    () => books.find((b) => b.id === activeBookId) ?? null,
+    [books, activeBookId]
+  );
+  const bookStoryIds: string[] = (activeBook?.payload?.story_ids ?? []) as string[];
+  const bookChapters = useMemo(() => {
+    if (!activeBook) return stories;
+    if (!bookStoryIds.length) return stories;
+    const map = new Map(stories.map((s) => [s.id, s]));
+    return bookStoryIds.map((id) => map.get(id)).filter(Boolean) as typeof stories;
+  }, [activeBook, bookStoryIds, stories]);
+  const currentChapter = bookChapters[idx];
 
   const refetch = async () => {
     if (!user) return;
@@ -46,6 +62,12 @@ export default function Book() {
     setBooks((data ?? []) as Book[]);
   };
   useEffect(() => { refetch(); }, [user]);
+
+  const openBookInReader = (id: string) => {
+    setActiveBookId(id);
+    setIdx(0);
+    setTab("reader");
+  };
 
   return (
     <div className="min-h-[calc(100vh-7rem)]">
@@ -66,79 +88,143 @@ export default function Book() {
           </div>
         </div>
 
-        {books.length > 0 && (
-          <div className="mb-10">
-            <div className="text-xs uppercase tracking-widest text-foreground/50 mb-3">My books</div>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {books.map((b) => (
-                <div key={b.id} className="relative group p-5 rounded-2xl border border-foreground/10 bg-background/70">
-                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ItemOverflowMenu kind="book" item={b} table="books" onDeleted={refetch} />
+        <Tabs value={tab} onValueChange={(v) => setTab(v as "reader" | "library")} className="mt-2">
+          <TabsList className="rounded-full bg-foreground/5 p-1">
+            <TabsTrigger value="reader" className="rounded-full gap-1.5 px-4">
+              <BookOpen className="h-3.5 w-3.5" /> Reader
+            </TabsTrigger>
+            <TabsTrigger value="library" className="rounded-full gap-1.5 px-4">
+              <LibraryIcon className="h-3.5 w-3.5" /> Library
+              <span className="ml-1 text-[10px] text-foreground/50">({books.length})</span>
+            </TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="reader" className="mt-8">
+            {activeBook && (
+              <div className="mb-6 flex items-center gap-3">
+                <BookMarked className="h-4 w-4 text-foreground/50" />
+                <div>
+                  <div className="text-[10px] uppercase tracking-widest text-foreground/50">Now reading</div>
+                  <div className="font-serif text-lg leading-tight">{activeBook.title}</div>
+                </div>
+                <Button variant="ghost" size="sm" className="ml-auto rounded-full text-xs"
+                  onClick={() => { setActiveBookId(null); setIdx(0); }}>
+                  Exit book
+                </Button>
+              </div>
+            )}
+
+            <div className="grid lg:grid-cols-[220px_1fr] gap-8">
+              <aside className="lg:sticky lg:top-24 h-fit">
+                <div className="text-xs uppercase tracking-widest text-foreground/50 mb-3">Chapters</div>
+                {bookChapters.length === 0 ? (
+                  <p className="text-sm text-foreground/50">No chapters yet.</p>
+                ) : (
+                  <ol className="space-y-1">
+                    {bookChapters.map((s, i) => (
+                      <li key={s.id}>
+                        <button onClick={() => setIdx(i)}
+                          className={cn("w-full text-left px-3 py-2 rounded-lg text-sm transition",
+                            i === idx ? "bg-foreground text-background" : "hover:bg-foreground/5 text-foreground/80")}>
+                          <span className="font-serif">{String(i + 1).padStart(2, "0")}. </span>
+                          <span className="font-serif">{s.title}</span>
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+              </aside>
+
+              {currentChapter ? (
+                <div className="relative">
+                  <div className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-[0_30px_80px_-30px_rgba(0,0,0,0.25)] border border-foreground/10">
+                    <div className="bg-[hsl(48,40%,97%)] p-10 md:p-14 min-h-[70vh] relative">
+                      <div className="text-[10px] uppercase tracking-[0.3em] text-foreground/50">Chapter {String(idx + 1).padStart(2, "0")}</div>
+                      <h1 className="font-serif text-4xl lg:text-5xl font-light leading-[1.1] mt-3">{currentChapter.title}</h1>
+                      <div className="mt-8 border-t border-foreground/15 pt-6">
+                        <p className="font-serif text-base leading-[1.85] text-foreground/85">
+                          <span className="font-serif text-6xl float-left mr-3 mt-1 leading-none">
+                            {(currentChapter.body ?? "—").trim().charAt(0)}
+                          </span>
+                          {(currentChapter.body ?? "—").trim().slice(1, 700)}
+                        </p>
+                      </div>
+                      <div className="absolute bottom-6 left-10 text-xs text-foreground/40">— {idx * 2 + 1} —</div>
+                    </div>
+                    <div className="bg-[hsl(48,30%,94%)] p-10 md:p-14 min-h-[70vh] relative border-l border-foreground/10">
+                      <p className="font-serif text-base leading-[1.85] text-foreground/85 whitespace-pre-wrap">
+                        {(currentChapter.body ?? "").slice(700) || "…"}
+                      </p>
+                      <div className="absolute bottom-6 right-10 text-xs text-foreground/40">— {idx * 2 + 2} —</div>
+                    </div>
                   </div>
-                  <BookOpen className="h-4 w-4 text-foreground/40 mb-2" />
-                  <div className="font-serif text-xl leading-tight">{b.title}</div>
-                  <div className="text-[10px] uppercase tracking-widest text-foreground/50 mt-1">{b.template}</div>
-                  <p className="text-xs text-foreground/70 mt-2 line-clamp-3">{b.premise ?? "—"}</p>
+                  <div className="flex justify-between mt-6 text-sm">
+                    <button disabled={idx === 0} onClick={() => setIdx(idx - 1)} className="text-foreground/70 hover:text-foreground disabled:opacity-30">← Previous</button>
+                    <button disabled={idx >= bookChapters.length - 1} onClick={() => setIdx(idx + 1)} className="text-foreground/70 hover:text-foreground disabled:opacity-30">Next →</button>
+                  </div>
                 </div>
-              ))}
+              ) : (
+                <div className="text-center py-20 text-foreground/50 font-serif text-xl">An empty book — write a story to fill the first page.</div>
+              )}
             </div>
-          </div>
-        )}
+          </TabsContent>
+
+          <TabsContent value="library" className="mt-8">
+            {books.length === 0 ? (
+              <div className="text-center py-24 text-foreground/50 font-serif text-xl">
+                Your library is empty. Add a book to begin.
+              </div>
+            ) : (
+              <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                {books.map((b) => {
+                  const ids: string[] = (b.payload?.story_ids ?? []) as string[];
+                  const map = new Map(stories.map((s) => [s.id, s]));
+                  const chapters = ids.map((id) => map.get(id)).filter(Boolean) as typeof stories;
+                  return (
+                    <div key={b.id} className="relative group p-6 rounded-2xl border border-foreground/10 bg-background/70 hover:border-foreground/30 hover:shadow-md transition flex flex-col">
+                      <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <ItemOverflowMenu kind="book" item={b} table="books" onDeleted={refetch} />
+                      </div>
+                      <BookOpen className="h-5 w-5 text-foreground/40 mb-3" />
+                      <div className="font-serif text-xl leading-tight">{b.title}</div>
+                      <div className="text-[10px] uppercase tracking-widest text-foreground/50 mt-1">{b.template}</div>
+                      {b.premise && (
+                        <p className="text-xs text-foreground/70 mt-2 line-clamp-2">{b.premise}</p>
+                      )}
+
+                      <div className="mt-4 pt-4 border-t border-foreground/10 flex-1">
+                        <div className="text-[10px] uppercase tracking-widest text-foreground/50 mb-2">
+                          Chapters · {chapters.length || ids.length}
+                        </div>
+                        {chapters.length === 0 ? (
+                          <p className="text-xs text-foreground/50 italic">No chapters linked yet.</p>
+                        ) : (
+                          <ol className="space-y-1 max-h-40 overflow-y-auto pr-1">
+                            {chapters.slice(0, 8).map((s, i) => (
+                              <li key={s.id} className="text-xs text-foreground/75 font-serif truncate">
+                                <span className="text-foreground/40">{String(i + 1).padStart(2, "0")}.</span> {s.title}
+                              </li>
+                            ))}
+                            {chapters.length > 8 && (
+                              <li className="text-[10px] text-foreground/50">+ {chapters.length - 8} more</li>
+                            )}
+                          </ol>
+                        )}
+                      </div>
+
+                      <Button size="sm" variant="outline" className="mt-4 rounded-full"
+                        onClick={() => openBookInReader(b.id)}>
+                        Open book
+                      </Button>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6 pb-20 grid lg:grid-cols-[220px_1fr] gap-8">
-        <aside className="lg:sticky lg:top-24 h-fit">
-          <div className="text-xs uppercase tracking-widest text-foreground/50 mb-3">Chapters</div>
-          {stories.length === 0 ? (
-            <p className="text-sm text-foreground/50">No chapters yet.</p>
-          ) : (
-            <ol className="space-y-1">
-              {stories.map((s, i) => (
-                <li key={s.id}>
-                  <button onClick={() => setIdx(i)}
-                    className={cn("w-full text-left px-3 py-2 rounded-lg text-sm transition",
-                      i === idx ? "bg-foreground text-background" : "hover:bg-foreground/5 text-foreground/80")}>
-                    <span className="font-serif">{String(i + 1).padStart(2, "0")}. </span>
-                    <span className="font-serif">{s.title}</span>
-                  </button>
-                </li>
-              ))}
-            </ol>
-          )}
-        </aside>
-
-        {current ? (
-          <div className="relative">
-            <div className="grid md:grid-cols-2 gap-0 rounded-2xl overflow-hidden shadow-[0_30px_80px_-30px_rgba(0,0,0,0.25)] border border-foreground/10">
-              <div className="bg-[hsl(48,40%,97%)] p-10 md:p-14 min-h-[70vh] relative">
-                <div className="text-[10px] uppercase tracking-[0.3em] text-foreground/50">Chapter {String(idx + 1).padStart(2, "0")}</div>
-                <h1 className="font-serif text-4xl lg:text-5xl font-light leading-[1.1] mt-3">{current.title}</h1>
-                <div className="mt-8 border-t border-foreground/15 pt-6">
-                  <p className="font-serif text-base leading-[1.85] text-foreground/85">
-                    <span className="font-serif text-6xl float-left mr-3 mt-1 leading-none">
-                      {(current.body ?? "—").trim().charAt(0)}
-                    </span>
-                    {(current.body ?? "—").trim().slice(1, 700)}
-                  </p>
-                </div>
-                <div className="absolute bottom-6 left-10 text-xs text-foreground/40">— {idx * 2 + 1} —</div>
-              </div>
-              <div className="bg-[hsl(48,30%,94%)] p-10 md:p-14 min-h-[70vh] relative border-l border-foreground/10">
-                <p className="font-serif text-base leading-[1.85] text-foreground/85 whitespace-pre-wrap">
-                  {(current.body ?? "").slice(700) || "…"}
-                </p>
-                <div className="absolute bottom-6 right-10 text-xs text-foreground/40">— {idx * 2 + 2} —</div>
-              </div>
-            </div>
-            <div className="flex justify-between mt-6 text-sm">
-              <button disabled={idx === 0} onClick={() => setIdx(idx - 1)} className="text-foreground/70 hover:text-foreground disabled:opacity-30">← Previous</button>
-              <button disabled={idx >= stories.length - 1} onClick={() => setIdx(idx + 1)} className="text-foreground/70 hover:text-foreground disabled:opacity-30">Next →</button>
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-20 text-foreground/50 font-serif text-xl">An empty book — write a story to fill the first page.</div>
-        )}
-      </div>
 
       <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
         <DialogContent className="sm:max-w-xl">
