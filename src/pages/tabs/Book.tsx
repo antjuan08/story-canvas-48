@@ -39,7 +39,22 @@ export default function Book() {
   const [idx, setIdx] = useState(0);
   const [pickerOpen, setPickerOpen] = useState(false);
   const [templateId, setTemplateId] = useState<string | null>(null);
+  const [tab, setTab] = useState<"reader" | "library">("reader");
+  const [activeBookId, setActiveBookId] = useState<string | null>(null);
   const current = stories[idx];
+
+  const activeBook = useMemo(
+    () => books.find((b) => b.id === activeBookId) ?? null,
+    [books, activeBookId]
+  );
+  const bookStoryIds: string[] = (activeBook?.payload?.story_ids ?? []) as string[];
+  const bookChapters = useMemo(() => {
+    if (!activeBook) return stories;
+    if (!bookStoryIds.length) return stories;
+    const map = new Map(stories.map((s) => [s.id, s]));
+    return bookStoryIds.map((id) => map.get(id)).filter(Boolean) as typeof stories;
+  }, [activeBook, bookStoryIds, stories]);
+  const currentChapter = bookChapters[idx];
 
   const refetch = async () => {
     if (!user) return;
@@ -47,6 +62,12 @@ export default function Book() {
     setBooks((data ?? []) as Book[]);
   };
   useEffect(() => { refetch(); }, [user]);
+
+  const openBookInReader = (id: string) => {
+    setActiveBookId(id);
+    setIdx(0);
+    setTab("reader");
+  };
 
   return (
     <div className="min-h-[calc(100vh-7rem)]">
