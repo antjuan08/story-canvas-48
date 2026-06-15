@@ -1,3 +1,4 @@
+import { SEO } from "@/components/seo/SEO";
 import { useEffect, useState } from "react";
 import { Plus, Loader2, BookOpen } from "lucide-react";
 import { toast } from "sonner";
@@ -48,6 +49,7 @@ export default function Book() {
 
   return (
     <div className="min-h-[calc(100vh-7rem)]">
+      <SEO title="Book library · StoryYou" description="Shape your collected stories into long-form chapters and start your book." path="/book" />
       <TabNav active="Book" />
 
       <div className="max-w-7xl mx-auto px-6 pt-8">

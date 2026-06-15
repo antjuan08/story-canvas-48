@@ -1,3 +1,4 @@
+import { SEO } from "@/components/seo/SEO";
 import { useEffect, useRef, useState } from "react";
 import { Loader2, Sparkles, Wand2, Film, Upload, X, Image as ImageIcon, Music, Video } from "lucide-react";
 import { toast } from "sonner";
@@ -34,6 +35,7 @@ export default function Reimagined() {
 
   return (
     <div className="min-h-[calc(100vh-7rem)]">
+      <SEO title="Reimagined · StoryYou" description="Bring a story to life as a short cinematic film with AI-generated visuals and audio." path="/reimagined" />
       <TabNav active="Reimagined" />
 
       <div className="max-w-6xl mx-auto px-6 pt-8 pb-20">

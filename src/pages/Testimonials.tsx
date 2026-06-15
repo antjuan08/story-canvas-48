@@ -1,3 +1,4 @@
+import { SEO } from "@/components/seo/SEO";
 import { useEffect, useState } from "react";
 import { Star, Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
@@ -26,6 +27,19 @@ export default function Testimonials() {
 
   return (
     <div className="min-h-[calc(100vh-7rem)] max-w-5xl mx-auto px-6 pt-12 pb-20">
+      <SEO
+        title="Testimonials · StoryYou"
+        description="What storytellers, speakers, and creators say about turning their moments into stories with StoryYou."
+        path="/testimonials"
+        jsonLd={items.slice(0, 20).map((t) => ({
+          "@context": "https://schema.org",
+          "@type": "Review",
+          reviewBody: t.quote,
+          author: { "@type": "Person", name: t.name },
+          reviewRating: { "@type": "Rating", ratingValue: t.rating, bestRating: 5 },
+          itemReviewed: { "@type": "Organization", name: "StoryYou" },
+        }))}
+      />
       <div className="flex items-end justify-between mb-10 gap-4">
         <div>
           <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">Testimonials.</h1>

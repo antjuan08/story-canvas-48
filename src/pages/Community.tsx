@@ -1,3 +1,4 @@
+import { SEO } from "@/components/seo/SEO";
 import { useEffect, useState } from "react";
 import { TabNav } from "@/components/nav/TabNav";
 import { supabase } from "@/integrations/supabase/client";
@@ -41,6 +42,18 @@ export default function Community() {
 
   return (
     <div className="min-h-[calc(100vh-7rem)]">
+      <SEO
+        title="Community · StoryYou"
+        description="Read and share stories from the StoryYou community of storytellers, speakers, and creators."
+        path="/community"
+        jsonLd={posts.slice(0, 20).map((p) => ({
+          "@context": "https://schema.org",
+          "@type": "CreativeWork",
+          headline: p.caption?.slice(0, 80) ?? "Community story",
+          author: { "@type": "Person", name: profiles[p.user_id]?.full_name ?? "Storyteller" },
+          datePublished: p.created_at,
+        }))}
+      />
       <TabNav active="Stories" />
       <div className="max-w-3xl mx-auto px-6 pt-10 pb-20">
         <header className="mb-10">
