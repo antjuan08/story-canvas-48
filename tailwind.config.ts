@@ -17,6 +17,14 @@ export default {
         18: "4.5rem",
       },
       colors: {
+        brand: {
+          anchor: "hsl(var(--brand-anchor))",
+          bone: "hsl(var(--brand-bone))",
+          brass: "hsl(var(--brand-brass))",
+          "aged-gold": "hsl(var(--brand-aged-gold))",
+          "sermon-red": "hsl(var(--brand-sermon-red))",
+          smoke: "hsl(var(--brand-smoke))",
+        },
         border: "hsl(var(--border))",
         "border-soft": "hsl(var(--border-soft))",
         input: "hsl(var(--input))",
