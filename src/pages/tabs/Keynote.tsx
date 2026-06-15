@@ -101,7 +101,7 @@ export default function Keynote() {
                   <Button onClick={() => setOpen(true)} size="lg" className="rounded-full">
                     <Plus className="h-4 w-4 mr-2" /> New keynote
                   </Button>
-                  <Button onClick={() => setFeedbackOpen(true)} size="lg" variant="outline" className="rounded-full">
+                  <Button onClick={() => setFeedbackOpen(true)} size="lg" className="rounded-full bg-[hsl(var(--brand-sermon-red))] hover:bg-[hsl(var(--brand-sermon-red))]/90 text-white border-0">
                     <Mic className="h-4 w-4 mr-2" /> Feedback
                   </Button>
                 </div>
