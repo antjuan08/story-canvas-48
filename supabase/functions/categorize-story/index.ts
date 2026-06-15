@@ -1,5 +1,6 @@
 import { corsHeaders } from "npm:@supabase/supabase-js@2/cors";
 import { z } from "npm:zod";
+import { requireUser } from "../_shared/auth.ts";
 
 const CATEGORIES = ["Family", "Friendship", "Business", "Hard Times", "Love", "Travel", "Childhood", "Faith", "Other"] as const;
 
