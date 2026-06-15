@@ -9,6 +9,9 @@ const BodySchema = z.object({
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
+  const auth = await requireUser(req);
+  if (auth instanceof Response) return auth;
+
   try {
     const key = Deno.env.get("LOVABLE_API_KEY");
     if (!key) return json({ error: "Missing LOVABLE_API_KEY" }, 500);
