@@ -125,9 +125,11 @@ export default function Podcast() {
         )}
       </div>
 
-      <div className="relative z-10 flex justify-center mt-16 mb-20">
-        <CloudAddButton onClick={() => setPickerOpen(true)} label="New podcast" />
-      </div>
+      {items.length > 0 && (
+        <div className="relative z-10 flex justify-center mt-16 mb-20">
+          <CloudAddButton onClick={() => setPickerOpen(true)} label="New podcast" />
+        </div>
+      )}
 
       <Dialog open={pickerOpen} onOpenChange={setPickerOpen}>
         <DialogContent className="sm:max-w-xl">
