@@ -32,9 +32,9 @@
     --primary-foreground: 48 56% 95%;
     --primary-soft: 40 20% 90%;
 
-    --gradient-start: 240 8% 18%;
-    --gradient-mid: 40 12% 60%;
-    --gradient-end: 48 40% 88%;
+    --gradient-start: 4 58% 41%;     /* sermon red */
+    --gradient-mid: 43 51% 48%;      /* brass */
+    --gradient-end: 44 65% 30%;      /* aged gold */
 
     --secondary: 40 18% 92%;
     --secondary-foreground: 240 10% 12%;
