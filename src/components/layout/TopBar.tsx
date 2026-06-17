@@ -106,6 +106,7 @@ export function TopBar() {
                   <button
                     key={t.label}
                     onClick={() => navigate(t.path)}
+                    data-tour={`nav-${t.label.toLowerCase()}`}
                     className={cn(
                       "px-3.5 py-1.5 rounded-full text-sm font-medium transition-all",
                       isActive ? "bg-foreground text-background" : "text-foreground/70 hover:text-foreground hover:bg-foreground/5",
@@ -118,6 +119,7 @@ export function TopBar() {
               <button
                 onClick={() => setSearchOpen(true)}
                 aria-label="Search"
+                data-tour="search"
                 className="ml-1 h-8 w-8 rounded-full flex items-center justify-center text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition"
               >
                 <Search className="h-4 w-4" />
