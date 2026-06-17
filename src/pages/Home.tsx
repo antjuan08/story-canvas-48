@@ -99,8 +99,8 @@ export default function Home() {
         <div className="w-full max-w-[360px] justify-self-center">
           <div className="rounded-2xl p-7 shadow-xl border" style={{ backgroundColor: CREAM, color: INK, borderColor: "hsl(240,8%,80%)" }}>
             <h1 className="font-serif text-2xl font-light tracking-tight leading-tight">
-              Your <em className="italic">stories</em>, kept like{" "}
-              <span className="inline-block px-1.5 rounded" style={{ backgroundColor: "hsl(0,0%,88%)" }}>clouds</span>.
+              Your <em className="italic">Voice</em>, Your{" "}
+              <span className="inline-block px-1.5 rounded" style={{ backgroundColor: "hsl(0,0%,88%)" }}>Words</span>.
             </h1>
 
             <div className="mt-5 space-y-3.5">
