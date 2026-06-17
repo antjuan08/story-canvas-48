@@ -13,7 +13,7 @@ export interface TourStep {
 
 const STEPS: TourStep[] = [
   {
-    selector: '[data-tour="nav-dashboard"]',
+    selector: '[data-tour="nav-home"]',
     title: "Your dashboard",
     body: "Your home base — start a new story, see prompts, and pick up where you left off.",
     route: "/dashboard",
