@@ -20,6 +20,7 @@ import Profile from "@/pages/Profile";
 import Community from "@/pages/Community";
 import BillingReturn from "@/pages/BillingReturn";
 import Testimonials from "@/pages/Testimonials";
+import Academy from "@/pages/Academy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
