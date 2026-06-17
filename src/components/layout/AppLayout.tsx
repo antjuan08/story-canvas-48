@@ -3,6 +3,7 @@ import { TopBar } from "./TopBar";
 import { SiteFooter } from "./SiteFooter";
 import { PaymentTestModeBanner } from "@/components/PaymentTestModeBanner";
 import { WelcomeSplash } from "@/components/onboarding/WelcomeSplash";
+import { TourGuide, hasSeenTour } from "@/components/onboarding/TourGuide";
 import { useAuth } from "@/hooks/use-auth";
 
 interface AppLayoutProps {
@@ -12,6 +13,7 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   const { user } = useAuth();
   const [showSplash, setShowSplash] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -21,6 +23,22 @@ export function AppLayout({ children }: AppLayoutProps) {
       sessionStorage.setItem(key, "1");
     }
   }, [user]);
+
+  // Auto-launch tour first time, plus a manual trigger via event
+  useEffect(() => {
+    if (!user) return;
+    const onStart = () => setTourOpen(true);
+    window.addEventListener("storyou:start-tour", onStart);
+    return () => window.removeEventListener("storyou:start-tour", onStart);
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || showSplash) return;
+    if (!hasSeenTour()) {
+      const t = setTimeout(() => setTourOpen(true), 600);
+      return () => clearTimeout(t);
+    }
+  }, [user, showSplash]);
 
   return (
     <div className="min-h-screen w-full bg-background overflow-x-hidden flex flex-col">
@@ -33,6 +51,7 @@ export function AppLayout({ children }: AppLayoutProps) {
         </div>
       </main>
       <SiteFooter />
+      <TourGuide open={tourOpen} onClose={() => setTourOpen(false)} />
     </div>
   );
 }

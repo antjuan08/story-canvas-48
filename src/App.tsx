@@ -20,6 +20,7 @@ import Profile from "@/pages/Profile";
 import Community from "@/pages/Community";
 import BillingReturn from "@/pages/BillingReturn";
 import Testimonials from "@/pages/Testimonials";
+import Academy from "@/pages/Academy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/billing/return" element={<Protected><BillingReturn /></Protected>} />
             <Route path="/settings" element={<Protected><Settings /></Protected>} />
             <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/academy" element={<Protected><Academy /></Protected>} />
 
             {/* Legacy redirects */}
             <Route path="/vault" element={<Navigate to="/stories" replace />} />

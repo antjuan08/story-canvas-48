@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { startTourFromAnywhere } from "@/components/onboarding/TourGuide";
 
 const COLS: { title: string; links: { label: string; to: string }[] }[] = [
   { title: "Product", links: [
@@ -24,13 +25,13 @@ const COLS: { title: string; links: { label: string; to: string }[] }[] = [
     { label: "Pricing", to: "/welcome" },
     { label: "Buy credits", to: "/profile" },
   ]},
+  { title: "Learn", links: [
+    { label: "StoryU Academy", to: "/academy" },
+    { label: "Tour guide", to: "#tour" },
+  ]},
   { title: "Company", links: [
     { label: "About", to: "/" },
     { label: "Journal", to: "/" },
-  ]},
-  { title: "Contact", links: [
-    { label: "Support", to: "/" },
-    { label: "Press", to: "/" },
   ]},
 ];
 
@@ -42,20 +43,43 @@ export function SiteFooter() {
           <div key={col.title}>
             <h4 className="font-serif text-sm mb-3 text-foreground">{col.title}</h4>
             <ul className="space-y-2">
-              {col.links.map((l) => (
-                <li key={l.label}>
-                  <Link to={l.to} className="text-xs text-foreground/60 hover:text-foreground transition-colors">
-                    {l.label}
-                  </Link>
-                </li>
-              ))}
+              {col.links.map((l) => {
+                if (l.to === "#tour") {
+                  return (
+                    <li key={l.label}>
+                      <button
+                        onClick={(e) => { e.preventDefault(); startTourFromAnywhere(); }}
+                        className="text-xs text-foreground/60 hover:text-foreground transition-colors text-left"
+                      >
+                        {l.label}
+                      </button>
+                    </li>
+                  );
+                }
+                return (
+                  <li key={l.label}>
+                    <Link to={l.to} className="text-xs text-foreground/60 hover:text-foreground transition-colors">
+                      {l.label}
+                    </Link>
+                  </li>
+                );
+              })}
             </ul>
           </div>
         ))}
       </div>
-      <div className="border-t border-foreground/10 px-6 py-5 text-xs text-foreground/50 flex justify-between max-w-7xl mx-auto">
+      <div className="border-t border-foreground/10 px-6 py-5 text-xs text-foreground/50 flex flex-wrap items-center justify-between gap-3 max-w-7xl mx-auto">
         <span>2026 © Storyou LLC</span>
-        <span className="font-serif">Kept like clouds.</span>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => startTourFromAnywhere()}
+            className="hover:text-foreground transition-colors"
+          >
+            Take the tour
+          </button>
+          <Link to="/academy" className="hover:text-foreground transition-colors">StoryU Academy</Link>
+          <span className="font-serif">Kept like clouds.</span>
+        </div>
       </div>
     </footer>
   );
