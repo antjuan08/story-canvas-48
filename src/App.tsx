@@ -55,6 +55,7 @@ const App = () => (
             <Route path="/billing/return" element={<Protected><BillingReturn /></Protected>} />
             <Route path="/settings" element={<Protected><Settings /></Protected>} />
             <Route path="/testimonials" element={<Testimonials />} />
+            <Route path="/academy" element={<Protected><Academy /></Protected>} />
 
             {/* Legacy redirects */}
             <Route path="/vault" element={<Navigate to="/stories" replace />} />
