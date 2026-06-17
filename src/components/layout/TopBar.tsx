@@ -143,7 +143,7 @@ export function TopBar() {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Account menu" className="rounded-full">
+                <Button variant="ghost" size="icon" aria-label="Account menu" data-tour="account" className="rounded-full">
                   <Avatar className="h-8 w-8">
                     <AvatarFallback className="bg-foreground text-background text-xs">{initials}</AvatarFallback>
                   </Avatar>
