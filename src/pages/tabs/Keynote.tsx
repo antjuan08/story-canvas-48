@@ -90,14 +90,14 @@ export default function Keynote() {
 
         {/* RIGHT — builder/preview, lifted to sit at the same level as the illustration */}
         <section>
-          <div className="rounded-3xl border border-foreground/10 bg-background/80 p-8 min-h-[60vh] relative">
+          <div className="rounded-3xl border border-foreground/10 bg-background/80 p-5 sm:p-8 min-h-[60vh] relative">
             {!selected ? (
-              <div className="text-center py-16">
-                <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">Build a keynote.</h1>
-                <p className="text-foreground/60 mt-3 max-w-md mx-auto">
+              <div className="text-center py-10 sm:py-16">
+                <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight">Build a keynote.</h1>
+                <p className="text-foreground/60 mt-3 max-w-md mx-auto text-sm sm:text-base">
                   Answer five quick questions. AI weaves your stories into a talkable outline.
                 </p>
-                <div className="flex items-center justify-center gap-3 mt-8">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mt-8">
                   <Button onClick={() => setOpen(true)} size="lg" className="rounded-full">
                     <Plus className="h-4 w-4 mr-2" /> New keynote
                   </Button>
@@ -105,7 +105,7 @@ export default function Keynote() {
                     <Mic className="h-4 w-4 mr-2" /> Feedback
                   </Button>
                 </div>
-                <p className="text-xs text-foreground/50 mt-4">Rehearse and get instant AI coaching on pacing, clarity & structure.</p>
+                <p className="text-xs text-foreground/50 mt-4 px-2">Rehearse and get instant AI coaching on pacing, clarity & structure.</p>
               </div>
             ) : (
               <KeynoteView k={selected} onClose={() => setSelected(null)} />
