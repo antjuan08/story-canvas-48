@@ -74,15 +74,15 @@ export default function Book() {
       <SEO title="Book library · StoryYou" description="Shape your collected stories into long-form chapters and start your book." path="/book" />
       <TabNav active="Book" />
 
-      <div className="max-w-7xl mx-auto px-6 pt-8">
-        <div className="grid md:grid-cols-[360px_1fr] items-center gap-8 mb-6">
-          <img src={bookIllustration} alt="Stick figure student in a library" className="w-full max-w-[360px] object-contain" loading="lazy" />
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">The library.</h1>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-8">
+        <div className="grid md:grid-cols-[360px_1fr] items-center gap-6 md:gap-8 mb-6">
+          <img src={bookIllustration} alt="Stick figure student in a library" className="w-full max-w-[240px] sm:max-w-[360px] object-contain mx-auto md:mx-0" loading="lazy" />
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div className="min-w-0">
+              <h1 className="font-serif text-3xl sm:text-5xl font-light tracking-tight">The library.</h1>
               <p className="text-sm text-foreground/60 mt-1">Chapter your stories. Begin a book.</p>
             </div>
-            <Button onClick={() => setPickerOpen(true)} className="rounded-full">
+            <Button onClick={() => setPickerOpen(true)} className="rounded-full w-full sm:w-auto">
               <Plus className="h-4 w-4 mr-2" /> Add a book
             </Button>
           </div>
