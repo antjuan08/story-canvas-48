@@ -188,7 +188,7 @@ export default function Stories() {
 
       <CloudsBackdrop className="z-0 opacity-40" variant="light" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-10">
         <style>{`
           @keyframes bubble-float {
             0%,100% { transform: translateY(0) rotate(0deg); }
