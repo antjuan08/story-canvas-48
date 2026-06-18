@@ -38,16 +38,16 @@ export default function Reimagined() {
       <SEO title="Reimagined · StoryYou" description="Bring a story to life as a short cinematic film with AI-generated visuals and audio." path="/reimagined" />
       <TabNav active="Reimagined" />
 
-      <div className="max-w-6xl mx-auto px-6 pt-8 pb-20">
-        <div className="flex items-end justify-between gap-6 mb-10">
-          <div className="flex items-center gap-6">
-            <img src={reimaginedIllustration} alt="Stick figure watching a cloud become a film" width={140} height={140} className="w-32 h-32 object-contain shrink-0" loading="lazy" />
-            <div>
-              <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">Reimagined.</h1>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-20">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-5 mb-10">
+          <div className="flex items-center gap-4 sm:gap-6 min-w-0">
+            <img src={reimaginedIllustration} alt="Stick figure watching a cloud become a film" width={140} height={140} className="w-20 h-20 sm:w-32 sm:h-32 object-contain shrink-0" loading="lazy" />
+            <div className="min-w-0">
+              <h1 className="font-serif text-3xl sm:text-5xl font-light tracking-tight">Reimagined.</h1>
               <p className="text-sm text-foreground/60 mt-1">Bring a story to life as a short film.</p>
             </div>
           </div>
-          <Button onClick={() => setOpen(true)} className="rounded-full">
+          <Button onClick={() => setOpen(true)} className="rounded-full w-full sm:w-auto">
             <Wand2 className="h-4 w-4 mr-2" /> Reimagine a story
           </Button>
         </div>
