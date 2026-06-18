@@ -126,13 +126,13 @@ function KeynoteView({ k, onClose }: { k: Keynote; onClose: () => void }) {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   return (
     <article className="space-y-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="min-w-0">
           <div className="text-xs uppercase tracking-widest text-foreground/50">Keynote</div>
-          <h2 className="font-serif text-3xl mt-1">{p.title ?? k.title}</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl mt-1 break-words">{p.title ?? k.title}</h2>
           <div className="text-xs text-foreground/50 mt-1">{[k.audience, k.tone, k.length].filter(Boolean).join(" · ")}</div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Button size="sm" className="rounded-full bg-[hsl(var(--brand-sermon-red))] hover:bg-[hsl(var(--brand-sermon-red))]/90 text-white border-0" onClick={() => setFeedbackOpen(true)}>
             <Mic className="h-3.5 w-3.5 mr-1.5" /> Feedback
           </Button>
