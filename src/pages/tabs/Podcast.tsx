@@ -58,12 +58,12 @@ export default function Podcast() {
       <SEO title="Podcast studio · StoryYou" description="Draft podcast episodes from your stories — intros, segments, outros, and show notes ready to record." path="/podcast" />
       <TabNav active="Podcast" />
 
-      <div className="max-w-6xl mx-auto px-6 pt-8 pb-32">
-        <div className="grid md:grid-cols-[360px_1fr] items-center gap-8 mb-8">
-          <img src={podcastIllustration} alt="Two stick figures podcasting" className="w-full max-w-[360px] object-contain" loading="lazy" />
-          <div className="flex items-end justify-between gap-6">
-            <div>
-              <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">On the mic.</h1>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-32">
+        <div className="grid md:grid-cols-[360px_1fr] items-center gap-6 md:gap-8 mb-8">
+          <img src={podcastIllustration} alt="Two stick figures podcasting" className="w-full max-w-[240px] sm:max-w-[360px] object-contain mx-auto md:mx-0" loading="lazy" />
+          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div className="min-w-0">
+              <h1 className="font-serif text-3xl sm:text-5xl font-light tracking-tight">On the mic.</h1>
               <p className="text-sm text-foreground/60 mt-1">{items.length} episode{items.length === 1 ? "" : "s"} drafted</p>
             </div>
             <ViewToggle value={view} onChange={setView} />
