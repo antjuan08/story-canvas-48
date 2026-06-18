@@ -220,7 +220,7 @@ export default function Feedback() {
               )}
             </div>
             {feedback.scores && (
-              <div className="grid grid-cols-5 gap-2">
+              <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
                 {Object.entries(feedback.scores).map(([k, v]) => (
                   <div key={k} className="rounded-xl bg-foreground/5 p-3 text-center">
                     <div className="text-2xl font-serif">{String(v)}</div>

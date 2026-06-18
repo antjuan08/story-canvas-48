@@ -188,7 +188,7 @@ export default function Stories() {
 
       <CloudsBackdrop className="z-0 opacity-40" variant="light" />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-6 pt-10">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-10">
         <style>{`
           @keyframes bubble-float {
             0%,100% { transform: translateY(0) rotate(0deg); }
@@ -202,9 +202,9 @@ export default function Stories() {
           .bubble:hover { animation: bubble-float-hover 2.2s ease-in-out infinite; box-shadow: 0 18px 40px -10px rgba(0,0,0,0.35); z-index: 5; }
         `}</style>
 
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="font-serif text-5xl font-light tracking-tight">Your stories</h1>
+            <h1 className="font-serif text-3xl sm:text-5xl font-light tracking-tight">Your stories</h1>
             <p className="text-sm text-foreground/60 mt-1">
               {stories.length} captured · floating like bubbles
               {folders.length > 0 && <> · {folders.length} folder{folders.length === 1 ? "" : "s"}</>}
@@ -288,13 +288,13 @@ export default function Stories() {
               {organizing ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 mr-1.5" />}
               Auto-organize
             </Button>
-            <div className="relative">
+            <div className="relative flex-1 sm:flex-none min-w-[180px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search stories…"
-                className="pl-9 rounded-full bg-background/80 w-64"
+                className="pl-9 rounded-full bg-background/80 w-full sm:w-64"
               />
             </div>
             <ViewToggle value={view} onChange={setView} />

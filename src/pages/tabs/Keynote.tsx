@@ -42,13 +42,13 @@ export default function Keynote() {
       <SEO title="Keynote builder · StoryYou" description="Turn your stories into stage-ready keynotes. Get AI feedback from a coach calibrated to CEOs, public speakers, storytellers, and communicators." path="/keynote" />
       <TabNav active="Keynote" />
 
-      <div className="max-w-6xl mx-auto px-6 pt-8 pb-20 grid lg:grid-cols-[1fr_2fr] gap-10 items-start">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-20 grid lg:grid-cols-[1fr_2fr] gap-8 lg:gap-10 items-start">
         {/* LEFT — illustration + saved keynotes */}
         <aside>
           <img
             src={keynoteIllustration}
             alt="Stick figure giving a keynote talk"
-            className="w-full max-w-[360px] object-contain mb-6"
+            className="w-full max-w-[240px] sm:max-w-[360px] object-contain mb-6 mx-auto lg:mx-0"
             loading="lazy"
           />
           <div className="flex items-center justify-between mb-5">
@@ -90,14 +90,14 @@ export default function Keynote() {
 
         {/* RIGHT — builder/preview, lifted to sit at the same level as the illustration */}
         <section>
-          <div className="rounded-3xl border border-foreground/10 bg-background/80 p-8 min-h-[60vh] relative">
+          <div className="rounded-3xl border border-foreground/10 bg-background/80 p-5 sm:p-8 min-h-[60vh] relative">
             {!selected ? (
-              <div className="text-center py-16">
-                <h1 className="font-serif text-4xl sm:text-5xl font-light tracking-tight">Build a keynote.</h1>
-                <p className="text-foreground/60 mt-3 max-w-md mx-auto">
+              <div className="text-center py-10 sm:py-16">
+                <h1 className="font-serif text-3xl sm:text-4xl lg:text-5xl font-light tracking-tight">Build a keynote.</h1>
+                <p className="text-foreground/60 mt-3 max-w-md mx-auto text-sm sm:text-base">
                   Answer five quick questions. AI weaves your stories into a talkable outline.
                 </p>
-                <div className="flex items-center justify-center gap-3 mt-8">
+                <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 mt-8">
                   <Button onClick={() => setOpen(true)} size="lg" className="rounded-full">
                     <Plus className="h-4 w-4 mr-2" /> New keynote
                   </Button>
@@ -105,7 +105,7 @@ export default function Keynote() {
                     <Mic className="h-4 w-4 mr-2" /> Feedback
                   </Button>
                 </div>
-                <p className="text-xs text-foreground/50 mt-4">Rehearse and get instant AI coaching on pacing, clarity & structure.</p>
+                <p className="text-xs text-foreground/50 mt-4 px-2">Rehearse and get instant AI coaching on pacing, clarity & structure.</p>
               </div>
             ) : (
               <KeynoteView k={selected} onClose={() => setSelected(null)} />
@@ -126,13 +126,13 @@ function KeynoteView({ k, onClose }: { k: Keynote; onClose: () => void }) {
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   return (
     <article className="space-y-6">
-      <div className="flex items-start justify-between gap-3">
-        <div>
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
+        <div className="min-w-0">
           <div className="text-xs uppercase tracking-widest text-foreground/50">Keynote</div>
-          <h2 className="font-serif text-3xl mt-1">{p.title ?? k.title}</h2>
+          <h2 className="font-serif text-2xl sm:text-3xl mt-1 break-words">{p.title ?? k.title}</h2>
           <div className="text-xs text-foreground/50 mt-1">{[k.audience, k.tone, k.length].filter(Boolean).join(" · ")}</div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <Button size="sm" className="rounded-full bg-[hsl(var(--brand-sermon-red))] hover:bg-[hsl(var(--brand-sermon-red))]/90 text-white border-0" onClick={() => setFeedbackOpen(true)}>
             <Mic className="h-3.5 w-3.5 mr-1.5" /> Feedback
           </Button>
