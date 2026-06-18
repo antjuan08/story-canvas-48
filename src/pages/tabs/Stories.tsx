@@ -288,13 +288,13 @@ export default function Stories() {
               {organizing ? <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5 mr-1.5" />}
               Auto-organize
             </Button>
-            <div className="relative">
+            <div className="relative flex-1 sm:flex-none min-w-[180px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-foreground/40" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search stories…"
-                className="pl-9 rounded-full bg-background/80 w-64"
+                className="pl-9 rounded-full bg-background/80 w-full sm:w-64"
               />
             </div>
             <ViewToggle value={view} onChange={setView} />
