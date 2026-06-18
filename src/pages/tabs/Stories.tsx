@@ -202,9 +202,9 @@ export default function Stories() {
           .bubble:hover { animation: bubble-float-hover 2.2s ease-in-out infinite; box-shadow: 0 18px 40px -10px rgba(0,0,0,0.35); z-index: 5; }
         `}</style>
 
-        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-6">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-6">
           <div>
-            <h1 className="font-serif text-5xl font-light tracking-tight">Your stories</h1>
+            <h1 className="font-serif text-3xl sm:text-5xl font-light tracking-tight">Your stories</h1>
             <p className="text-sm text-foreground/60 mt-1">
               {stories.length} captured · floating like bubbles
               {folders.length > 0 && <> · {folders.length} folder{folders.length === 1 ? "" : "s"}</>}
