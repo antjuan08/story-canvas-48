@@ -48,7 +48,6 @@ export default function Keynote() {
           <img
             src={keynoteIllustration}
             alt="Stick figure giving a keynote talk"
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-20 grid lg:grid-cols-[1fr_2fr] gap-8 lg:gap-10 items-start">
             className="w-full max-w-[240px] sm:max-w-[360px] object-contain mb-6 mx-auto lg:mx-0"
             loading="lazy"
           />
