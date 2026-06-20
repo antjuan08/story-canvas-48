@@ -70,7 +70,7 @@ export function TopBar() {
               </SheetTrigger>
               <SheetContent side="left" className="w-72">
                 <SheetHeader>
-                  <SheetTitle className="font-serif text-left">StoryYou</SheetTitle>
+                  <SheetTitle className="font-serif text-left">Storyou</SheetTitle>
                 </SheetHeader>
                 <div className="mt-6 flex flex-col gap-1">
                   {NAV_TABS.map((t) => {
@@ -93,7 +93,7 @@ export function TopBar() {
             </Sheet>
             <Link to="/dashboard" className="flex items-center gap-2">
               <div className="h-7 w-7 rounded-xl bg-foreground text-background grid place-items-center font-serif text-sm">S</div>
-              <span className="font-serif text-lg tracking-tight hidden sm:inline">StoryYou</span>
+              <span className="font-serif text-lg tracking-tight hidden sm:inline">Storyou</span>
             </Link>
           </div>
 
