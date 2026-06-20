@@ -43,7 +43,7 @@ export default function Home() {
           options: { emailRedirectTo: `${window.location.origin}/dashboard`, data: { full_name: name } },
         });
         if (error) throw error;
-        toast.success("Welcome to StoryYou");
+        toast.success("Welcome to Storyou");
       } else {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
@@ -65,13 +65,13 @@ export default function Home() {
   return (
     <div className="relative min-h-screen overflow-hidden" style={{ backgroundColor: CREAM, color: INK }}>
       <SEO
-        title="StoryYou — Capture, refine, and share your stories"
-        description="StoryYou turns spoken moments into keynotes, podcasts, books, and cinematic reimaginings — with an AI speaking coach built in."
+        title="Storyou — Capture, refine, and share your stories"
+        description="Storyou turns spoken moments into keynotes, podcasts, books, and cinematic reimaginings — with an AI speaking coach built in."
         path="/"
         jsonLd={{
           "@context": "https://schema.org",
           "@type": "WebSite",
-          name: "StoryYou",
+          name: "Storyou",
           url: "https://storyou.ai",
           potentialAction: {
             "@type": "SearchAction",
@@ -87,7 +87,7 @@ export default function Home() {
       <div className="absolute top-5 left-6 z-20 flex items-center gap-2">
         <div className="h-9 w-9 rounded-2xl grid place-items-center font-serif text-base"
           style={{ backgroundColor: INK, color: CREAM }}>S</div>
-        <span className="font-serif text-xl tracking-tight" style={{ color: INK }}>StoryYou</span>
+        <span className="font-serif text-xl tracking-tight" style={{ color: INK }}>Storyou</span>
       </div>
 
       {/* Main grid */}

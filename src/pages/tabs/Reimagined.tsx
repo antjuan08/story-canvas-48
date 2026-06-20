@@ -35,7 +35,7 @@ export default function Reimagined() {
 
   return (
     <div className="min-h-[calc(100vh-7rem)]">
-      <SEO title="Reimagined · StoryYou" description="Bring a story to life as a short cinematic film with AI-generated visuals and audio." path="/reimagined" />
+      <SEO title="Reimagined · Storyou" description="Bring a story to life as a short cinematic film with AI-generated visuals and audio." path="/reimagined" />
       <TabNav active="Reimagined" />
 
       <div className="max-w-6xl mx-auto px-4 sm:px-6 pt-8 pb-20">

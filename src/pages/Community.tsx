@@ -43,8 +43,8 @@ export default function Community() {
   return (
     <div className="min-h-[calc(100vh-7rem)]">
       <SEO
-        title="Community · StoryYou"
-        description="Read and share stories from the StoryYou community of storytellers, speakers, and creators."
+        title="Community · Storyou"
+        description="Read and share stories from the Storyou community of storytellers, speakers, and creators."
         path="/community"
         jsonLd={posts.slice(0, 20).map((p) => ({
           "@context": "https://schema.org",
