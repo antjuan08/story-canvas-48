@@ -35,7 +35,7 @@ function StoryDoc({ payload }: { payload: ExportPayload }) {
             <Text style={styles.body}>{s.body}</Text>
           </View>
         ))}
-        <Text style={styles.footer} fixed>StoryYou · {new Date().toLocaleDateString()}</Text>
+        <Text style={styles.footer} fixed>Storyou · {new Date().toLocaleDateString()}</Text>
       </Page>
     </Document>
   );

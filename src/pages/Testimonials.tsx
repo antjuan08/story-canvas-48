@@ -28,8 +28,8 @@ export default function Testimonials() {
   return (
     <div className="min-h-[calc(100vh-7rem)] max-w-5xl mx-auto px-6 pt-12 pb-20">
       <SEO
-        title="Testimonials · StoryYou"
-        description="What storytellers, speakers, and creators say about turning their moments into stories with StoryYou."
+        title="Testimonials · Storyou"
+        description="What storytellers, speakers, and creators say about turning their moments into stories with Storyou."
         path="/testimonials"
         jsonLd={items.slice(0, 20).map((t) => ({
           "@context": "https://schema.org",
@@ -37,7 +37,7 @@ export default function Testimonials() {
           reviewBody: t.quote,
           author: { "@type": "Person", name: t.name },
           reviewRating: { "@type": "Rating", ratingValue: t.rating, bestRating: 5 },
-          itemReviewed: { "@type": "Organization", name: "StoryYou" },
+          itemReviewed: { "@type": "Organization", name: "Storyou" },
         }))}
       />
       <div className="flex items-end justify-between mb-10 gap-4">
