@@ -894,6 +894,7 @@ export type Database = {
     }
     Functions: {
       check_tier_limit: { Args: { _kind: string }; Returns: boolean }
+      consume_reimagine_credit: { Args: { _user_id: string }; Returns: number }
       get_public_profiles: {
         Args: { user_ids: string[] }
         Returns: {
@@ -913,6 +914,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      increment_reimagine_credits: {
+        Args: { _delta: number; _user_id: string }
+        Returns: number
       }
       increment_usage: { Args: { _kind: string }; Returns: undefined }
     }
