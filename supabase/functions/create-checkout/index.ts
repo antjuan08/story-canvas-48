@@ -35,6 +35,17 @@ async function resolveOrCreateCustomer(
   return created.id;
 }
 
+// Canonical server-side trial lengths per price lookup_key. Mirrors the
+// trial offer the app exposes to users — do NOT trust client-supplied values.
+const TRIAL_DAYS_BY_PRICE: Record<string, number> = {
+  storyteller_monthly: 7,
+  storyteller_yearly: 7,
+  pro_monthly: 7,
+  pro_yearly: 7,
+  creator_monthly: 7,
+  creator_yearly: 7,
+};
+
 async function createCheckoutSession(options: {
   priceId: string;
   quantity?: number;
@@ -42,7 +53,6 @@ async function createCheckoutSession(options: {
   userId?: string;
   returnUrl: string;
   environment: StripeEnv;
-  trialDays?: number;
 }) {
   if (!/^[a-zA-Z0-9_-]+$/.test(options.priceId)) throw new Error("Invalid priceId");
   const stripe = createStripeClient(options.environment);
