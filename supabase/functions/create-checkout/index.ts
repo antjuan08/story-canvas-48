@@ -135,7 +135,6 @@ Deno.serve(async (req) => {
       userId: userData.user.id,
       returnUrl: body.returnUrl,
       environment: body.environment,
-      trialDays: body.trialDays,
     });
     return new Response(JSON.stringify({ clientSecret }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
