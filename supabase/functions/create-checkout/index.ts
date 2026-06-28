@@ -35,6 +35,17 @@ async function resolveOrCreateCustomer(
   return created.id;
 }
 
+// Canonical server-side trial lengths per price lookup_key. Mirrors the
+// trial offer the app exposes to users — do NOT trust client-supplied values.
+const TRIAL_DAYS_BY_PRICE: Record<string, number> = {
+  storyteller_monthly: 7,
+  storyteller_yearly: 7,
+  pro_monthly: 7,
+  pro_yearly: 7,
+  creator_monthly: 7,
+  creator_yearly: 7,
+};
+
 async function createCheckoutSession(options: {
   priceId: string;
   quantity?: number;
@@ -42,7 +53,6 @@ async function createCheckoutSession(options: {
   userId?: string;
   returnUrl: string;
   environment: StripeEnv;
-  trialDays?: number;
 }) {
   if (!/^[a-zA-Z0-9_-]+$/.test(options.priceId)) throw new Error("Invalid priceId");
   const stripe = createStripeClient(options.environment);
@@ -63,6 +73,9 @@ async function createCheckoutSession(options: {
     productDescription = product.name;
   }
 
+  // Server-determined trial length — ignore any client-supplied value.
+  const trialDays = isRecurring ? TRIAL_DAYS_BY_PRICE[options.priceId] : undefined;
+
   const session = await stripe.checkout.sessions.create({
     line_items: [{ price: stripePrice.id, quantity: options.quantity || 1 }],
     mode: isRecurring ? "subscription" : "payment",
@@ -70,13 +83,13 @@ async function createCheckoutSession(options: {
     return_url: options.returnUrl,
     ...(customerId && { customer: customerId }),
     ...(!isRecurring && { payment_intent_data: { description: productDescription } }),
-    ...(isRecurring && options.trialDays && {
+    ...(isRecurring && trialDays && {
       subscription_data: {
-        trial_period_days: options.trialDays,
+        trial_period_days: trialDays,
         ...(options.userId && { metadata: { userId: options.userId } }),
       },
     }),
-    ...(isRecurring && !options.trialDays && options.userId && {
+    ...(isRecurring && !trialDays && options.userId && {
       subscription_data: { metadata: { userId: options.userId } },
     }),
     ...(options.userId && { metadata: { userId: options.userId, priceId: options.priceId } }),
@@ -122,7 +135,6 @@ Deno.serve(async (req) => {
       userId: userData.user.id,
       returnUrl: body.returnUrl,
       environment: body.environment,
-      trialDays: body.trialDays,
     });
     return new Response(JSON.stringify({ clientSecret }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

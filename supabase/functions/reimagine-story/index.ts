@@ -10,6 +10,10 @@ const ANON_KEY = Deno.env.get('SUPABASE_ANON_KEY')!;
 Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  let creditReserved = false;
+  let reservedUserId: string | null = null;
+  const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
+
   try {
     const auth = req.headers.get('Authorization');
     if (!auth) return json({ error: 'Unauthorized' }, 401);
@@ -31,8 +35,6 @@ Deno.serve(async (req) => {
     const useUploadedAudio: boolean = !!body.use_uploaded_audio;
     const customPrompt: string = (body.prompt ?? '').toString().trim();
 
-    const admin = createClient(SUPABASE_URL, SERVICE_ROLE);
-
     let storyTitle = customPrompt.slice(0, 80) || 'Reimagined';
     let storyBody = customPrompt;
     if (storyId) {
@@ -45,6 +47,22 @@ Deno.serve(async (req) => {
     if (!storyId && !customPrompt && !refImageUrl && !refVideoUrl) {
       return json({ error: 'Provide a story, a prompt, or a reference photo/video.' }, 400);
     }
+
+    // Atomically reserve 1 Reimagined credit BEFORE any AI work.
+    const { data: newBalance, error: creditErr } = await admin.rpc(
+      'consume_reimagine_credit',
+      { _user_id: user.id },
+    );
+    if (creditErr) return json({ error: creditErr.message }, 500);
+    if (newBalance === null || newBalance === undefined) {
+      return json(
+        { error: "You're out of Reimagined credits. Buy more in Profile → Billing." },
+        402,
+      );
+    }
+    creditReserved = true;
+    reservedUserId = user.id;
+
 
     // 1) Film treatment
     let treatment: any = { title: storyTitle, video_prompt: customPrompt || storyBody, mood: null };
@@ -201,9 +219,20 @@ Deno.serve(async (req) => {
       .single();
     if (insErr) return json({ error: insErr.message }, 500);
 
+    creditReserved = false; // output produced — keep the credit consumed
     return json({ reimagined: saved, note: videoNote });
   } catch (e) {
     return json({ error: (e as Error).message }, 500);
+  } finally {
+    // Refund if we reserved a credit but never produced output.
+    if (creditReserved && reservedUserId) {
+      try {
+        await admin.rpc('increment_reimagine_credits', {
+          _user_id: reservedUserId,
+          _delta: 1,
+        });
+      } catch { /* best-effort refund */ }
+    }
   }
 });
 
