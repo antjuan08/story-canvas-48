@@ -70,7 +70,9 @@ export async function verifyWebhook(req: Request, env: StripeEnv): Promise<{ typ
   );
   const signed = await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(`${timestamp}.${body}`));
   const expected = new TextDecoder().decode(encode(new Uint8Array(signed)));
-  if (!v1Signatures.includes(expected)) throw new Error("Invalid webhook signature");
+  if (!v1Signatures.some((sig) => timingSafeEqual(sig, expected))) {
+    throw new Error("Invalid webhook signature");
+  }
 
   return JSON.parse(body);
 }
