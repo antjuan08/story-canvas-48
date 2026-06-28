@@ -141,22 +141,34 @@ async function handleCheckoutCompleted(session: any) {
   const credits = CREDIT_PACKS[priceId];
   if (!credits) return;
 
-  await getSupabase().from("credit_purchases").insert({
-    user_id: userId,
-    pack: priceId,
-    credits,
-    amount_cents: session.amount_total ?? 0,
-    stripe_session_id: session.id,
-  });
+  // Idempotency: rely on UNIQUE(stripe_session_id). If a duplicate webhook
+  // arrives, the insert returns zero rows and we skip the credit grant.
+  const { data: inserted, error: insertErr } = await getSupabase()
+    .from("credit_purchases")
+    .insert({
+      user_id: userId,
+      pack: priceId,
+      credits,
+      amount_cents: session.amount_total ?? 0,
+      stripe_session_id: session.id,
+    })
+    .select("id")
+    .maybeSingle();
 
-  // Atomically add credits to profile
-  const { data: prof } = await getSupabase()
-    .from("profiles").select("reimagine_credits").eq("id", userId).maybeSingle();
-  const current = (prof as any)?.reimagine_credits ?? 0;
-  await getSupabase().from("profiles").update({
-    reimagine_credits: current + credits,
-    updated_at: new Date().toISOString(),
-  }).eq("id", userId);
+  if (insertErr) {
+    // 23505 unique_violation = already processed → safe to ignore.
+    if ((insertErr as any).code === "23505") return;
+    throw insertErr;
+  }
+  if (!inserted) return;
+
+  // Atomic increment so concurrent webhooks can't lose credits.
+  const { error: rpcErr } = await getSupabase().rpc("increment_reimagine_credits", {
+    _user_id: userId,
+    _delta: credits,
+  });
+  if (rpcErr) throw rpcErr;
+
 
   await getSupabase().from("subscription_events").insert({
     user_id: userId, event_type: "credits.purchased", payload: session,
