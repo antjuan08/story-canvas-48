@@ -73,6 +73,9 @@ async function createCheckoutSession(options: {
     productDescription = product.name;
   }
 
+  // Server-determined trial length — ignore any client-supplied value.
+  const trialDays = isRecurring ? TRIAL_DAYS_BY_PRICE[options.priceId] : undefined;
+
   const session = await stripe.checkout.sessions.create({
     line_items: [{ price: stripePrice.id, quantity: options.quantity || 1 }],
     mode: isRecurring ? "subscription" : "payment",
@@ -80,13 +83,13 @@ async function createCheckoutSession(options: {
     return_url: options.returnUrl,
     ...(customerId && { customer: customerId }),
     ...(!isRecurring && { payment_intent_data: { description: productDescription } }),
-    ...(isRecurring && options.trialDays && {
+    ...(isRecurring && trialDays && {
       subscription_data: {
-        trial_period_days: options.trialDays,
+        trial_period_days: trialDays,
         ...(options.userId && { metadata: { userId: options.userId } }),
       },
     }),
-    ...(isRecurring && !options.trialDays && options.userId && {
+    ...(isRecurring && !trialDays && options.userId && {
       subscription_data: { metadata: { userId: options.userId } },
     }),
     ...(options.userId && { metadata: { userId: options.userId, priceId: options.priceId } }),
