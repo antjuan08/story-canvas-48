@@ -219,9 +219,20 @@ Deno.serve(async (req) => {
       .single();
     if (insErr) return json({ error: insErr.message }, 500);
 
+    creditReserved = false; // output produced — keep the credit consumed
     return json({ reimagined: saved, note: videoNote });
   } catch (e) {
     return json({ error: (e as Error).message }, 500);
+  } finally {
+    // Refund if we reserved a credit but never produced output.
+    if (creditReserved && reservedUserId) {
+      try {
+        await admin.rpc('increment_reimagine_credits', {
+          _user_id: reservedUserId,
+          _delta: 1,
+        });
+      } catch { /* best-effort refund */ }
+    }
   }
 });
 
