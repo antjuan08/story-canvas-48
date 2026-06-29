@@ -157,7 +157,10 @@ export default function Home() {
               </Tabs>
 
               <p className="text-[11px] text-center pt-1" style={{ color: "hsl(240,5%,45%)" }}>
-                By continuing you agree to our Terms & Privacy.
+                By continuing you agree to our{" "}
+                <a href="/terms" className="underline hover:text-foreground">Terms</a>
+                {" "}&{" "}
+                <a href="/privacy" className="underline hover:text-foreground">Privacy</a>.
               </p>
             </div>
           </div>
