@@ -78,6 +78,8 @@ export function SiteFooter() {
             Take the tour
           </button>
           <Link to="/academy" className="hover:text-foreground transition-colors">StoryU Academy</Link>
+          <Link to="/terms" className="hover:text-foreground transition-colors">Terms</Link>
+          <Link to="/privacy" className="hover:text-foreground transition-colors">Privacy</Link>
           <span className="font-serif">Kept like clouds.</span>
         </div>
       </div>
