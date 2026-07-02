@@ -22,6 +22,7 @@ import BillingReturn from "@/pages/BillingReturn";
 import Testimonials from "@/pages/Testimonials";
 import Academy from "@/pages/Academy";
 import { Terms, Privacy } from "@/pages/Legal";
+import Landing from "@/pages/Landing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
