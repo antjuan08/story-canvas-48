@@ -22,6 +22,7 @@ import BillingReturn from "@/pages/BillingReturn";
 import Testimonials from "@/pages/Testimonials";
 import Academy from "@/pages/Academy";
 import { Terms, Privacy } from "@/pages/Legal";
+import Landing from "@/pages/Landing";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +42,7 @@ const App = () => (
         <AuthProvider>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/landing" element={<Landing />} />
             <Route path="/auth" element={<Navigate to="/" replace />} />
 
             <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
