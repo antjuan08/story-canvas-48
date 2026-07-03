@@ -103,8 +103,60 @@ function Placeholder({
 }
 
 /* ---------- Nav ---------- */
+const NAV: { label: string; items: string[] }[] = [
+  { label: "Story", items: ["Story Cloud", "Signature Story", "Storyboard", "Enterprise Stories"] },
+  { label: "Stage", items: ["Keynote", "Feedback Coach"] },
+  { label: "Studio", items: ["Podcast", "Reimagine Studio"] },
+  { label: "Support", items: ["StoryU", "Tutorials", "Courses", "Case Studies"] },
+];
+
+function NavDropdown({ label, items }: { label: string; items: string[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
+        className="flex items-center gap-1 py-2 hover:text-brand-anchor transition-colors"
+      >
+        {label}
+        <ChevronDown className={cn("h-3.5 w-3.5 opacity-60 transition-transform", open && "rotate-180")} />
+      </button>
+      <div
+        role="menu"
+        className={cn(
+          "absolute left-0 top-full pt-2 w-56 transition-all",
+          open ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-1 pointer-events-none"
+        )}
+      >
+        <div className="rounded-2xl border border-brand-anchor/10 bg-brand-bone shadow-lg shadow-brand-anchor/5 p-2">
+          {items.map((item) => (
+            <Link
+              key={item}
+              to="/"
+              role="menuitem"
+              className="block rounded-xl px-3 py-2 text-sm text-brand-anchor/80 hover:text-brand-anchor hover:bg-brand-anchor/[0.04] transition-colors"
+            >
+              {item}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function Nav() {
   const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
     onScroll();
@@ -116,7 +168,7 @@ function Nav() {
     <header
       className={cn(
         "sticky top-0 z-50 transition-all",
-        scrolled
+        scrolled || mobileOpen
           ? "backdrop-blur bg-brand-bone/85 border-b border-brand-anchor/10"
           : "bg-transparent border-b border-transparent"
       )}
@@ -128,19 +180,57 @@ function Nav() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8 text-sm text-brand-anchor/80">
-          {["Product", "Explore", "For teams"].map((label) => (
-            <button
-              key={label}
-              className="flex items-center gap-1 hover:text-brand-anchor transition-colors"
-            >
-              {label}
-              <ChevronDown className="h-3.5 w-3.5 opacity-60" />
-            </button>
+          {NAV.map((n) => (
+            <NavDropdown key={n.label} label={n.label} items={n.items} />
           ))}
-          <a href="#support" className="hover:text-brand-anchor transition-colors">
-            Support ↗
-          </a>
         </nav>
+
+        <button
+          type="button"
+          className="lg:hidden inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-brand-anchor/5 text-brand-anchor/80"
+          aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen((v) => !v)}
+        >
+          <ChevronDown className={cn("h-4 w-4 transition-transform", mobileOpen && "rotate-180")} />
+        </button>
+
+        {mobileOpen && (
+          <div className="lg:hidden absolute left-0 right-0 top-full bg-brand-bone border-b border-brand-anchor/10 px-6 py-4">
+            <div className="max-w-7xl mx-auto flex flex-col gap-1 text-sm">
+              {NAV.map((n) => {
+                const isOpen = expanded === n.label;
+                return (
+                  <div key={n.label} className="border-b border-brand-anchor/5 last:border-0">
+                    <button
+                      type="button"
+                      onClick={() => setExpanded(isOpen ? null : n.label)}
+                      aria-expanded={isOpen}
+                      className="w-full flex items-center justify-between py-3 text-brand-anchor"
+                    >
+                      {n.label}
+                      <ChevronDown className={cn("h-4 w-4 opacity-60 transition-transform", isOpen && "rotate-180")} />
+                    </button>
+                    {isOpen && (
+                      <div className="pb-3 pl-3 flex flex-col gap-1">
+                        {n.items.map((item) => (
+                          <Link
+                            key={item}
+                            to="/"
+                            onClick={() => setMobileOpen(false)}
+                            className="py-2 text-brand-anchor/70 hover:text-brand-anchor"
+                          >
+                            {item}
+                          </Link>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="flex items-center gap-3">
           <Link
