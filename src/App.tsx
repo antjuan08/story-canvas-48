@@ -23,6 +23,7 @@ import Testimonials from "@/pages/Testimonials";
 import Academy from "@/pages/Academy";
 import { Terms, Privacy } from "@/pages/Legal";
 import Landing from "@/pages/Landing";
+import OAuthConsent from "@/pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -43,6 +44,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/landing" element={<Landing />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route path="/auth" element={<Navigate to="/" replace />} />
 
             <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />

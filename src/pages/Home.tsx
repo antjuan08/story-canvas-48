@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,14 +23,17 @@ const schema = z.object({
 export default function Home() {
   const { session, loading } = useAuth();
   const navigate = useNavigate();
+  const [params] = useSearchParams();
+  const rawNext = params.get("next") ?? "";
+  const nextPath = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
 
-  useEffect(() => { if (session) navigate("/dashboard", { replace: true }); }, [session, navigate]);
+  useEffect(() => { if (session) navigate(nextPath, { replace: true }); }, [session, navigate, nextPath]);
   if (loading) return null;
-  if (session) return <Navigate to="/dashboard" replace />;
+  if (session) return <Navigate to={nextPath} replace />;
 
   const handleEmail = async (mode: "signin" | "signup") => {
     const parsed = schema.safeParse({ email, password });
@@ -40,7 +43,7 @@ export default function Home() {
       if (mode === "signup") {
         const { error } = await supabase.auth.signUp({
           email, password,
-          options: { emailRedirectTo: `${window.location.origin}/dashboard`, data: { full_name: name } },
+          options: { emailRedirectTo: `${window.location.origin}${nextPath}`, data: { full_name: name } },
         });
         if (error) throw error;
         toast.success("Welcome to Storyou");
@@ -56,10 +59,11 @@ export default function Home() {
   const handleOAuth = async (provider: "google" | "apple") => {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth(provider, {
-      redirect_uri: `${window.location.origin}/dashboard`,
+      redirect_uri: `${window.location.origin}${nextPath}`,
     });
     if (result.error) { toast.error(result.error.message ?? "Sign-in failed"); setBusy(false); }
   };
+
 
 
   return (
