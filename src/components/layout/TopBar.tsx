@@ -1,7 +1,23 @@
-import { useState, useEffect } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, Command, LogOut, Settings as SettingsIcon, Menu, Sun, Moon, Monitor, User as UserIcon, Users, Palette, UserPlus, Mail, Twitter, Linkedin, Facebook, Link2 } from "lucide-react";
+import {
+  ChevronDown,
+  LogOut,
+  Settings as SettingsIcon,
+  Sun,
+  Moon,
+  Monitor,
+  User as UserIcon,
+  Users,
+  Palette,
+  UserPlus,
+  Mail,
+  Twitter,
+  Linkedin,
+  Facebook,
+  Link2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,21 +33,106 @@ import {
   DropdownMenuRadioItem,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Sheet, SheetContent, SheetTrigger, SheetHeader, SheetTitle } from "@/components/ui/sheet";
-import { SearchDialog } from "@/components/ui/SearchDialog";
 import { useAuth } from "@/hooks/use-auth";
 import { useTheme, type Theme } from "@/hooks/use-theme";
-import { NAV_TABS } from "@/components/nav/TabNav";
 import { TrialBanner } from "@/components/billing/TrialBanner";
 import { cn } from "@/lib/utils";
+import wordmarkAsset from "@/assets/storyou-wordmark.png.asset.json";
+import markAsset from "@/assets/storyou-mark.png.asset.json";
+
+const NAV: { label: string; items: { label: string; path: string }[] }[] = [
+  {
+    label: "Story",
+    items: [
+      { label: "Story Cloud", path: "/vault" },
+      { label: "Signature Story", path: "/dashboard" },
+      { label: "Storyboard", path: "/dashboard" },
+      { label: "Enterprise Stories", path: "/community" },
+    ],
+  },
+  {
+    label: "Stage",
+    items: [
+      { label: "Keynote", path: "/keynotes" },
+      { label: "Feedback Coach", path: "/dashboard" },
+    ],
+  },
+  {
+    label: "Studio",
+    items: [
+      { label: "Podcast", path: "/dashboard" },
+      { label: "Reimagine Studio", path: "/dashboard" },
+    ],
+  },
+  {
+    label: "Support",
+    items: [
+      { label: "StoryU", path: "/academy" },
+      { label: "Tutorials", path: "/academy" },
+      { label: "Courses", path: "/academy" },
+      { label: "Case Studies", path: "/community" },
+    ],
+  },
+];
+
+function NavDropdown({ label, items }: { label: string; items: { label: string; path: string }[] }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
+        className="flex items-center gap-1 py-2 hover:text-foreground transition-colors"
+      >
+        {label}
+        <ChevronDown className={cn("h-3.5 w-3.5 opacity-60 transition-transform", open && "rotate-180")} />
+      </button>
+      <div
+        role="menu"
+        className={cn(
+          "absolute left-0 top-full pt-2 w-56 transition-all z-50",
+          open ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-1 pointer-events-none",
+        )}
+      >
+        <div className="rounded-2xl border border-foreground/10 bg-background shadow-lg shadow-foreground/5 p-2">
+          {items.map((item) => (
+            <Link
+              key={item.label}
+              to={item.path}
+              role="menuitem"
+              onClick={() => setOpen(false)}
+              className="block rounded-xl px-3 py-2 text-sm text-foreground/80 hover:text-foreground hover:bg-foreground/[0.04] transition-colors"
+            >
+              {item.label}
+            </Link>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function TopBar() {
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [expanded, setExpanded] = useState<string | null>(null);
   const { user, signOut } = useAuth();
   const { theme, setTheme } = useTheme();
   const navigate = useNavigate();
-  const location = useLocation();
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   const handleSignOut = async () => {
     try {
@@ -46,155 +147,128 @@ export function TopBar() {
   const email = user?.email ?? "";
   const initials = (email.split("@")[0] || "U").slice(0, 2).toUpperCase();
 
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        setSearchOpen(true);
-      }
-    };
-    document.addEventListener("keydown", handleKeyDown);
-    return () => document.removeEventListener("keydown", handleKeyDown);
-  }, []);
-
   return (
-    <>
-      <header className="sticky top-0 z-30 h-14 w-full bg-background/70 backdrop-blur-md border-b border-foreground/5">
-        <div className="flex h-14 items-center justify-between px-4 md:px-6 gap-3">
-          <div className="flex items-center gap-2 shrink-0">
-            <Sheet open={menuOpen} onOpenChange={setMenuOpen}>
-              <SheetTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Menu" className="md:hidden rounded-full -ml-1">
-                  <Menu className="h-5 w-5" />
-                </Button>
-              </SheetTrigger>
-              <SheetContent side="left" className="w-72">
-                <SheetHeader>
-                  <SheetTitle className="font-serif text-left">Storyou</SheetTitle>
-                </SheetHeader>
-                <div className="mt-6 flex flex-col gap-1">
-                  {NAV_TABS.map((t) => {
-                    const active = location.pathname === t.path;
-                    return (
-                      <button
-                        key={t.label}
-                        onClick={() => { navigate(t.path); setMenuOpen(false); }}
-                        className={cn(
-                          "text-left px-3 py-2.5 rounded-xl text-sm font-medium transition",
-                          active ? "bg-foreground text-background" : "hover:bg-foreground/5",
-                        )}
-                      >
-                        {t.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </SheetContent>
-            </Sheet>
-            <Link to="/dashboard" className="flex items-center gap-2">
-              <div className="h-7 w-7 rounded-xl bg-foreground text-background grid place-items-center font-serif text-sm">S</div>
-              <span className="font-serif text-lg tracking-tight hidden sm:inline">Storyou</span>
-            </Link>
-          </div>
+    <header
+      className={cn(
+        "sticky top-0 z-40 transition-all",
+        scrolled || mobileOpen
+          ? "backdrop-blur bg-background/85 border-b border-foreground/10"
+          : "bg-transparent border-b border-transparent",
+      )}
+    >
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
+        <Link to="/dashboard" className="flex items-center gap-2 shrink-0" aria-label="Storyou home">
+          <img src={markAsset.url} alt="" className="h-6 w-auto" />
+          <img src={wordmarkAsset.url} alt="Storyou" className="h-4 w-auto" />
+        </Link>
 
-          {/* Inline tab nav + magnifier search at the end (desktop only) */}
-          <nav className="hidden md:flex flex-1 justify-center min-w-0">
-            <div className="flex items-center gap-1 rounded-full border border-foreground/10 bg-background/70 backdrop-blur-sm p-1 shadow-sm">
-              {NAV_TABS.map((t) => {
-                const isActive = location.pathname === t.path;
+        <nav className="hidden lg:flex items-center gap-8 text-sm text-foreground/80">
+          {NAV.map((n) => (
+            <NavDropdown key={n.label} label={n.label} items={n.items} />
+          ))}
+        </nav>
+
+        <button
+          type="button"
+          className="lg:hidden inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-foreground/5 text-foreground/80"
+          aria-label="Toggle menu"
+          aria-expanded={mobileOpen}
+          onClick={() => setMobileOpen((v) => !v)}
+        >
+          <ChevronDown className={cn("h-4 w-4 transition-transform", mobileOpen && "rotate-180")} />
+        </button>
+
+        {mobileOpen && (
+          <div className="lg:hidden absolute left-0 right-0 top-full bg-background border-b border-foreground/10 px-6 py-4">
+            <div className="max-w-7xl mx-auto flex flex-col gap-1 text-sm">
+              {NAV.map((n) => {
+                const isOpen = expanded === n.label;
                 return (
-                  <button
-                    key={t.label}
-                    onClick={() => navigate(t.path)}
-                    data-tour={`nav-${t.label.toLowerCase()}`}
-                    className={cn(
-                      "px-3.5 py-1.5 rounded-full text-sm font-medium transition-all",
-                      isActive ? "bg-foreground text-background" : "text-foreground/70 hover:text-foreground hover:bg-foreground/5",
+                  <div key={n.label} className="border-b border-foreground/5 last:border-0">
+                    <button
+                      type="button"
+                      onClick={() => setExpanded(isOpen ? null : n.label)}
+                      aria-expanded={isOpen}
+                      className="w-full flex items-center justify-between py-3 text-foreground"
+                    >
+                      {n.label}
+                      <ChevronDown className={cn("h-4 w-4 opacity-60 transition-transform", isOpen && "rotate-180")} />
+                    </button>
+                    {isOpen && (
+                      <div className="pb-3 pl-3 flex flex-col gap-1">
+                        {n.items.map((item) => (
+                          <Link
+                            key={item.label}
+                            to={item.path}
+                            onClick={() => setMobileOpen(false)}
+                            className="py-2 text-foreground/70 hover:text-foreground"
+                          >
+                            {item.label}
+                          </Link>
+                        ))}
+                      </div>
                     )}
-                  >
-                    {t.label}
-                  </button>
+                  </div>
                 );
               })}
-              <button
-                onClick={() => setSearchOpen(true)}
-                aria-label="Search"
-                data-tour="search"
-                className="ml-1 h-8 w-8 rounded-full flex items-center justify-center text-foreground/60 hover:text-foreground hover:bg-foreground/5 transition"
-              >
-                <Search className="h-4 w-4" />
-              </button>
             </div>
-          </nav>
-
-          <div className="flex items-center gap-2 shrink-0">
-            <TrialBanner />
-            <Button
-              variant="ghost"
-              size="icon"
-              className="md:hidden rounded-full"
-              onClick={() => setSearchOpen(true)}
-              aria-label="Search"
-            >
-              <Search className="h-4 w-4" />
-            </Button>
-
-            <InviteMenu />
-
-            <DropdownMenu>
-
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" aria-label="Account menu" data-tour="account" className="rounded-full">
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback className="bg-foreground text-background text-xs">{initials}</AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel className="font-normal">
-                  <div className="text-sm font-medium truncate">{email || "Account"}</div>
-                  <div className="text-xs text-muted-foreground">Signed in</div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuSub>
-                  <DropdownMenuSubTrigger>
-                    <Palette className="mr-2 h-4 w-4" /> Theme
-                  </DropdownMenuSubTrigger>
-                  <DropdownMenuSubContent>
-                    <DropdownMenuRadioGroup value={theme} onValueChange={(v) => setTheme(v as Theme)}>
-                      <DropdownMenuRadioItem value="light">
-                        <Sun className="mr-2 h-4 w-4" /> Light
-                      </DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="dark">
-                        <Moon className="mr-2 h-4 w-4" /> Dark
-                      </DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="system">
-                        <Monitor className="mr-2 h-4 w-4" /> System
-                      </DropdownMenuRadioItem>
-                    </DropdownMenuRadioGroup>
-                  </DropdownMenuSubContent>
-                </DropdownMenuSub>
-                <DropdownMenuItem onClick={() => navigate("/profile")}>
-                  <UserIcon className="mr-2 h-4 w-4" /> Profile & billing
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/community")}>
-                  <Users className="mr-2 h-4 w-4" /> Community
-                </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => navigate("/settings")}>
-                  <SettingsIcon className="mr-2 h-4 w-4" /> Settings
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
-                  <LogOut className="mr-2 h-4 w-4" /> Sign out
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
-        </div>
-      </header>
+        )}
 
-      <SearchDialog open={searchOpen} onOpenChange={setSearchOpen} />
-    </>
+        <div className="flex items-center gap-2 shrink-0">
+          <TrialBanner />
+          <InviteMenu />
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" aria-label="Account menu" className="rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback className="bg-foreground text-background text-xs">{initials}</AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuLabel className="font-normal">
+                <div className="text-sm font-medium truncate">{email || "Account"}</div>
+                <div className="text-xs text-muted-foreground">Signed in</div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <Palette className="mr-2 h-4 w-4" /> Theme
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuRadioGroup value={theme} onValueChange={(v) => setTheme(v as Theme)}>
+                    <DropdownMenuRadioItem value="light">
+                      <Sun className="mr-2 h-4 w-4" /> Light
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="dark">
+                      <Moon className="mr-2 h-4 w-4" /> Dark
+                    </DropdownMenuRadioItem>
+                    <DropdownMenuRadioItem value="system">
+                      <Monitor className="mr-2 h-4 w-4" /> System
+                    </DropdownMenuRadioItem>
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuItem onClick={() => navigate("/profile")}>
+                <UserIcon className="mr-2 h-4 w-4" /> Profile & billing
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/community")}>
+                <Users className="mr-2 h-4 w-4" /> Community
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => navigate("/settings")}>
+                <SettingsIcon className="mr-2 h-4 w-4" /> Settings
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                <LogOut className="mr-2 h-4 w-4" /> Sign out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
+    </header>
   );
 }
 
@@ -213,12 +287,7 @@ function InviteMenu() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label="Invite"
-          className="rounded-full gap-1.5 px-2 md:px-3"
-        >
+        <Button variant="ghost" size="sm" aria-label="Invite" className="rounded-full gap-1.5 px-2 md:px-3">
           <UserPlus className="h-4 w-4" />
           <span className="hidden md:inline text-sm">Invite</span>
         </Button>
@@ -248,16 +317,12 @@ function InviteMenu() {
           <Twitter className="mr-2 h-4 w-4" /> X / Twitter
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() =>
-            open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(inviteUrl)}`)
-          }
+          onClick={() => open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(inviteUrl)}`)}
         >
           <Linkedin className="mr-2 h-4 w-4" /> LinkedIn
         </DropdownMenuItem>
         <DropdownMenuItem
-          onClick={() =>
-            open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(inviteUrl)}`)
-          }
+          onClick={() => open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(inviteUrl)}`)}
         >
           <Facebook className="mr-2 h-4 w-4" /> Facebook
         </DropdownMenuItem>
@@ -269,4 +334,3 @@ function InviteMenu() {
     </DropdownMenu>
   );
 }
-
