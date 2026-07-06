@@ -56,6 +56,21 @@ export default function Home() {
     } finally { setBusy(false); }
   };
 
+  const handleForgotPassword = async () => {
+    const emailParsed = z.string().trim().email().max(255).safeParse(email);
+    if (!emailParsed.success) return toast.error("Enter your email above, then tap Forgot password");
+    setBusy(true);
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(emailParsed.data, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+      if (error) throw error;
+      toast.success("Check your email for a reset link");
+    } catch (e: any) {
+      toast.error(e.message ?? "Could not send reset email");
+    } finally { setBusy(false); }
+  };
+
   const handleOAuth = async (provider: "google" | "apple") => {
     setBusy(true);
     const result = await lovable.auth.signInWithOAuth(provider, {
