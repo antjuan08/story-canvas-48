@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, Command, LogOut, Settings as SettingsIcon, Menu, Sun, Moon, Monitor, User as UserIcon, Users, Palette } from "lucide-react";
+import { Search, Command, LogOut, Settings as SettingsIcon, Menu, Sun, Moon, Monitor, User as UserIcon, Users, Palette, UserPlus, Mail, Twitter, Linkedin, Facebook, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
