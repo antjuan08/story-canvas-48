@@ -381,7 +381,9 @@ export default function Landing() {
                     size="lg"
                     className="rounded-full h-12 px-7 bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90"
                   >
-                    <Link to="/">Learn more</Link>
+                    <Link to={ctaHref}>
+                      Start your story <ArrowRight className="ml-1 h-4 w-4" />
+                    </Link>
                   </Button>
                   <Button
                     asChild
@@ -389,9 +391,7 @@ export default function Landing() {
                     variant="outline"
                     className="rounded-full h-12 px-7 border-brand-anchor/20 bg-brand-bone/70 backdrop-blur hover:bg-brand-bone text-brand-anchor"
                   >
-                    <Link to="/">
-                      Get started <ArrowRight className="ml-1 h-4 w-4" />
-                    </Link>
+                    <a href="#features">Learn more</a>
                   </Button>
                 </div>
               </Reveal>
