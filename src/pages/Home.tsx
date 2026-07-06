@@ -171,6 +171,17 @@ export default function Home() {
                 <TabsContent value="signin" className="space-y-2.5 mt-3.5">
                   <Field id="si-email" label="Email" type="email" value={email} onChange={setEmail} />
                   <Field id="si-pw" label="Password" type="password" value={password} onChange={setPassword} />
+                  <div className="flex justify-end">
+                    <button
+                      type="button"
+                      onClick={handleForgotPassword}
+                      disabled={busy}
+                      className="text-[11px] underline hover:text-foreground disabled:opacity-50"
+                      style={{ color: "hsl(240,5%,45%)" }}
+                    >
+                      Forgot password?
+                    </button>
+                  </div>
                   <SubmitBtn busy={busy} onClick={() => handleEmail("signin")}>Sign in</SubmitBtn>
                 </TabsContent>
               </Tabs>
