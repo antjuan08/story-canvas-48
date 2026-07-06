@@ -24,6 +24,7 @@ import Academy from "@/pages/Academy";
 import { Terms, Privacy } from "@/pages/Legal";
 import Landing from "@/pages/Landing";
 import OAuthConsent from "@/pages/OAuthConsent";
+import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -44,6 +45,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Home />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/landing" element={<Navigate to="/" replace />} />
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
 
