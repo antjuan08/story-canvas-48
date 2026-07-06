@@ -42,10 +42,10 @@ const App = () => (
       <BrowserRouter>
         <AuthProvider>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/landing" element={<Landing />} />
+            <Route path="/" element={<Landing />} />
+            <Route path="/auth" element={<Home />} />
+            <Route path="/landing" element={<Navigate to="/" replace />} />
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
-            <Route path="/auth" element={<Navigate to="/" replace />} />
 
             <Route path="/dashboard" element={<Protected><Dashboard /></Protected>} />
             <Route path="/stories" element={<Protected><Stories /></Protected>} />
