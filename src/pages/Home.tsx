@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -88,11 +88,11 @@ export default function Home() {
       <CloudsBackdrop className="z-0" variant="light" />
 
       {/* Brand mark */}
-      <div className="absolute top-5 left-6 z-20 flex items-center gap-2">
+      <Link to="/" className="absolute top-5 left-6 z-20 flex items-center gap-2" aria-label="Storyou home">
         <div className="h-9 w-9 rounded-2xl grid place-items-center font-serif text-base"
           style={{ backgroundColor: INK, color: CREAM }}>S</div>
         <span className="font-serif text-xl tracking-tight" style={{ color: INK }}>Storyou</span>
-      </div>
+      </Link>
 
       {/* Main grid */}
       <div className="relative z-10 min-h-screen grid lg:grid-cols-[1fr_auto_1fr] items-center px-6 lg:px-16 pt-24 lg:pt-20 pb-24 gap-10">

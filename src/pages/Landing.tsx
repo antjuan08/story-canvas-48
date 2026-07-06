@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { SEO } from "@/components/seo/SEO";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "@/hooks/use-in-view";
 import wordmarkAsset from "@/assets/storyou-wordmark.png.asset.json";
 import markAsset from "@/assets/storyou-mark.png.asset.json";
@@ -154,6 +155,8 @@ function NavDropdown({ label, items }: { label: string; items: string[] }) {
 }
 
 function Nav() {
+  const { session } = useAuth();
+  const ctaHref = session ? "/dashboard" : "/auth";
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
@@ -174,7 +177,7 @@ function Nav() {
       )}
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
-        <Link to="/landing" className="flex items-center gap-2 shrink-0" aria-label="Storyou home">
+        <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="Storyou home">
           <img src={markAsset.url} alt="" className="h-6 w-auto" />
           <img src={wordmarkAsset.url} alt="Storyou" className="h-4 w-auto" />
         </Link>
@@ -233,19 +236,20 @@ function Nav() {
         )}
 
         <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full hover:bg-brand-anchor/5 transition-colors"
-            aria-label="Sign in"
-          >
-            <User className="h-4 w-4 text-brand-anchor/70" />
-          </Link>
+          {!session && (
+            <Link
+              to="/auth"
+              className="hidden sm:inline-flex text-sm text-brand-anchor/70 hover:text-brand-anchor transition-colors"
+            >
+              Sign in
+            </Link>
+          )}
           <Button
             asChild
             size="sm"
             className="rounded-full bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90 px-5"
           >
-            <Link to="/">Get started</Link>
+            <Link to={ctaHref}>Start your story</Link>
           </Button>
         </div>
       </div>
@@ -312,6 +316,8 @@ const PRODUCTS = [
 
 /* ---------- Page ---------- */
 export default function Landing() {
+  const { session } = useAuth();
+  const ctaHref = session ? "/dashboard" : "/auth";
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
@@ -375,7 +381,9 @@ export default function Landing() {
                     size="lg"
                     className="rounded-full h-12 px-7 bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90"
                   >
-                    <Link to="/">Learn more</Link>
+                    <Link to={ctaHref}>
+                      Start your story <ArrowRight className="ml-1 h-4 w-4" />
+                    </Link>
                   </Button>
                   <Button
                     asChild
@@ -383,9 +391,7 @@ export default function Landing() {
                     variant="outline"
                     className="rounded-full h-12 px-7 border-brand-anchor/20 bg-brand-bone/70 backdrop-blur hover:bg-brand-bone text-brand-anchor"
                   >
-                    <Link to="/">
-                      Get started <ArrowRight className="ml-1 h-4 w-4" />
-                    </Link>
+                    <a href="#features">Learn more</a>
                   </Button>
                 </div>
               </Reveal>
