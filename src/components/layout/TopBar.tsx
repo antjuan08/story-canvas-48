@@ -139,9 +139,10 @@ export function TopBar() {
               <Search className="h-4 w-4" />
             </Button>
 
-
+            <InviteMenu />
 
             <DropdownMenu>
+
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Account menu" data-tour="account" className="rounded-full">
                   <Avatar className="h-8 w-8">
