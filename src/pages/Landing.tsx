@@ -236,19 +236,20 @@ function Nav() {
         )}
 
         <div className="flex items-center gap-3">
-          <Link
-            to="/"
-            className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full hover:bg-brand-anchor/5 transition-colors"
-            aria-label="Sign in"
-          >
-            <User className="h-4 w-4 text-brand-anchor/70" />
-          </Link>
+          {!session && (
+            <Link
+              to="/auth"
+              className="hidden sm:inline-flex text-sm text-brand-anchor/70 hover:text-brand-anchor transition-colors"
+            >
+              Sign in
+            </Link>
+          )}
           <Button
             asChild
             size="sm"
             className="rounded-full bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90 px-5"
           >
-            <Link to="/">Get started</Link>
+            <Link to={ctaHref}>Start your story</Link>
           </Button>
         </div>
       </div>
