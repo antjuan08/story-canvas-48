@@ -24,6 +24,7 @@ import Academy from "@/pages/Academy";
 import { Terms, Privacy } from "@/pages/Legal";
 import Landing from "@/pages/Landing";
 import OAuthConsent from "@/pages/OAuthConsent";
+import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
