@@ -177,7 +177,7 @@ function Nav() {
       )}
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
-        <Link to="/landing" className="flex items-center gap-2 shrink-0" aria-label="Storyou home">
+        <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="Storyou home">
           <img src={markAsset.url} alt="" className="h-6 w-auto" />
           <img src={wordmarkAsset.url} alt="Storyou" className="h-4 w-auto" />
         </Link>
