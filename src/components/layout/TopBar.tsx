@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { toast } from "sonner";
-import { Search, Command, LogOut, Settings as SettingsIcon, Menu, Sun, Moon, Monitor, User as UserIcon, Users, Palette } from "lucide-react";
+import { Search, Command, LogOut, Settings as SettingsIcon, Menu, Sun, Moon, Monitor, User as UserIcon, Users, Palette, UserPlus, Mail, Twitter, Linkedin, Facebook, Link2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -139,9 +139,10 @@ export function TopBar() {
               <Search className="h-4 w-4" />
             </Button>
 
-
+            <InviteMenu />
 
             <DropdownMenu>
+
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" aria-label="Account menu" data-tour="account" className="rounded-full">
                   <Avatar className="h-8 w-8">
@@ -196,3 +197,76 @@ export function TopBar() {
     </>
   );
 }
+
+function InviteMenu() {
+  const inviteUrl = typeof window !== "undefined" ? window.location.origin : "https://storyou.ai";
+  const message = "I'm using Storyou to capture and share my stories — join me:";
+  const open = (url: string) => window.open(url, "_blank", "noopener,noreferrer");
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(`${message} ${inviteUrl}`);
+      toast.success("Invite link copied");
+    } catch {
+      toast.error("Could not copy link");
+    }
+  };
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          size="sm"
+          aria-label="Invite"
+          className="rounded-full gap-1.5 px-2 md:px-3"
+        >
+          <UserPlus className="h-4 w-4" />
+          <span className="hidden md:inline text-sm">Invite</span>
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-56">
+        <DropdownMenuLabel className="font-normal">
+          <div className="text-sm font-medium">Invite friends</div>
+          <div className="text-xs text-muted-foreground">Share Storyou</div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={() =>
+            open(
+              `mailto:?subject=${encodeURIComponent("Join me on Storyou")}&body=${encodeURIComponent(`${message} ${inviteUrl}`)}`,
+            )
+          }
+        >
+          <Mail className="mr-2 h-4 w-4" /> Email
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() =>
+            open(
+              `https://twitter.com/intent/tweet?text=${encodeURIComponent(message)}&url=${encodeURIComponent(inviteUrl)}`,
+            )
+          }
+        >
+          <Twitter className="mr-2 h-4 w-4" /> X / Twitter
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() =>
+            open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(inviteUrl)}`)
+          }
+        >
+          <Linkedin className="mr-2 h-4 w-4" /> LinkedIn
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={() =>
+            open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(inviteUrl)}`)
+          }
+        >
+          <Facebook className="mr-2 h-4 w-4" /> Facebook
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={copy}>
+          <Link2 className="mr-2 h-4 w-4" /> Copy link
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
