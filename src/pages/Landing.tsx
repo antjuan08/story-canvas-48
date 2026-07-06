@@ -154,6 +154,8 @@ function NavDropdown({ label, items }: { label: string; items: string[] }) {
 }
 
 function Nav() {
+  const { session } = useAuth();
+  const ctaHref = session ? "/dashboard" : "/auth";
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expanded, setExpanded] = useState<string | null>(null);
