@@ -316,6 +316,8 @@ const PRODUCTS = [
 
 /* ---------- Page ---------- */
 export default function Landing() {
+  const { session } = useAuth();
+  const ctaHref = session ? "/dashboard" : "/auth";
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
   useEffect(() => {
