@@ -1,21 +1,27 @@
-## Add Invite button to TopBar
+## Make Landing the home page + add Start Your Story CTA
 
-Place a new "Invite" button in `src/components/layout/TopBar.tsx`, immediately left of the account avatar dropdown (and left of the `TrialBanner`/mobile search cluster it sits next to).
+### Routing (`src/App.tsx`)
+- `/` → `<Landing />` (public, no auth required)
+- `/auth` → `<Home />` (the current sign-in / sign-up screen)
+- Keep `/landing` as a redirect to `/` for back-compat
+- Signed-in users visiting `/` stay on Landing (no auto-redirect). The header CTA takes them into the app.
 
-### Behavior
-Clicking opens a dropdown (using existing `DropdownMenu`) with share options:
-- **Email** — opens `mailto:?subject=Join me on Storyou&body=<invite text + link>`
-- **X / Twitter** — opens `https://twitter.com/intent/tweet?text=...&url=<invite link>` in new tab
-- **LinkedIn** — opens `https://www.linkedin.com/sharing/share-offsite/?url=<invite link>` in new tab
-- **Facebook** — opens `https://www.facebook.com/sharer/sharer.php?u=<invite link>` in new tab
-- **Copy link** — copies invite URL to clipboard via `navigator.clipboard.writeText`, shows a `toast.success("Link copied")`
+### Sign-up entry points
+- **Header** (`src/pages/Landing.tsx`): add a primary **"Start your story"** button on the right side of the top nav. For signed-out users it links to `/auth`; for signed-in users it links to `/dashboard`.
+- **Hero banner**: ensure a prominent **"Start your story"** button appears in the hero section (add if not already the primary CTA), linking to `/auth` (or `/dashboard` when signed in).
 
-Invite link = `window.location.origin` (landing page). Invite copy: "I'm using Storyou to capture and share my stories — join me:".
+### Logo behavior
+- `TopBar` (in-app header, `src/components/layout/TopBar.tsx`): logo mark + "Storyou" wordmark link to `/` (landing).
+- `Landing` header: logo + wordmark link to `/`.
+- `Home` (`src/pages/Home.tsx`): the brand mark in the top-left becomes a link to `/`.
 
-### UI
-- Desktop: pill-style ghost button with `UserPlus` lucide icon + "Invite" label, matching existing rounded/ghost styling in the header.
-- Mobile (<md): icon-only button (same `UserPlus`), consistent with the existing mobile search button.
-- Dropdown items use lucide icons: `Mail`, `Twitter`, `Linkedin`, `Facebook`, `Link2` (copy).
+### Home page auth redirect
+- `Home.tsx` currently reads `?next=` and defaults to `/dashboard`. Keep that; only change is it now lives at `/auth` instead of `/`.
 
-### Files
-- `src/components/layout/TopBar.tsx` — add the Invite dropdown block between `TrialBanner`/mobile-search and the account `DropdownMenu`. No other files changed.
+### Files touched
+- `src/App.tsx` — swap `/` and `/auth` routes, add `/landing` redirect
+- `src/pages/Landing.tsx` — header "Start your story" button, logo → `/`, hero CTA points to `/auth` or `/dashboard` based on session
+- `src/pages/Home.tsx` — wrap brand mark in `Link to="/"`
+- `src/components/layout/TopBar.tsx` — logo/wordmark link to `/` (landing) instead of `/dashboard`
+
+No backend, styling, or Invite-button changes.
