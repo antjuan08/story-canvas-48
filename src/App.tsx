@@ -45,6 +45,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Landing />} />
             <Route path="/auth" element={<Home />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/landing" element={<Navigate to="/" replace />} />
             <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
 
