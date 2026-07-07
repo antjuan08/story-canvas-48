@@ -93,10 +93,18 @@ export default function OAuthConsent() {
 
   if (error) {
     return (
-      <main className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <div className="max-w-md w-full space-y-4">
-          <h1 className="text-2xl font-serif">Authorization error</h1>
-          <p className="text-muted-foreground">{error}</p>
+      <main className="min-h-screen flex flex-col p-6 bg-background">
+        <header className="max-w-md mx-auto w-full pb-8">
+          <Link to="/" className="flex items-center gap-2" aria-label="Storyou home">
+            <img src={markAsset.url} alt="" className="h-12 w-auto" />
+            <img src={wordmarkAsset.url} alt="Storyou" className="h-8 w-auto" />
+          </Link>
+        </header>
+        <div className="flex-1 flex items-center justify-center">
+          <div className="max-w-md w-full space-y-4">
+            <h1 className="text-2xl font-serif">Authorization error</h1>
+            <p className="text-muted-foreground">{error}</p>
+          </div>
         </div>
       </main>
     );
@@ -104,8 +112,16 @@ export default function OAuthConsent() {
 
   if (!details) {
     return (
-      <main className="min-h-screen flex items-center justify-center p-6 bg-background text-muted-foreground">
-        Loading…
+      <main className="min-h-screen flex flex-col p-6 bg-background">
+        <header className="max-w-md mx-auto w-full pb-8">
+          <Link to="/" className="flex items-center gap-2" aria-label="Storyou home">
+            <img src={markAsset.url} alt="" className="h-12 w-auto" />
+            <img src={wordmarkAsset.url} alt="Storyou" className="h-8 w-auto" />
+          </Link>
+        </header>
+        <div className="flex-1 flex items-center justify-center text-muted-foreground">
+          Loading…
+        </div>
       </main>
     );
   }
@@ -113,21 +129,29 @@ export default function OAuthConsent() {
   const clientName = details.client?.name ?? "an app";
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-6 bg-background">
-      <div className="max-w-md w-full space-y-6 rounded-2xl border border-border p-8 bg-card">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-serif">Connect {clientName} to Storyou</h1>
-          <p className="text-sm text-muted-foreground">
-            This will let {clientName} read and add stories in your Story Cloud as you.
-          </p>
-        </div>
-        <div className="flex gap-3">
-          <Button onClick={() => decide(true)} disabled={busy} className="flex-1">
-            Approve
-          </Button>
-          <Button onClick={() => decide(false)} disabled={busy} variant="outline" className="flex-1">
-            Deny
-          </Button>
+    <main className="min-h-screen flex flex-col p-6 bg-background">
+      <header className="max-w-md mx-auto w-full pb-8">
+        <Link to="/" className="flex items-center gap-2" aria-label="Storyou home">
+          <img src={markAsset.url} alt="" className="h-12 w-auto" />
+          <img src={wordmarkAsset.url} alt="Storyou" className="h-8 w-auto" />
+        </Link>
+      </header>
+      <div className="flex-1 flex items-center justify-center">
+        <div className="max-w-md w-full space-y-6 rounded-2xl border border-border p-8 bg-card">
+          <div className="space-y-2">
+            <h1 className="text-2xl font-serif">Connect {clientName} to Storyou</h1>
+            <p className="text-sm text-muted-foreground">
+              This will let {clientName} read and add stories in your Story Cloud as you.
+            </p>
+          </div>
+          <div className="flex gap-3">
+            <Button onClick={() => decide(true)} disabled={busy} className="flex-1">
+              Approve
+            </Button>
+            <Button onClick={() => decide(false)} disabled={busy} variant="outline" className="flex-1">
+              Deny
+            </Button>
+          </div>
         </div>
       </div>
     </main>
