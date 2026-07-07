@@ -1,5 +1,7 @@
 import { Link } from "react-router-dom";
 import { SEO } from "@/components/seo/SEO";
+import wordmarkAsset from "@/assets/storyou-wordmark.png.asset.json";
+import markAsset from "@/assets/storyou-mark.png.asset.json";
 
 const CREAM = "hsl(48, 56%, 95%)";
 const INK = "hsl(240, 12%, 6%)";
@@ -23,14 +25,9 @@ function LegalShell({
     <div className="min-h-screen" style={{ backgroundColor: CREAM, color: INK }}>
       <SEO title={`${title} — Storyou`} description={description} path={path} />
       <header className="max-w-3xl mx-auto px-6 pt-10 pb-6 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-2">
-          <div
-            className="h-9 w-9 rounded-2xl grid place-items-center font-serif text-base"
-            style={{ backgroundColor: INK, color: CREAM }}
-          >
-            S
-          </div>
-          <span className="font-serif text-xl tracking-tight">Storyou</span>
+        <Link to="/" className="flex items-center gap-2" aria-label="Storyou home">
+          <img src={markAsset.url} alt="" className="h-12 w-auto" />
+          <img src={wordmarkAsset.url} alt="Storyou" className="h-8 w-auto" />
         </Link>
         <Link to="/" className="text-sm text-foreground/60 hover:text-foreground transition-colors">
           ← Back home
