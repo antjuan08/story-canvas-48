@@ -398,14 +398,13 @@ export default function Landing() {
               </Reveal>
             </div>
 
-            {/* hero visual placeholder */}
+            {/* hero visual */}
             <div className="hidden lg:block absolute right-0 top-0 bottom-0 w-[46%]">
               <Reveal delay={200} className="h-full">
-                <Placeholder
-                  tone="bone"
-                  aspect="h-full"
-                  label="Portrait"
-                  className="!rounded-none bg-brand-anchor/[0.06]"
+                <img
+                  src={heroThinkerAsset.url}
+                  alt="Person reflecting on a story to tell"
+                  className="h-full w-full object-cover object-center"
                 />
               </Reveal>
             </div>
