@@ -176,10 +176,10 @@ function Nav() {
           : "bg-transparent border-b border-transparent"
       )}
     >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
-        <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="Storyou home">
-          <img src={markAsset.url} alt="" className="h-12 w-auto" />
-          <img src={wordmarkAsset.url} alt="Storyou" className="h-8 w-auto" />
+      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-8">
+        <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="Storyou home">
+          <img src={markAsset.url} alt="" className="h-16 w-auto" />
+          <img src={wordmarkAsset.url} alt="Storyou" className="h-10 w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8 text-sm text-brand-anchor/80">
