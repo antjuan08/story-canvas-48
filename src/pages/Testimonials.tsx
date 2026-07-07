@@ -1,5 +1,6 @@
 import { SEO } from "@/components/seo/SEO";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { Star, Plus, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,6 +10,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import wordmarkAsset from "@/assets/storyou-wordmark.png.asset.json";
+import markAsset from "@/assets/storyou-mark.png.asset.json";
 
 type Testimonial = {
   id: string; name: string; title: string | null; quote: string; rating: number; created_at: string;
@@ -26,7 +29,16 @@ export default function Testimonials() {
   useEffect(() => { refetch(); }, []);
 
   return (
-    <div className="min-h-[calc(100vh-7rem)] max-w-5xl mx-auto px-6 pt-12 pb-20">
+    <div className="min-h-[calc(100vh-7rem)] max-w-5xl mx-auto px-6 pb-20">
+      <header className="pt-10 pb-6 flex items-center justify-between">
+        <Link to="/" className="flex items-center gap-2" aria-label="Storyou home">
+          <img src={markAsset.url} alt="" className="h-12 w-auto" />
+          <img src={wordmarkAsset.url} alt="Storyou" className="h-8 w-auto" />
+        </Link>
+        <Link to="/" className="text-sm text-foreground/60 hover:text-foreground transition-colors">
+          ← Back home
+        </Link>
+      </header>
       <SEO
         title="Testimonials · Storyou"
         description="What storytellers, speakers, and creators say about turning their moments into stories with Storyou."

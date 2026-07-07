@@ -11,6 +11,8 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { CloudsBackdrop } from "@/components/visuals/CloudsBackdrop";
 import { SEO } from "@/components/seo/SEO";
+import wordmarkAsset from "@/assets/storyou-wordmark.png.asset.json";
+import markAsset from "@/assets/storyou-mark.png.asset.json";
 
 const CREAM = "hsl(48, 56%, 95%)";
 const INK = "hsl(240, 12%, 6%)";
@@ -104,9 +106,8 @@ export default function Home() {
 
       {/* Brand mark */}
       <Link to="/" className="absolute top-5 left-6 z-20 flex items-center gap-2" aria-label="Storyou home">
-        <div className="h-9 w-9 rounded-2xl grid place-items-center font-serif text-base"
-          style={{ backgroundColor: INK, color: CREAM }}>S</div>
-        <span className="font-serif text-xl tracking-tight" style={{ color: INK }}>Storyou</span>
+        <img src={markAsset.url} alt="" className="h-12 w-auto" />
+        <img src={wordmarkAsset.url} alt="Storyou" className="h-8 w-auto" />
       </Link>
 
       {/* Main grid */}
