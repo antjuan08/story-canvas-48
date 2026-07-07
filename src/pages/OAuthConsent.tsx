@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
+import wordmarkAsset from "@/assets/storyou-wordmark.png.asset.json";
+import markAsset from "@/assets/storyou-mark.png.asset.json";
 
 type AuthClient = {
   name?: string;
