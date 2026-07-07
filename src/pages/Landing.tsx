@@ -10,6 +10,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useInView } from "@/hooks/use-in-view";
 import wordmarkAsset from "@/assets/storyou-wordmark.png.asset.json";
 import markAsset from "@/assets/storyou-mark.png.asset.json";
+import heroPortraitAsset from "@/assets/hero-portrait.png.asset.json";
 
 type Testimonial = {
   id: string;
