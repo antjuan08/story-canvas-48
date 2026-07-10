@@ -156,10 +156,10 @@ export function TopBar() {
           : "bg-transparent border-b border-transparent",
       )}
     >
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between gap-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3 sm:gap-8">
         <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="Storyou home">
-          <img src={markAsset.url} alt="" className="h-12 w-auto" />
-          <img src={wordmarkAsset.url} alt="Storyou" className="h-8 w-auto" />
+          <img src={markAsset.url} alt="" className="h-9 sm:h-12 w-auto" />
+          <img src={wordmarkAsset.url} alt="Storyou" className="h-6 sm:h-8 w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8 text-sm text-foreground/80">

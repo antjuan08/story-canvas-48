@@ -536,7 +536,7 @@ export default function Landing() {
           </div>
         </Reveal>
 
-        <div className="space-y-24 sm:space-y-40">
+        <div className="space-y-16 sm:space-y-40">
           {FEATURES.map((f, i) => {
             const flipped = i % 2 === 1;
             return (
