@@ -177,10 +177,10 @@ function Nav() {
           : "bg-transparent border-b border-transparent"
       )}
     >
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-8">
-        <Link to="/" className="flex items-center gap-3 shrink-0" aria-label="Storyou home">
-          <img src={markAsset.url} alt="" className="h-16 w-auto" />
-          <img src={wordmarkAsset.url} alt="Storyou" className="h-10 w-auto" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-3 sm:gap-8">
+        <Link to="/" className="flex items-center gap-2 sm:gap-3 shrink-0" aria-label="Storyou home">
+          <img src={markAsset.url} alt="" className="h-10 sm:h-16 w-auto" />
+          <img src={wordmarkAsset.url} alt="Storyou" className="h-6 sm:h-10 w-auto" />
         </Link>
 
         <nav className="hidden lg:flex items-center gap-8 text-sm text-brand-anchor/80">
@@ -236,7 +236,7 @@ function Nav() {
           </div>
         )}
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3 shrink-0">
           {!session && (
             <Link
               to="/auth"
@@ -248,9 +248,12 @@ function Nav() {
           <Button
             asChild
             size="sm"
-            className="rounded-full bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90 px-5"
+            className="rounded-full bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90 px-3 sm:px-5 text-xs sm:text-sm"
           >
-            <Link to={ctaHref}>Start your story</Link>
+            <Link to={ctaHref}>
+              <span className="sm:hidden">Start</span>
+              <span className="hidden sm:inline">Start your story</span>
+            </Link>
           </Button>
         </div>
       </div>
@@ -344,8 +347,8 @@ export default function Landing() {
 
       {/* ---------- HERO ---------- */}
       <section className="relative">
-        <div className="max-w-7xl mx-auto px-6 pt-10 lg:pt-14">
-          <div className="relative rounded-[2rem] overflow-hidden bg-gradient-to-br from-[hsl(210,50%,90%)] via-[hsl(210,45%,86%)] to-[hsl(35,35%,88%)] min-h-[560px] lg:min-h-[680px] flex">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 sm:pt-10 lg:pt-14">
+          <div className="relative rounded-[1.5rem] sm:rounded-[2rem] overflow-hidden bg-gradient-to-br from-[hsl(210,50%,90%)] via-[hsl(210,45%,86%)] to-[hsl(35,35%,88%)] min-h-[420px] sm:min-h-[560px] lg:min-h-[680px] flex">
             {/* decorative doodles */}
             <svg viewBox="0 0 400 200" className="absolute top-14 right-16 w-64 hidden md:block opacity-60 text-brand-anchor" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
               <path d="M20 100 Q 80 20, 160 80 T 320 60" />
@@ -353,7 +356,7 @@ export default function Landing() {
               <path d="M60 140 q 30 -40 70 -10" />
             </svg>
 
-            <div className="relative z-10 flex-1 flex flex-col justify-center px-8 sm:px-14 lg:px-20 py-20 max-w-3xl">
+            <div className="relative z-10 flex-1 flex flex-col justify-center px-6 sm:px-14 lg:px-20 py-12 sm:py-20 max-w-3xl">
               <Reveal>
                 <div className="inline-flex items-center gap-2 rounded-full bg-brand-brass/25 px-3 py-1 text-xs font-medium text-brand-anchor w-fit">
                   Storyou Voice
@@ -362,7 +365,7 @@ export default function Landing() {
               </Reveal>
 
               <Reveal delay={80}>
-                <h1 className="mt-6 font-serif font-light tracking-tight leading-[0.98] text-5xl sm:text-7xl lg:text-8xl">
+                <h1 className="mt-5 sm:mt-6 font-serif font-light tracking-tight leading-[0.98] text-[3rem] sm:text-7xl lg:text-8xl">
                   Made for
                   <br />
                   <span className="italic">storytelling</span>
@@ -370,17 +373,17 @@ export default function Landing() {
               </Reveal>
 
               <Reveal delay={160}>
-                <p className="mt-8 text-lg sm:text-xl text-brand-anchor/70 max-w-xl leading-relaxed">
+                <p className="mt-5 sm:mt-8 text-base sm:text-xl text-brand-anchor/70 max-w-xl leading-relaxed">
                   Move your voice easily from a spoken moment to keynote, podcast, book, and film — with an AI speaking coach built in.
                 </p>
               </Reveal>
 
               <Reveal delay={240}>
-                <div className="mt-10 flex flex-wrap gap-3">
+                <div className="mt-7 sm:mt-10 flex flex-wrap gap-3">
                   <Button
                     asChild
                     size="lg"
-                    className="rounded-full h-12 px-7 bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90"
+                    className="rounded-full h-11 sm:h-12 px-5 sm:px-7 bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90"
                   >
                     <Link to={ctaHref}>
                       Start your story <ArrowRight className="ml-1 h-4 w-4" />
@@ -390,7 +393,7 @@ export default function Landing() {
                     asChild
                     size="lg"
                     variant="outline"
-                    className="rounded-full h-12 px-7 border-brand-anchor/20 bg-brand-bone/70 backdrop-blur hover:bg-brand-bone text-brand-anchor"
+                    className="rounded-full h-11 sm:h-12 px-5 sm:px-7 border-brand-anchor/20 bg-brand-bone/70 backdrop-blur hover:bg-brand-bone text-brand-anchor"
                   >
                     <a href="#features">Learn more</a>
                   </Button>
@@ -408,6 +411,15 @@ export default function Landing() {
                 />
               </Reveal>
             </div>
+          </div>
+
+          {/* Mobile hero image */}
+          <div className="lg:hidden mt-4">
+            <img
+              src={heroThinkerAsset.url}
+              alt="Person reflecting on a story to tell"
+              className="w-full h-56 sm:h-72 object-cover object-center rounded-[1.5rem]"
+            />
           </div>
         </div>
       </section>
