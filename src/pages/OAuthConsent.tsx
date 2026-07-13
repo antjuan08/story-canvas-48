@@ -141,7 +141,7 @@ export default function OAuthConsent() {
           <div className="space-y-2">
             <h1 className="text-2xl font-serif">Connect {clientName} to Storyou</h1>
             <p className="text-sm text-muted-foreground">
-              This will let {clientName} read and add stories in your Story Cloud as you.
+              This will let {clientName} read and add stories in your StoryCloud as you.
             </p>
           </div>
           <div className="flex gap-3">

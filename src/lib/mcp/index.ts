@@ -10,7 +10,7 @@ export default defineMcp({
   title: "Storyou",
   version: "0.1.0",
   instructions:
-    "Tools for Storyou: browse and add stories in the signed-in user's Story Cloud. Use `list_stories` to find stories, `get_story` to read one, and `create_story` to save a new one.",
+    "Tools for Storyou: browse and add stories in the signed-in user's StoryCloud. Use `list_stories` to find stories, `get_story` to read one, and `create_story` to save a new one.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated",
