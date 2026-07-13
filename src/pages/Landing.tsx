@@ -624,7 +624,7 @@ export default function Landing() {
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-full bg-brand-bone text-brand-anchor hover:bg-brand-bone/90 h-12 px-7">
-                <Link to="/">Learn about Storyou</Link>
+                <Link to="/auth">Learn about Storyou</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full h-12 px-7 border-brand-bone/25 bg-transparent text-brand-bone hover:bg-brand-bone/10 hover:text-brand-bone">
                 <Link to="/welcome">Pricing and plans</Link>
