@@ -479,7 +479,7 @@ export default function Landing() {
                     variant="outline"
                     className="mt-6 rounded-full border-brand-anchor/20 bg-brand-bone hover:bg-brand-anchor/5"
                   >
-                    <Link to="/">Learn more</Link>
+                    <Link to="/auth">Learn more</Link>
                   </Button>
                 </div>
               </article>
