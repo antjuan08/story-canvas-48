@@ -722,7 +722,7 @@ export default function Landing() {
                 size="lg"
                 className="rounded-full h-12 px-8 bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90 text-base"
               >
-                <Link to="/">
+                <Link to="/auth">
                   Get started <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
