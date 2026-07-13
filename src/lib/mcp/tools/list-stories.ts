@@ -13,7 +13,7 @@ function supabaseForUser(ctx: ToolContext) {
 export default defineTool({
   name: "list_stories",
   title: "List stories",
-  description: "List the signed-in user's stories from their Story Cloud, newest first.",
+  description: "List the signed-in user's stories from their StoryCloud, newest first.",
   inputSchema: {
     limit: z.number().int().min(1).max(50).default(20).describe("Maximum number of stories to return."),
     search: z.string().trim().optional().describe("Optional case-insensitive substring match on the story title."),

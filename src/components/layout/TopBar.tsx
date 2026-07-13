@@ -44,7 +44,7 @@ const NAV: { label: string; items: { label: string; path: string }[] }[] = [
   {
     label: "Story",
     items: [
-      { label: "Story Cloud", path: "/vault" },
+      { label: "StoryCloud", path: "/vault" },
       { label: "Signature Story", path: "/dashboard" },
       { label: "Storyboard", path: "/dashboard" },
       { label: "Enterprise Stories", path: "/community" },

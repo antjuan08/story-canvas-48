@@ -106,7 +106,7 @@ function Placeholder({
 
 /* ---------- Nav ---------- */
 const NAV: { label: string; items: string[] }[] = [
-  { label: "Story", items: ["Story Cloud", "Signature Story", "Storyboard", "Enterprise Stories"] },
+  { label: "Story", items: ["StoryCloud", "Signature Story", "Storyboard", "Enterprise Stories"] },
   { label: "Stage", items: ["Keynote", "Feedback Coach"] },
   { label: "Studio", items: ["Podcast", "Reimagine Studio"] },
   { label: "Support", items: ["StoryU", "Tutorials", "Courses", "Case Studies"] },

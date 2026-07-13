@@ -18,7 +18,7 @@ function supabaseForUser(ctx) {
 var list_stories_default = defineTool({
   name: "list_stories",
   title: "List stories",
-  description: "List the signed-in user's stories from their Story Cloud, newest first.",
+  description: "List the signed-in user's stories from their StoryCloud, newest first.",
   inputSchema: {
     limit: z.number().int().min(1).max(50).default(20).describe("Maximum number of stories to return."),
     search: z.string().trim().optional().describe("Optional case-insensitive substring match on the story title.")
@@ -84,7 +84,7 @@ function supabaseForUser3(ctx) {
 var create_story_default = defineTool3({
   name: "create_story",
   title: "Create story",
-  description: "Save a new story to the signed-in user's Story Cloud.",
+  description: "Save a new story to the signed-in user's StoryCloud.",
   inputSchema: {
     title: z3.string().trim().min(1).max(200).describe("Story title."),
     body: z3.string().trim().min(1).describe("Full story text."),
@@ -111,7 +111,7 @@ var mcp_default = defineMcp({
   name: "storyou-mcp",
   title: "Storyou",
   version: "0.1.0",
-  instructions: "Tools for Storyou: browse and add stories in the signed-in user's Story Cloud. Use `list_stories` to find stories, `get_story` to read one, and `create_story` to save a new one.",
+  instructions: "Tools for Storyou: browse and add stories in the signed-in user's StoryCloud. Use `list_stories` to find stories, `get_story` to read one, and `create_story` to save a new one.",
   auth: auth.oauth.issuer({
     issuer: `https://${projectRef}.supabase.co/auth/v1`,
     acceptedAudiences: "authenticated"

@@ -19,7 +19,7 @@
       {
         "name": "list_stories",
         "title": "List stories",
-        "description": "List the signed-in user's stories from their Story Cloud, newest first.",
+        "description": "List the signed-in user's stories from their StoryCloud, newest first.",
         "annotations": {
           "readOnlyHint": true,
           "idempotentHint": true,
@@ -74,7 +74,7 @@
       {
         "name": "create_story",
         "title": "Create story",
-        "description": "Save a new story to the signed-in user's Story Cloud.",
+        "description": "Save a new story to the signed-in user's StoryCloud.",
         "annotations": {
           "readOnlyHint": false,
           "destructiveHint": false,

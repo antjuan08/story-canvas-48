@@ -13,7 +13,7 @@ function supabaseForUser(ctx: ToolContext) {
 export default defineTool({
   name: "create_story",
   title: "Create story",
-  description: "Save a new story to the signed-in user's Story Cloud.",
+  description: "Save a new story to the signed-in user's StoryCloud.",
   inputSchema: {
     title: z.string().trim().min(1).max(200).describe("Story title."),
     body: z.string().trim().min(1).describe("Full story text."),
