@@ -157,7 +157,7 @@ export function TopBar() {
       )}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-14 sm:h-16 flex items-center justify-between gap-3 sm:gap-8">
-        <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="Storyou home">
+        <Link to="/dashboard" className="flex items-center gap-2 shrink-0" aria-label="Storyou home">
           <img src={markAsset.url} alt="" className="h-9 sm:h-12 w-auto" />
           <img src={wordmarkAsset.url} alt="Storyou" className="h-6 sm:h-8 w-auto" />
         </Link>

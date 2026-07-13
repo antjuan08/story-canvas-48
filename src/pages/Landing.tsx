@@ -479,7 +479,7 @@ export default function Landing() {
                     variant="outline"
                     className="mt-6 rounded-full border-brand-anchor/20 bg-brand-bone hover:bg-brand-anchor/5"
                   >
-                    <Link to="/">Learn more</Link>
+                    <Link to="/auth">Learn more</Link>
                   </Button>
                 </div>
               </article>
@@ -568,7 +568,7 @@ export default function Landing() {
                       variant="outline"
                       className="mt-8 rounded-full border-brand-anchor/20 hover:bg-brand-anchor/5"
                     >
-                      <Link to="/">
+                      <Link to="/auth">
                         Learn more <ArrowRight className="ml-1 h-4 w-4" />
                       </Link>
                     </Button>
@@ -624,7 +624,7 @@ export default function Landing() {
             </p>
             <div className="mt-10 flex flex-wrap gap-3">
               <Button asChild size="lg" className="rounded-full bg-brand-bone text-brand-anchor hover:bg-brand-bone/90 h-12 px-7">
-                <Link to="/">Learn about Storyou</Link>
+                <Link to="/auth">Learn about Storyou</Link>
               </Button>
               <Button asChild size="lg" variant="outline" className="rounded-full h-12 px-7 border-brand-bone/25 bg-transparent text-brand-bone hover:bg-brand-bone/10 hover:text-brand-bone">
                 <Link to="/welcome">Pricing and plans</Link>
@@ -722,7 +722,7 @@ export default function Landing() {
                 size="lg"
                 className="rounded-full h-12 px-8 bg-brand-anchor text-brand-bone hover:bg-brand-anchor/90 text-base"
               >
-                <Link to="/">
+                <Link to="/auth">
                   Get started <ArrowRight className="ml-1 h-4 w-4" />
                 </Link>
               </Button>
