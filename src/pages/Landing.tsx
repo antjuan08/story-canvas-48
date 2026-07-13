@@ -568,7 +568,7 @@ export default function Landing() {
                       variant="outline"
                       className="mt-8 rounded-full border-brand-anchor/20 hover:bg-brand-anchor/5"
                     >
-                      <Link to="/">
+                      <Link to="/auth">
                         Learn more <ArrowRight className="ml-1 h-4 w-4" />
                       </Link>
                     </Button>
