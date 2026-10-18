@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Storyou. Brand Montage</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; }
+
+  /* 1920x1080 master stage, scaled to fit any window. 4K delivery = render at 3840x2160. */
+  #stage {
+    position: fixed; left: 50%; top: 50%;
+    width: 1920px; height: 1080px;
+    transform: translate(-50%, -50%);
+    overflow: hidden; background: #000;
+  }
+
+  /* Background shots: hard cuts, no transitions. Only the plates move. */
+  .shot { position: absolute; inset: 0; opacity: 0; overflow: hidden; }
+  .shot.on { opacity: 1; }
+  .plate {
+    position: absolute; inset: -2%; width: 104%; height: 104%;
+    background: var(--c); object-fit: cover;
+  }
+  .shot.on .plate { animation: push 2s linear both; }
+  @keyframes push { from { transform: scale(1); } to { transform: scale(1.05); } }
+
+  .tag {
+    position: absolute; left: 0; right: 0; bottom: 72px; text-align: center;
+    font: 500 20px/1 system-ui, -apple-system, sans-serif;
+    letter-spacing: .24em; text-transform: uppercase; color: rgba(255,255,255,.6);
+  }
+  body.clean .tag { display: none; }
+
+  /* Final fade to black (18–20s). Sits under the logo. */
+  #fade { position: absolute; inset: 0; background: #000; opacity: 0; z-index: 3; }
+
+  /* Soft vignette and film grain sit over the footage, under the logo. */
+  #vignette {
+    position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0) 55%, rgba(0,0,0,.45) 100%);
+  }
+  #grain {
+    position: absolute; inset: 0; z-index: 5; pointer-events: none;
+    opacity: .08; mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='320' height='320'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  /* The logo never moves, resizes, or changes. It is fixed at the center for the whole 20s. */
+  #logo {
+    position: absolute; left: 50%; top: 50%; width: 36%; z-index: 10;
+    transform: translate(-50%, -50%); pointer-events: none;
+  }
+
+  #ui {
+    position: fixed; left: 12px; bottom: 10px; z-index: 20;
+    font: 13px/1.4 system-ui, sans-serif; color: #888;
+  }
+  #ui kbd { color: #bbb; }
+</style>
+</head>
+<body>
+
+<div id="stage">
+  <!-- Shots: 9 x 2s scenes, then the fade. Set `src` to a clip path to swap in real footage. -->
+  <div class="shot" data-start="0"  data-src=""><div class="plate" style="--c:#4a2f1d"></div><span class="tag">Coffee shop · steaming mug, wooden table</span></div>
+  <div class="shot" data-start="2"  data-src=""><div class="plate" style="--c:#5b3e26"></div><span class="tag">Warm library · bookshelves, soft blur</span></div>
+  <div class="shot" data-start="4"  data-src=""><div class="plate" style="--c:#8a7458"></div><span class="tag">Creative workspace · notebook, hands writing</span></div>
+  <div class="shot" data-start="6"  data-src=""><div class="plate" style="--c:#3c5a6e"></div><span class="tag">Airplane · seat back, glowing window</span></div>
+  <div class="shot" data-start="8"  data-src=""><div class="plate" style="--c:#4b4f52"></div><span class="tag">City sidewalk · people past a café</span></div>
+  <div class="shot" data-start="10" data-src=""><div class="plate" style="--c:#2b2430"></div><span class="tag">Podcast studio · mics, people talking</span></div>
+  <div class="shot" data-start="12" data-src=""><div class="plate" style="--c:#6d4f3a"></div><span class="tag">Living room · reading on a sofa</span></div>
+  <div class="shot" data-start="14" data-src=""><div class="plate" style="--c:#2f4a4e"></div><span class="tag">Train window · landscape, reflections</span></div>
+  <div class="shot" data-start="16" data-src=""><div class="plate" style="--c:#b8733c"></div><span class="tag">Rooftop · golden hour skyline</span></div>
+
+  <div id="fade"></div>
+  <div id="vignette"></div>
+  <div id="grain"></div>
+  <img id="logo" src="storyou-logo.png" alt="Storyou.">
+</div>
+
+<div id="ui">
+  <kbd>Space</kbd> play/pause · <kbd>R</kbd> restart · <kbd>L</kbd> labels · <span id="time">0.0s</span> / 20s
+</div>
+
+<script>
+  const DURATION = 20;
+  const CUT = 2;
+  const FADE_START = 18;
+  const shots = [...document.querySelectorAll('.shot')];
+  const fade = document.getElementById('fade');
+  const timeEl = document.getElementById('time');
+
+  // Swap-in footage: if data-src is set, add a muted looping <video> to the shot.
+  shots.forEach(el => {
+    const src = el.dataset.src;
+    if (!src) return;
+    const v = document.createElement('video');
+    v.src = src; v.muted = true; v.loop = true; v.playsInline = true;
+    v.className = 'plate'; v.style.objectFit = 'cover';
+    el.prepend(v);
+    el.video = v;
+  });
+
+  // Fit the 1920x1080 stage to the window.
+  function fit() {
+    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    document.getElementById('stage').style.transform =
+      `translate(-50%, -50%) scale(${s})`;
+  }
+  addEventListener('resize', fit); fit();
+
+  let t = 0, playing = true, last = performance.now();
+
+  function render() {
+    // Hard cuts every 2s. Only one shot is on at a time.
+    const idx = Math.min(Math.floor(t / CUT), shots.length - 1);
+    shots.forEach((el, i) => {
+      const on = i === idx && t < FADE_START;
+      if (el.classList.contains('on') !== on) {
+        el.classList.toggle('on', on);
+        if (el.video) { on ? (el.video.currentTime = 0, el.video.play()) : el.video.pause(); }
+      }
+    });
+
+    // Fade to solid black from 18s to 20s, eased. The logo stays on top.
+    const f = Math.min(Math.max((t - FADE_START) / (DURATION - FADE_START), 0), 1);
+    fade.style.opacity = (f * f * (3 - 2 * f)).toFixed(3);
+
+    timeEl.textContent = t.toFixed(1) + 's';
+  }
+
+  function frame(now) {
+    if (playing) t += (now - last) / 1000;
+    last = now;
+    if (t >= DURATION) t = 0; // loop
+    render();
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  addEventListener('keydown', e => {
+    if (e.code === 'Space') { playing = !playing; e.preventDefault(); }
+    if (e.key === 'r' || e.key === 'R') { t = 0; }
+    if (e.key === 'l' || e.key === 'L') { document.body.classList.toggle('clean'); }
+  });
+</script>
+</body>
+</html>
